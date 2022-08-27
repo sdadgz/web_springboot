@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -35,34 +37,46 @@ public class BlogController {
     // 获取blogs空手套白狼
     @GetMapping("/blogs")
     public Result getBlogs() {
-        return getBlogsByNameFun("sdadgz");
+        int id = 0; // 公共显示账号
+        return _getBlogsByUserId(id);
     }
 
     // 提供用户名获取blogs
     @GetMapping("/blogs/{username}")
     public Result getBlogsByUserName(@PathVariable String username) {
-        return getBlogsByNameFun(username);
-    }
-
-    // 根据用户名获取blogs
-    private Result getBlogsByNameFun(String username) {
-
-        User user = getUserByNameFun(username);
+        User user = _getUserByName(username);
         if (user != null) {
-            // 获取id
             int id = user.getId();
-
-            QueryWrapper<Blog> wrapper = new QueryWrapper<>();
-            wrapper.eq("user_id", id);
-            List<Blog> blogs = blogMapper.selectList(wrapper);
-
-            return Result.success(blogs);
+            return _getBlogsByUserId(id);
         }
-        return Result.error("454", "用户名错误，无法通过username查到该用户");
+        return Result.error("457", "查不到用户");
     }
+
+    // 根据userid获取blogs
+    private Result _getBlogsByUserId(int id) {
+        List<Blog> blogs = blogMapper.getBlogsByUserId(id);
+        return Result.success(blogs);
+    }
+
+//    // 根据用户名获取blogs
+//    private Result getBlogsByNameFun(String username) {
+//
+//        User user = _getUserByName(username);
+//        if (user != null) {
+//            // 获取id
+//            int id = user.getId();
+//
+//            QueryWrapper<Blog> wrapper = new QueryWrapper<>();
+//            wrapper.eq("user_id", id);
+//            List<Blog> blogs = blogMapper.selectList(wrapper);
+//
+//            return Result.success(blogs);
+//        }
+//        return Result.error("454", "用户名错误，无法通过username查到该用户");
+//    }
 
     // 根据用户名获取用户id
-    private User getUserByNameFun(String username) {
+    private User _getUserByName(String username) {
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.eq("name", username);
         List<User> userList = userMapper.selectList(wrapper);

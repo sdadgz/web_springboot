@@ -2,4 +2,55 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.sdadgz.web_springboot.mapper.BlogMapper">
 
+    <select id="getBlogsByUserId" resultMap="BlogMap" parameterType="int">
+        select b.id         bid,
+               b.createtime bct,
+               u.id         uid,
+               u.createtime uct,
+               i.id         iid,
+               i.createtime ict,
+               `text`,
+               img_id,
+               title,
+               detail,
+               `name`,
+               avatar,
+               url,
+               md5,
+               is_delete
+        from blog b
+                 left join img i on b.img_id = i.id
+                 left join user u on b.user_id = u.id
+        where b.user_id = #{userid}
+    </select>
+
+    <!--  返回map  -->
+    <resultMap id="BlogMap" type="Blog">
+        <result property="id" column="bid"/>
+        <result property="createtime" column="bct"/>
+
+        <result property="userId" column="user_id"/>
+        <result property="text" column="text"/>
+        <result property="imgId" column="img_id"/>
+        <result property="title" column="title"/>
+        <result property="detail" column="detail"/>
+
+        <association property="user" javaType="User">
+            <result property="id" column="uid"/>
+            <result property="createtime" column="uct"/>
+
+            <result property="name" column="name"/>
+            <!--      密码不写      -->
+            <result property="avatar" column="avatar"/>
+        </association>
+
+        <association property="img" javaType="Img">
+            <result property="id" column="iid"/>
+            <result property="createtime" column="ict"/>
+
+            <result property="url" column="url"/>
+            <result property="md5" column="md5"/>
+            <result property="isDelete" column="is_delete"/>
+        </association>
+    </resultMap>
 </mapper>

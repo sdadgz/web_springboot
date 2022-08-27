@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -40,4 +41,12 @@ public class Blog implements Serializable {
     private String detail;
 
     private LocalDateTime createtime;
+
+    // 用户
+    @TableField(exist = false)
+    private User user;
+
+    // 首页图片
+    @TableField(exist = false)
+    private Img img;
 }

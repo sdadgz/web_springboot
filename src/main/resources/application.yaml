@@ -7,7 +7,7 @@ spring:
     url: jdbc:mysql://sdadgz.cn:3306/website
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: MPC112bq
+    password: 123456
     type: com.alibaba.druid.pool.DruidDataSource
   servlet:
     multipart:

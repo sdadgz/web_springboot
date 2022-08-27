@@ -8,6 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class MyWebMvcConfig implements WebMvcConfigurer {
 
+    // 跨域
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
@@ -17,4 +18,7 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
                 .exposedHeaders("*")
                 .allowCredentials(true);
     }
+
+    // 拦截器
+
 }

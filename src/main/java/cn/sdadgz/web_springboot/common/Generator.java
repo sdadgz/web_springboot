@@ -16,12 +16,12 @@ public class Generator {
 //        String localPath = "D:/CODE/";
 
         // 表名
-        String tableName = "blog";
+        String tableName = "img";
 
         FastAutoGenerator.create(
                         "jdbc:mysql://sdadgz.cn:3306/website",
                         "root",
-                        "MPC112bq")
+                        "123456")
                 .globalConfig(builder -> {
                     builder.author("eula") // 设置作者
                             .fileOverride() // 覆盖已生成文件
