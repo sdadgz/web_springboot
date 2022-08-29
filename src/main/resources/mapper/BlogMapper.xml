@@ -2,7 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.sdadgz.web_springboot.mapper.BlogMapper">
 
-    <select id="getBlogsByUserId" resultMap="BlogMap" parameterType="int">
+    <!--  根据name和title获取blog  -->
+    <select id="getBlog" resultMap="BlogMap">
         select b.id         bid,
                b.createtime bct,
                u.id         uid,
@@ -21,7 +22,30 @@
         from blog b
                  left join img i on b.img_id = i.id
                  left join user u on b.user_id = u.id
-        where b.user_id = #{userid}
+        where u.name = #{username} and b.title = #{title}
+    </select>
+
+    <!--  根据id获取用户blogs  -->
+    <select id="getBlogsByName" resultMap="BlogMap">
+        select b.id         bid,
+               b.createtime bct,
+               u.id         uid,
+               u.createtime uct,
+               i.id         iid,
+               i.createtime ict,
+               `text`,
+               img_id,
+               title,
+               detail,
+               `name`,
+               avatar,
+               url,
+               md5,
+               is_delete
+        from blog b
+                 left join img i on b.img_id = i.id
+                 left join user u on b.user_id = u.id
+        where u.name = #{username}
     </select>
 
     <!--  返回map  -->

@@ -34,46 +34,21 @@ public class BlogController {
     @Resource
     UserMapper userMapper;
 
-    // 获取blogs空手套白狼
-    @GetMapping("/blogs")
-    public Result getBlogs() {
-        int id = 0; // 公共显示账号
-        return _getBlogsByUserId(id);
+    @GetMapping("/{username}/blog/{title}")
+    public Result getBlog(@PathVariable("username") String username,
+                          @PathVariable("title") String title) {
+
+        Blog blog = blogMapper.getBlog(username, title);
+        return Result.success(blog);
     }
 
     // 提供用户名获取blogs
-    @GetMapping("/blogs/{username}")
-    public Result getBlogsByUserName(@PathVariable String username) {
-        User user = _getUserByName(username);
-        if (user != null) {
-            int id = user.getId();
-            return _getBlogsByUserId(id);
-        }
-        return Result.error("457", "查不到用户");
-    }
+    @GetMapping("/{username}/blogs")
+    public Result getBlogsByUserName(@PathVariable("username") String username) {
 
-    // 根据userid获取blogs
-    private Result _getBlogsByUserId(int id) {
-        List<Blog> blogs = blogMapper.getBlogsByUserId(id);
+        List<Blog> blogs = blogMapper.getBlogsByName(username);
         return Result.success(blogs);
     }
-
-//    // 根据用户名获取blogs
-//    private Result getBlogsByNameFun(String username) {
-//
-//        User user = _getUserByName(username);
-//        if (user != null) {
-//            // 获取id
-//            int id = user.getId();
-//
-//            QueryWrapper<Blog> wrapper = new QueryWrapper<>();
-//            wrapper.eq("user_id", id);
-//            List<Blog> blogs = blogMapper.selectList(wrapper);
-//
-//            return Result.success(blogs);
-//        }
-//        return Result.error("454", "用户名错误，无法通过username查到该用户");
-//    }
 
     // 根据用户名获取用户id
     private User _getUserByName(String username) {

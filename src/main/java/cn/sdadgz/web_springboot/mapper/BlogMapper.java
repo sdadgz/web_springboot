@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author eula
@@ -18,6 +18,9 @@ import java.util.List;
 @Mapper
 public interface BlogMapper extends BaseMapper<Blog> {
 
+    // 根据name和title获取blog
+    Blog getBlog(@Param("username") String username, @Param("title") String title);
+
     // 根据userid获取blogs
-    List<Blog> getBlogsByUserId(int userid);
+    List<Blog> getBlogsByName(@Param("username") String username);
 }
