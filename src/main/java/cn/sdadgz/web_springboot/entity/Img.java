@@ -34,4 +34,8 @@ public class Img implements Serializable {
     private Boolean isDelete;
 
     private LocalDateTime createtime;
+
+    private String field;
+
+    private Integer userId;
 }

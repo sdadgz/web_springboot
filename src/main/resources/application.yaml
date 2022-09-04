@@ -4,7 +4,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://sdadgz.cn:3306/website
+    url: jdbc:mysql://sdadgz.cn:3307/website
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: 123456
@@ -15,12 +15,14 @@ spring:
       max-file-size: 10GB
   mvc:
     static-path-pattern: ${my.file-config.staticPath}** # 静态资源访问
-  web:
-    resources:
-      static-locations: file:${my.file-config.uploadPath}
+  resources:
+    static-locations: file:${my.file-config.uploadPath}
 
 mybatis:
   mapper-locations: mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+  type-aliases-package: cn.sdadgz.web_springboot.entity
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
@@ -35,5 +37,5 @@ my:
 
   file-config:
     uploadPath: '${my.server.uploadPath}'
-    staticPath: '/file/img/'
+    staticPath: '/static/'
     downloadPath: '${my.server.name}:${server.port}${my.file-config.staticPath}' # 存url到数据库时用的他

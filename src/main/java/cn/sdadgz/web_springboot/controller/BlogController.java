@@ -6,10 +6,7 @@ import cn.sdadgz.web_springboot.entity.User;
 import cn.sdadgz.web_springboot.mapper.BlogMapper;
 import cn.sdadgz.web_springboot.mapper.UserMapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -33,6 +30,12 @@ public class BlogController {
 
     @Resource
     UserMapper userMapper;
+
+    @PostMapping("/test")
+    public Result test(@RequestParam("url") String url){
+
+        return Result.success(url);
+    }
 
     @GetMapping("/{username}/blog/{title}")
     public Result getBlog(@PathVariable("username") String username,
