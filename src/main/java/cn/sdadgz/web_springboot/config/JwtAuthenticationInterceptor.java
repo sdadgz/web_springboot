@@ -1,6 +1,6 @@
 package cn.sdadgz.web_springboot.config;
 
-import cn.sdadgz.web_springboot.Utils.JwtU;
+import cn.sdadgz.web_springboot.Utils.JwtUtil;
 import cn.sdadgz.web_springboot.entity.User;
 import cn.sdadgz.web_springboot.mapper.UserMapper;
 import org.springframework.stereotype.Component;
@@ -35,7 +35,7 @@ public class JwtAuthenticationInterceptor implements HandlerInterceptor {
         //获取签发对象id，不存在直接报错
         String userid = null; //获取签发对象的Userid
         try {
-            userid = JwtU.getAudience(token);//获取token中的签发对象
+            userid = JwtUtil.getAudience(token);//获取token中的签发对象
         } catch (Exception e) {
             throw new BusinessException("499", "数据校验失败");
         }
@@ -46,16 +46,16 @@ public class JwtAuthenticationInterceptor implements HandlerInterceptor {
             throw new BusinessException("499", "认证错误");
         }
         //姓名不匹配返回
-        if (!Objects.equals(RealUser.getName(), JwtU.getClaimByName(token, "username").asString())) {
+        if (!Objects.equals(RealUser.getName(), JwtUtil.getClaimByName(token, "username").asString())) {
             throw new BusinessException("499", "认证错误");
         }
         //检查是否过期
-        if (JwtU.checkDate(token)) {
+        if (JwtUtil.checkDate(token)) {
             throw new BusinessException("499", "token过期");
         }
         System.out.println("tocken验证成功");
         //布尔值验证
-        return JwtU.vertifyToken(token, userid, RealUser.getPassword());
+        return JwtUtil.vertifyToken(token, userid, RealUser.getPassword());
     }
 
     @Override

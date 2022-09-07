@@ -12,7 +12,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 import java.util.Date;
 
-public class JwtU {
+public class JwtUtil {
     //创建token
     public static String CreateToken(String userid, String username, String password) throws NoSuchAlgorithmException {
         Calendar now = Calendar.getInstance();
@@ -22,13 +22,13 @@ public class JwtU {
                 .withIssuedAt(new Date())//创建日期
                 .withExpiresAt(time)//过期日期
                 .withClaim("username", username)//载荷
-                .sign(Algorithm.HMAC256(Md5U.md5(userid) + Md5U.md5(password)));  //加密算法
+                .sign(Algorithm.HMAC256(Md5Util.md5(userid) + Md5Util.md5(password)));  //加密算法
     }
 
     //认证测试
     public static Boolean vertifyToken(String token, String userid, String password) throws NoSuchAlgorithmException {
         DecodedJWT jwt = null;
-        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(Md5U.md5(userid) + Md5U.md5(password))).build();
+        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(Md5Util.md5(userid) + Md5Util.md5(password))).build();
         try {
             jwt = verifier.verify(token);
             System.out.println(jwt);

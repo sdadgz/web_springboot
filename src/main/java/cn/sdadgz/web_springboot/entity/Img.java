@@ -1,6 +1,7 @@
 package cn.sdadgz.web_springboot.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -38,4 +39,7 @@ public class Img implements Serializable {
     private String field;
 
     private Integer userId;
+
+    @TableField(exist = false)
+    private User user;
 }

@@ -1,9 +1,8 @@
 package cn.sdadgz.web_springboot.controller;
 
-import cn.sdadgz.web_springboot.Utils.JwtU;
-import cn.sdadgz.web_springboot.Utils.TimeU;
+import cn.sdadgz.web_springboot.Utils.JwtUtil;
+import cn.sdadgz.web_springboot.Utils.TimeUtil;
 import cn.sdadgz.web_springboot.common.Result;
-import cn.sdadgz.web_springboot.config.BusinessException;
 import cn.sdadgz.web_springboot.entity.User;
 import cn.sdadgz.web_springboot.mapper.UserMapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -33,7 +32,7 @@ public class UserController {
     // 新建用户
     @PostMapping("")
     public Result setUser(@RequestBody User user) {
-        user.setCreatetime(TimeU.now());
+        user.setCreatetime(TimeUtil.now());
         int insert = userMapper.insert(user);
         return Result.success(insert);
     }
@@ -54,7 +53,7 @@ public class UserController {
             boolean b = list.get(0).getPassword().equals(password);
             if (b) {
                 User trueUser = list.get(0);
-                String token = JwtU.CreateToken(trueUser.getId().toString(), trueUser.getName(), trueUser.getPassword());
+                String token = JwtUtil.CreateToken(trueUser.getId().toString(), trueUser.getName(), trueUser.getPassword());
                 map.put("user", trueUser);
                 map.put("token", token);
                 return Result.success(map);
