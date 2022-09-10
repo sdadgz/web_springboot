@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,9 +31,17 @@ public class Blog implements Serializable {
 
     private Integer userId;
 
+    // 用户
+    @TableField(exist = false)
+    private User user;
+
     private String text;
 
     private Integer imgId;
+
+    // 首页图片
+    @TableField(exist = false)
+    private Img img;
 
     private String title;
 
@@ -42,11 +49,5 @@ public class Blog implements Serializable {
 
     private LocalDateTime createtime;
 
-    // 用户
-    @TableField(exist = false)
-    private User user;
 
-    // 首页图片
-    @TableField(exist = false)
-    private Img img;
 }

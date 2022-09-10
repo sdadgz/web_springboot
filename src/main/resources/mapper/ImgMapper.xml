@@ -2,4 +2,30 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.sdadgz.web_springboot.mapper.ImgMapper">
 
+    <!--  正常用户分页  -->
+    <select id="getPageByUserId" resultMap="ImgMap">
+        select *
+        from img i
+                 left join user u on u.id = i.user_id
+        where i.user_id = #{userId}
+          and !i.is_delete
+        order by i.createtime desc
+        limit #{startPage},#{pageSize}
+    </select>
+
+    <!--  海克斯科技用户分页  -->
+    <select id="getPage" resultMap="ImgMap">
+        select *
+        from img i
+                 left join user u on u.id = i.user_id
+        where !is_delete
+        order by i.createtime desc
+        limit #{startPage},#{pageSize}
+    </select>
+
+    <!--  结果集  -->
+    <resultMap id="ImgMap" type="Img">
+        <association property="user" javaType="User"/>
+    </resultMap>
+
 </mapper>

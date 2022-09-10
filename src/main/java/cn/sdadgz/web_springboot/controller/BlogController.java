@@ -2,6 +2,7 @@ package cn.sdadgz.web_springboot.controller;
 
 import cn.sdadgz.web_springboot.Utils.FileUtil;
 import cn.sdadgz.web_springboot.Utils.IdUtil;
+import cn.sdadgz.web_springboot.Utils.SameCode.Page.Page;
 import cn.sdadgz.web_springboot.Utils.TimeUtil;
 import cn.sdadgz.web_springboot.common.Result;
 import cn.sdadgz.web_springboot.config.BusinessException;
@@ -11,10 +12,12 @@ import cn.sdadgz.web_springboot.entity.User;
 import cn.sdadgz.web_springboot.mapper.BlogMapper;
 import cn.sdadgz.web_springboot.mapper.ImgMapper;
 import cn.sdadgz.web_springboot.mapper.UserMapper;
+import cn.sdadgz.web_springboot.service.IBlogService;
+import cn.sdadgz.web_springboot.service.IImgService;
+import cn.sdadgz.web_springboot.service.IUserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,7 +26,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Time;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -119,29 +121,7 @@ public class BlogController {
     // 提供用户名获取blogs
     @GetMapping("/{username}/blogs")
     public Result getBlogsByUserName(@PathVariable("username") String username) {
-
-        // 查user的id
-        LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        userLambdaQueryWrapper.eq(User::getName, username);
-        List<User> users = userMapper.selectList(userLambdaQueryWrapper);
-        if (users.size() != 1) {
-            throw new BusinessException("404", "url不存在");
-        }
-        User user = users.get(0);
-        int userId = user.getId();
-
-        // 获取blogs
-        LambdaQueryWrapper<Blog> blogLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        blogLambdaQueryWrapper.eq(Blog::getUserId, userId);
-        blogLambdaQueryWrapper.orderByDesc(Blog::getCreatetime);
-        List<Blog> blogs = blogMapper.selectList(blogLambdaQueryWrapper);
-
-        // 增加信息
-        for (Blog blog : blogs) {
-            blog.setUser(user);
-            Img img = imgMapper.selectById(blog.getImgId());
-            blog.setImg(img);
-        }
+        List<Blog> blogs = blogMapper.getBlogsByName(username);
         return Result.success(blogs);
     }
 
@@ -163,8 +143,9 @@ public class BlogController {
         return Result.success(i);
     }
 
+    // 删除博客
     @DeleteMapping("")
-    public Result deleteBlog(@RequestBody Map<String,Integer[]> objectMap) {
+    public Result deleteBlog(@RequestBody Map<String, Integer[]> objectMap) {
 
         Integer[] idList = objectMap.get("idList");
 
@@ -182,45 +163,8 @@ public class BlogController {
                        @PathVariable("username") String username,
                        HttpServletRequest request) {
 
-        Map<String, Object> map = new HashMap<>();
-        Page<Blog> page = new Page<>(currentPage, pageSize);
-        Long total;
-        LambdaQueryWrapper<Blog> wrapper = new LambdaQueryWrapper<>();
-        wrapper.orderByDesc(Blog::getCreatetime);
-
-        int userId = IdUtil.getId(request);
-
-        if (userId > 0) { // 不是root用户
-            if (!IdUtil.getName(request).equals(username)) { // 权限不足
-                throw new BusinessException("498", "权限不足");
-            } else { // 正常用户正常查询
-                wrapper.eq(Blog::getUserId, userId);
-                blogMapper.selectPage(page, wrapper);
-                // 返回总数
-                total = blogMapper.selectCount(wrapper);
-            }
-        } else { // root用户全部查询
-            blogMapper.selectPage(page, wrapper); // 分页
-            total = blogMapper.selectCount(wrapper); // 总数
-        }
-
-        for (Blog blog : page.getRecords()) {
-            // 设置图片
-            Integer imgId = blog.getImgId();
-            Img img = imgMapper.selectById(imgId);
-            blog.setImg(img);
-            // 设置用户
-            Integer id = blog.getUserId();
-            User user = userMapper.selectById(id);
-            if (user == null) {
-                user = new User();
-                user.setName("用户已注销");
-            }
-            blog.setUser(user);
-        }
-
-        map.put("blogs", page.getRecords());
-        map.put("total", total);
+        Page<BlogMapper, Blog> page = new Page<>();
+        Map<String, Object> map = page.getPage(currentPage, pageSize, request, blogMapper);
 
         return Result.success(map);
     }

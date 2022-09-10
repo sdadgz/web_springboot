@@ -27,6 +27,7 @@ public class FileUtil {
     private String uploadPath;
     private String downloadPath;
     private ImgMapper imgMapper;
+    private final String blogField = "博客内图片";
 
 //    @Value("${my.file-config.uploadPath}")
 //    private String uploadPath;
@@ -116,7 +117,7 @@ public class FileUtil {
         String path;
         String url;
         // blog不增加uuid
-        if (field.equals("blog")) {
+        if (field.equals(blogField)) {
             path = uploadPath + "blog/" + fileName;
             url = downloadPath + "blog/" + fileName;
         } else {

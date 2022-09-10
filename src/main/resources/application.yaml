@@ -1,13 +1,14 @@
 server:
   port: 8000
-
+  ssl:
+    key-store: classpath:sdadgz.cn.jks
+    key-store-type: JKS
 
 spring:
   datasource:
     url: jdbc:mysql://sdadgz.cn:3307/website
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: 123456
     type: com.alibaba.druid.pool.DruidDataSource
   servlet:
     multipart:
@@ -22,20 +23,22 @@ mybatis:
   mapper-locations: mapper/*.xml
   configuration:
     map-underscore-to-camel-case: true
+    auto-mapping-behavior: full
   type-aliases-package: cn.sdadgz.web_springboot.entity
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
+    auto-mapping-behavior: full
   type-aliases-package: cn.sdadgz.web_springboot.entity
 
 my:
   server: # 上传到服务器需要改这个
-    name: http://localhost
-    uploadPath: 'D:/下载/不用思考，删这个文件夹/' # 文件下载到哪里，记得屁股加个杠
+    name: https://sdadgz.cn
+    uploadPath: '/usr/local/springboot/static/' # 文件下载到哪里，记得屁股加个杠
 
 
   file-config:
     uploadPath: '${my.server.uploadPath}'
-    staticPath: '/static/'
+    staticPath: '/static/' # 访问前缀，不是物理地址
     downloadPath: '${my.server.name}:${server.port}${my.file-config.staticPath}' # 存url到数据库时用的他

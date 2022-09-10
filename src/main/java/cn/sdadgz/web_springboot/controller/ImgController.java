@@ -2,6 +2,7 @@ package cn.sdadgz.web_springboot.controller;
 
 import cn.sdadgz.web_springboot.Utils.FileUtil;
 import cn.sdadgz.web_springboot.Utils.IdUtil;
+import cn.sdadgz.web_springboot.Utils.SameCode.Page.Page;
 import cn.sdadgz.web_springboot.common.Result;
 import cn.sdadgz.web_springboot.config.BusinessException;
 import cn.sdadgz.web_springboot.entity.Blog;
@@ -9,17 +10,17 @@ import cn.sdadgz.web_springboot.entity.Img;
 import cn.sdadgz.web_springboot.entity.User;
 import cn.sdadgz.web_springboot.mapper.ImgMapper;
 import cn.sdadgz.web_springboot.mapper.UserMapper;
+import cn.sdadgz.web_springboot.service.IUserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -52,43 +53,70 @@ public class ImgController {
                        @PathVariable("username") String username,
                        HttpServletRequest request) {
 
-        Map<String, Object> map = new HashMap<>();
-        Page<Img> page = new Page<>(currentPage, pageSize);
-        Long total;
-        LambdaQueryWrapper<Img> wrapper = new LambdaQueryWrapper<>();
-        wrapper.orderByDesc(Img::getCreatetime);
-
-        int userId = IdUtil.getId(request);
-
-        if (userId > 0) { // 不是root用户
-            if (!IdUtil.getName(request).equals(username)) { // 权限不足
-                throw new BusinessException("498", "权限不足");
-            } else { // 正常用户正常查询
-                wrapper.eq(Img::getUserId, userId);
-                imgMapper.selectPage(page, wrapper);
-                // 返回总数
-                total = imgMapper.selectCount(wrapper);
-            }
-        } else { // root用户全部查询
-            imgMapper.selectPage(page, wrapper); // 分页
-            total = imgMapper.selectCount(wrapper); // 总数
-        }
-
-        for (Img img : page.getRecords()) {
-            // 设置用户
-            Integer id = img.getUserId();
-            User user = userMapper.selectById(id);
-            if (user == null) {
-                user = new User();
-                user.setName("用户已注销");
-            }
-            img.setUser(user);
-        }
-
-        map.put("imgs", page.getRecords());
-        map.put("total", total);
+        Page<ImgMapper, Img> page = new Page<>();
+        Map<String, Object> map = page.getPage(currentPage, pageSize, request, imgMapper);
 
         return Result.success(map);
+    }
+
+    // 删除
+    @DeleteMapping("")
+    public Result delete(@RequestBody Map<String, Object> map,
+                         HttpServletRequest request) {
+
+        // 返回集
+        Map<String, Object> resultMap = new HashMap<>();
+
+        // 获取图片id
+        int id = (int) map.get("id");
+
+        // 获取用户id
+        int userId = IdUtil.getId(request);
+
+        // 获取图片
+        LambdaQueryWrapper<Img> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Img::getId, id);
+        Img img = imgMapper.selectById(id);
+
+        if (img.getUserId() != userId && userId > 0) { // 不是海克斯科技用户还想删别人东西
+            throw new BusinessException("498", "权限不足");
+        }
+
+        // 虚拟删除
+        img.setIsDelete(true);
+        int i = imgMapper.updateById(img);
+
+        resultMap.put("mapperDelete", i);
+
+        // 真实删除
+        String md5 = img.getMd5();
+        wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Img::getMd5, md5);
+        List<Img> imgs = imgMapper.selectList(wrapper);
+        boolean readDelete = true;
+        for (Img img1 : imgs) {
+            if (!img1.getIsDelete()) {
+                readDelete = false;
+                break;
+            }
+        }
+        // 确实需要删除了
+        if (readDelete) {
+            String path = img.getUrl();
+            if (path.contains(downloadPath)) { // 是上传的图片，不是网图
+                path = path.substring(downloadPath.length());
+            }
+            File file = new File(uploadPath + path);
+            boolean delete = file.delete();
+            resultMap.put("realDelete", delete);
+
+            // 数据库删除
+            for (Img img1 : imgs) {
+                int deleteById = imgMapper.deleteById(img1.getId());
+                resultMap.put("deleteSqlItem" + img1.getId(), deleteById);
+            }
+        }
+        return Result.success(resultMap);
     }
 
     @PostMapping("/upload")
