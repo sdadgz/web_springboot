@@ -114,6 +114,8 @@ public class FileUtil {
         // 基本属性
         String uuid = IdUtil.uuid();
         String fileName = file.getOriginalFilename();
+        assert fileName != null;
+        fileName = getType(fileName); // 结尾加上类型
         String path;
         String url;
         // blog不增加uuid
@@ -173,5 +175,13 @@ public class FileUtil {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    // 根据文件名获取文件类型
+    private String getType(String fileName) {
+        if (!fileName.contains(".")) {
+            return "";
+        }
+        return fileName.substring(fileName.lastIndexOf('.'));
     }
 }

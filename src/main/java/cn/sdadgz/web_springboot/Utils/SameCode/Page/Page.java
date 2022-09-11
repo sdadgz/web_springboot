@@ -15,19 +15,22 @@ public class Page<MP extends Mapper<T>, T> {
                                        HttpServletRequest request,
                                        MP mapper) {
 
+        // 设置开始页
         int startPage = (currentPage - 1) * pageSize;
 
+        // 初始化
         Map<String, Object> map = new HashMap<>();
         List<T> lists;
         Long total;
 
         QueryWrapper<T> wrapper = new QueryWrapper<>();
 
+        // 获取用户id
         int id = IdUtil.getId(request);
-        if (id > 0) {
+        if (id > 0) { // 正常用户
             lists = mapper.getPageByUserId(id, startPage, pageSize);
             wrapper.eq("user_id", id);
-        } else {
+        } else { // 海克斯科技用户
             lists = mapper.getPage(startPage, pageSize);
         }
 
