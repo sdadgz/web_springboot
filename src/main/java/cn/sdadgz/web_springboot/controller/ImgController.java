@@ -12,6 +12,7 @@ import cn.sdadgz.web_springboot.mapper.ImgMapper;
 import cn.sdadgz.web_springboot.mapper.UserMapper;
 import cn.sdadgz.web_springboot.service.IUserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -54,7 +55,7 @@ public class ImgController {
         Map<String, Object> map = new HashMap<>();
 
         int id = 0;
-        int[] idList = null;
+        ArrayList<Integer> idList = null;
 
         // 获取需要修改的数据
         String field = String.valueOf(paramMap.get("field"));
@@ -67,7 +68,8 @@ public class ImgController {
         // 参数是多
         param = paramMap.get("idList");
         if (param != null) {
-            idList = (int[]) param;
+            idList = (ArrayList<Integer>) param;
+            System.out.println(param.getClass());
         }
 
         // 使用参数
@@ -102,6 +104,9 @@ public class ImgController {
             }
         }
 
+        if (img == null) {
+            throw new BusinessException("401", "图片id不存在");
+        }
         img.setField(field);
         int i = imgMapper.updateById(img);
         map.put("id:" + id, i);
