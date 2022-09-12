@@ -46,12 +46,77 @@ public class ImgController {
     @Value("${my.file-config.downloadPath}")
     private String downloadPath;
 
+    @PutMapping("/update")
+    public Result update(@RequestBody Map<String, Object> paramMap,
+                         HttpServletRequest request) {
+
+        // 返回集
+        Map<String, Object> map = new HashMap<>();
+
+        int id = 0;
+        int[] idList = null;
+
+        // 获取需要修改的数据
+        String field = String.valueOf(paramMap.get("field"));
+
+        // 参数是单
+        Object param = paramMap.get("id");
+        if (param != null) {
+            id = (int) param;
+        }
+        // 参数是多
+        param = paramMap.get("idList");
+        if (param != null) {
+            idList = (int[]) param;
+        }
+
+        // 使用参数
+        if (id != 0) {
+            map.put("single", updateF(id, field, request));
+
+        }
+        // 使用多个参数
+        if (idList != null) {
+            for (int i : idList) {
+                map.put("multiple:" + i, updateF(i, field, request));
+            }
+        }
+
+        return Result.success(map);
+    }
+
+    // 带验证的修改
+    private Map<String, Object> updateF(int id, String field, HttpServletRequest request) {
+
+        Map<String, Object> map = new HashMap<>();
+
+        // 获取用户id
+        int userId = IdUtil.getId(request);
+
+        // 获取图片信息并验证
+        Img img = imgMapper.selectById(id);
+        if (userId > 0) { // 正常用户
+            if (img.getUserId() != userId) { // 尝试跨权限
+                // 拒绝他
+                throw new BusinessException("498", "权限不足");
+            }
+        }
+
+        img.setField(field);
+        int i = imgMapper.updateById(img);
+        map.put("id:" + id, i);
+
+        return map;
+    }
+
     // 分页
     @GetMapping("/{username}/page")
     public Result page(@RequestParam("currentPage") int currentPage,
                        @RequestParam("pageSize") int pageSize,
                        @PathVariable("username") String username,
                        HttpServletRequest request) {
+
+        // 用户名冗余了，都多余了，爱谁谁！
 
         Page<ImgMapper, Img> page = new Page<>();
         Map<String, Object> map = page.getPage(currentPage, pageSize, request, imgMapper);
