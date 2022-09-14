@@ -2,6 +2,7 @@ package cn.sdadgz.web_springboot.controller;
 
 import cn.sdadgz.web_springboot.Utils.FileUtil;
 import cn.sdadgz.web_springboot.Utils.IdUtil;
+import cn.sdadgz.web_springboot.Utils.RandomUtil;
 import cn.sdadgz.web_springboot.Utils.SameCode.Page.Page;
 import cn.sdadgz.web_springboot.Utils.TimeUtil;
 import cn.sdadgz.web_springboot.common.Result;
@@ -64,49 +65,36 @@ public class BlogController {
                          @RequestParam("title") String title,
                          @RequestParam("detail") String detail,
                          HttpServletRequest request) throws IOException {
-        // 文件原始名
-        String originalFilename = file.getOriginalFilename();
 
-        // 没标题就用文件名
-        if (title.length() < 1) {
-            assert originalFilename != null;
-            title = originalFilename.substring(0, originalFilename.lastIndexOf('.'));
-        }
-
-        // 获取用户id
-        int userid = IdUtil.getId(request);
-
-        // 防止重复标题
-        QueryWrapper<Blog> wrapper = new QueryWrapper<>();
-        wrapper.eq("title", title);
-        wrapper.eq("user_id", userid);
-        List<Blog> blogs = blogMapper.selectList(wrapper);
-        if (blogs.size() > 0) {
-            throw new BusinessException("465", "重复的标题");
-        }
-
-        // 初始化
-        FileUtil fileUtil = new FileUtil(uploadPath, downloadPath, null);
-
-        // 获取创建时间和处理后的博客内容
-//        LocalDateTime createTime = fileUtil.getCreateTime(file); // 被阉割
-        LocalDateTime createTime = TimeUtil.now();
-//        String text = fileUtil.md((File) file);
-        String path = uploadPath + "blog/temp.md";
-        fileUtil.uploadToServer(file, path);
-        File jFile = new File(path);
-        String text = fileUtil.md(jFile);
-
-        Blog blog = new Blog();
-        blog.setUserId(userid);
-        blog.setText(text);
-        blog.setImgId(imgId);
-        blog.setTitle(title);
-        blog.setDetail(detail);
-        blog.setCreatetime(createTime);
-        blogMapper.insert(blog);
+        FileUtil fileUtil = new FileUtil(uploadPath, downloadPath, imgMapper);
+        Blog blog = fileUtil.mdUpload(file, title, request, blogMapper, imgId, detail);
 
         return Result.success(blog);
+    }
+
+    // 批量上传博客
+    @PostMapping("/uploads")
+    public Result upload(@RequestPart("files") MultipartFile[] files,
+                         HttpServletRequest request) throws IOException {
+
+        // 初始化
+        FileUtil fileUtil = new FileUtil(uploadPath, downloadPath, imgMapper);
+
+        // 获取本人博客首页图片
+        LambdaQueryWrapper<Img> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Img::getUserId, IdUtil.getId(request)); // 用户id
+        wrapper.eq(Img::getField, "博客首页");
+        List<Img> imgs = imgMapper.selectList(wrapper);
+        if (imgs.size() < 1) {
+            throw new BusinessException("489", "还没有上传博客首页图片");
+        }
+
+        for (MultipartFile file : files) {
+            int imgId = imgs.get(RandomUtil.getInt(imgs.size())).getId();
+            fileUtil.mdUpload(file, "", request, blogMapper, imgId, "");
+        }
+
+        return Result.success();
     }
 
     // 获取某个博客

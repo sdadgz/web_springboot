@@ -34,7 +34,7 @@ public class UserController {
     @PostMapping("")
     public Result setUser(@RequestBody User user) throws NoSuchAlgorithmException {
         user.setCreatetime(TimeUtil.now());
-        int insert = userMapper.insert(user);
+        userMapper.insert(user);
         return Result.success(loginF(user));
     }
 

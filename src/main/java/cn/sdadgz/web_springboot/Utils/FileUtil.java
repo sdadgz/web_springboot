@@ -1,7 +1,9 @@
 package cn.sdadgz.web_springboot.Utils;
 
 import cn.sdadgz.web_springboot.config.BusinessException;
+import cn.sdadgz.web_springboot.entity.Blog;
 import cn.sdadgz.web_springboot.entity.Img;
+import cn.sdadgz.web_springboot.mapper.BlogMapper;
 import cn.sdadgz.web_springboot.mapper.ImgMapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.AllArgsConstructor;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -42,6 +45,54 @@ public class FileUtil {
         this.imgMapper = imgMapper;
     }
 
+    // 笔记上传
+    public Blog mdUpload(MultipartFile file, String title, HttpServletRequest request,
+                         BlogMapper blogMapper, int imgId, String detail) throws IOException {
+        // 文件原始名
+        String originalFilename = file.getOriginalFilename();
+
+        // 没标题就用文件名
+        if (title.length() < 1) {
+            assert originalFilename != null;
+            title = originalFilename.substring(0, originalFilename.lastIndexOf('.'));
+        }
+
+        // 获取用户id
+        int userid = IdUtil.getId(request);
+
+        // 防止重复标题
+        QueryWrapper<Blog> wrapper = new QueryWrapper<>();
+        wrapper.eq("title", title);
+        wrapper.eq("user_id", userid);
+        List<Blog> blogs = blogMapper.selectList(wrapper);
+        if (blogs.size() > 0) {
+            throw new BusinessException("465", "重复的标题");
+        }
+
+        // 初始化
+        FileUtil fileUtil = new FileUtil(uploadPath, downloadPath, null);
+
+        // 获取创建时间和处理后的博客内容
+//        LocalDateTime createTime = fileUtil.getCreateTime(file); // 被阉割
+        LocalDateTime createTime = TimeUtil.now();
+//        String text = fileUtil.md((File) file);
+        String path = uploadPath + "blog/temp.md";
+        fileUtil.uploadToServer(file, path);
+        File jFile = new File(path);
+        String text = fileUtil.md(jFile);
+
+        Blog blog = new Blog();
+        blog.setUserId(userid);
+        blog.setText(text);
+        blog.setImgId(imgId);
+        blog.setTitle(title);
+        blog.setDetail(detail);
+        blog.setCreatetime(createTime);
+        blogMapper.insert(blog);
+
+        return blog;
+    }
+
     // 笔记转字符
     public String md(File file) throws IOException {
         StringBuilder sb = new StringBuilder();
@@ -66,7 +117,7 @@ public class FileUtil {
                     if (!(line.contains("(http://") || line.contains("(https://"))) { // 都不包括链接
                         String start = line.substring(0, line.indexOf('(')); // 去掉右边括号
                         String originName = line.substring(line.lastIndexOf('\\') + 1, line.length() - 1);
-                        line = start + '(' + downloadPath + "blog/" + originName;
+                        line = start + '(' + downloadPath + "blog/" + originName + ')';
                     }
                 }
             }
@@ -113,15 +164,15 @@ public class FileUtil {
 
         // 基本属性
         String uuid = IdUtil.uuid();
-        String fileName = file.getOriginalFilename();
-        assert fileName != null;
-        fileName = getType(fileName); // 结尾加上类型
+        String originalFilename = file.getOriginalFilename();
+        assert originalFilename != null;
+        String fileName = getType(originalFilename); // 结尾加上类型
         String path;
         String url;
         // blog不增加uuid
         if (field.equals(blogField)) {
-            path = uploadPath + "blog/" + fileName;
-            url = downloadPath + "blog/" + fileName;
+            path = uploadPath + "blog/" + originalFilename;
+            url = downloadPath + "blog/" + originalFilename;
         } else {
             path = uploadPath + uuid + fileName;
             url = downloadPath + uuid + fileName;
