@@ -2,6 +2,7 @@ package cn.sdadgz.web_springboot;
 
 import cn.sdadgz.web_springboot.Utils.FileUtil;
 import cn.sdadgz.web_springboot.Utils.SameCode.Page.Page;
+import cn.sdadgz.web_springboot.Utils.SameCode.User.UserBan;
 import cn.sdadgz.web_springboot.Utils.TimeUtil;
 import cn.sdadgz.web_springboot.entity.Blog;
 import cn.sdadgz.web_springboot.entity.Img;
@@ -27,8 +28,6 @@ class WebSpringbootApplicationTests {
 
     @Test
     void contextLoads() throws IOException, NoSuchAlgorithmException {
-        Random random = new Random();
-        int i = random.nextInt();
-        System.out.println(i);
+
     }
 }

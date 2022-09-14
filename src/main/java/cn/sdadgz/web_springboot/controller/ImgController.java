@@ -3,6 +3,7 @@ package cn.sdadgz.web_springboot.controller;
 import cn.sdadgz.web_springboot.Utils.FileUtil;
 import cn.sdadgz.web_springboot.Utils.IdUtil;
 import cn.sdadgz.web_springboot.Utils.SameCode.Page.Page;
+import cn.sdadgz.web_springboot.Utils.SameCode.User.UserBan;
 import cn.sdadgz.web_springboot.common.Result;
 import cn.sdadgz.web_springboot.config.BusinessException;
 import cn.sdadgz.web_springboot.entity.Blog;
@@ -46,6 +47,12 @@ public class ImgController {
 
     @Value("${my.file-config.downloadPath}")
     private String downloadPath;
+
+    @GetMapping("/banner")
+    public Result banner(HttpServletRequest request){
+
+        return Result.success();
+    }
 
     @PutMapping("/update")
     public Result update(@RequestBody Map<String, Object> paramMap,
@@ -121,7 +128,8 @@ public class ImgController {
                        @PathVariable("username") String username,
                        HttpServletRequest request) {
 
-        // 用户名冗余了，都多余了，爱谁谁！
+        // 遣返
+        new UserBan().getTheFuckOut(username,request);
 
         Page<ImgMapper, Img> page = new Page<>();
         Map<String, Object> map = page.getPage(currentPage, pageSize, request, imgMapper);
@@ -197,7 +205,7 @@ public class ImgController {
         int userid = IdUtil.getId(request);
 
         // 上传到服务器
-        FileUtil fileU = new FileUtil(uploadPath, downloadPath, imgMapper);
+        FileUtil fileU = new FileUtil();
         Map<String, Object> map = fileU.uploadImg(file, userid, field);
 
         return Result.success(map);
@@ -214,7 +222,7 @@ public class ImgController {
 
         // 上传到服务器
         for (int i = 0; i < files.length; i++) {
-            FileUtil u = new FileUtil(uploadPath, downloadPath, imgMapper);
+            FileUtil u = new FileUtil();
             Map<String, Object> tempMap = u.uploadImg(files[i], userid, field);
             map.put(String.valueOf(i), tempMap);
         }

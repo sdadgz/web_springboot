@@ -4,6 +4,7 @@ import cn.sdadgz.web_springboot.Utils.FileUtil;
 import cn.sdadgz.web_springboot.Utils.IdUtil;
 import cn.sdadgz.web_springboot.Utils.RandomUtil;
 import cn.sdadgz.web_springboot.Utils.SameCode.Page.Page;
+import cn.sdadgz.web_springboot.Utils.SameCode.User.UserBan;
 import cn.sdadgz.web_springboot.Utils.TimeUtil;
 import cn.sdadgz.web_springboot.common.Result;
 import cn.sdadgz.web_springboot.config.BusinessException;
@@ -66,8 +67,8 @@ public class BlogController {
                          @RequestParam("detail") String detail,
                          HttpServletRequest request) throws IOException {
 
-        FileUtil fileUtil = new FileUtil(uploadPath, downloadPath, imgMapper);
-        Blog blog = fileUtil.mdUpload(file, title, request, blogMapper, imgId, detail);
+        FileUtil fileUtil = new FileUtil();
+        Blog blog = fileUtil.mdUpload(file, title, request, imgId, detail);
 
         return Result.success(blog);
     }
@@ -78,7 +79,7 @@ public class BlogController {
                          HttpServletRequest request) throws IOException {
 
         // 初始化
-        FileUtil fileUtil = new FileUtil(uploadPath, downloadPath, imgMapper);
+        FileUtil fileUtil = new FileUtil();
 
         // 获取本人博客首页图片
         LambdaQueryWrapper<Img> wrapper = new LambdaQueryWrapper<>();
@@ -91,7 +92,7 @@ public class BlogController {
 
         for (MultipartFile file : files) {
             int imgId = imgs.get(RandomUtil.getInt(imgs.size())).getId();
-            fileUtil.mdUpload(file, "", request, blogMapper, imgId, "");
+            fileUtil.mdUpload(file, "", request, imgId, "");
         }
 
         return Result.success();
@@ -150,6 +151,9 @@ public class BlogController {
                        @RequestParam("pageSize") int pageSize,
                        @PathVariable("username") String username,
                        HttpServletRequest request) {
+
+        // 遣返
+        new UserBan().getTheFuckOut(username, request);
 
         Page<BlogMapper, Blog> page = new Page<>();
         Map<String, Object> map = page.getPage(currentPage, pageSize, request, blogMapper);
