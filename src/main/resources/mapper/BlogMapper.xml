@@ -11,7 +11,7 @@
         where u.name = #{username}
           and b.title = #{title}
           and !i.is_delete
-        order by b.createtime desc
+        order by b.id desc
     </select>
 
     <!--  根据name获取用户blogs  -->
@@ -22,7 +22,7 @@
                  left join user u on b.user_id = u.id
         where u.name = #{username}
           and !i.is_delete
-        order by b.createtime desc
+        order by b.id desc
     </select>
 
     <!--  根据id获取blogs  -->
@@ -33,7 +33,7 @@
                  left join user u on u.id = b.user_id
         where b.user_id = #{userId}
           and !i.is_delete
-        order by b.createtime desc
+        order by b.id desc
     </select>
 
     <!--  正常用户分页  -->
@@ -42,7 +42,7 @@
         from blog b
                  left join user u on u.id = b.user_id
         where user_id = #{userId}
-        order by b.createtime desc
+        order by b.id desc
         limit #{startPage},#{pageSize}
     </select>
 
@@ -51,7 +51,7 @@
         select *
         from blog b
                  left join user u on u.id = b.user_id
-        order by b.createtime desc
+        order by b.id desc
         limit #{startPage},#{pageSize}
     </select>
 

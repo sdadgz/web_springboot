@@ -39,6 +39,8 @@ public class Img implements Serializable {
 
     private Integer userId;
 
+    private String reduceUrl;
+
     @TableField(exist = false)
     private User user;
 }

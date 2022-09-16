@@ -9,7 +9,7 @@
                  left join user u on u.id = i.user_id
         where i.user_id = #{userId}
           and !i.is_delete
-        order by i.createtime desc
+        order by i.id desc
         limit #{startPage},#{pageSize}
     </select>
 
@@ -19,7 +19,7 @@
         from img i
                  left join user u on u.id = i.user_id
         where !is_delete
-        order by i.createtime desc
+        order by i.id desc
         limit #{startPage},#{pageSize}
     </select>
 

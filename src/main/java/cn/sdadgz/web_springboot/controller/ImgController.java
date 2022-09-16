@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
@@ -195,6 +196,7 @@ public class ImgController {
         }
         // 确实需要删除了
         if (readDelete) {
+            // 原图片删除
             String path = img.getUrl();
             if (path.contains(downloadPath)) { // 是上传的图片，不是网图
                 path = path.substring(downloadPath.length());
@@ -202,6 +204,15 @@ public class ImgController {
             File file = new File(uploadPath + path);
             boolean delete = file.delete();
             resultMap.put("realDelete", delete);
+
+            // 浓缩图删除
+            String reducePath = img.getReduceUrl();
+            if (reducePath.contains(downloadPath)) { // 是上传的图片，不是网图
+                reducePath = reducePath.substring(downloadPath.length());
+            }
+            File reduceFile = new File(uploadPath + reducePath);
+            boolean reduceDelete = reduceFile.delete();
+            resultMap.put("reduceRealDelete", reduceDelete);
 
             // 数据库删除
             for (Img img1 : imgs) {
@@ -215,7 +226,7 @@ public class ImgController {
     @PostMapping("/upload")
     public Result upload(@RequestPart("file") MultipartFile file,
                          @RequestParam("field") String field,
-                         HttpServletRequest request) throws NoSuchAlgorithmException {
+                         HttpServletRequest request) throws NoSuchAlgorithmException, IOException {
         // 获取用户名
         int userid = IdUtil.getId(request);
 
@@ -230,7 +241,7 @@ public class ImgController {
     @PostMapping("/uploads")
     public Result uploads(@RequestPart("files") MultipartFile[] files,
                           @RequestParam("field") String field,
-                          HttpServletRequest request) throws NoSuchAlgorithmException {
+                          HttpServletRequest request) throws NoSuchAlgorithmException, IOException {
         // 获取用户名
         int userid = IdUtil.getId(request);
 

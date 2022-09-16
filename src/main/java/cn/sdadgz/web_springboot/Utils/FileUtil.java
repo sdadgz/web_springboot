@@ -6,16 +6,16 @@ import cn.sdadgz.web_springboot.entity.Img;
 import cn.sdadgz.web_springboot.mapper.BlogMapper;
 import cn.sdadgz.web_springboot.mapper.ImgMapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -44,8 +44,13 @@ public class FileUtil {
     @Resource
     private BlogMapper blogMapper;
 
+    private final int SCREEN_WIDTH = 1920; // 屏幕宽度
+    private final int BLOG_COLUMNS = 4; // 博客分几栏
 
-    private final String blogField = "博客内图片";
+    private final String[] SUPPORT_TYPE = {".jpg", ".png", ".jpeg"}; // 支持压缩的类型
+
+    private final String BLOG_FIELD = "博客内图片";
+    private final String BLOG_BANNER = "博客首页";
 
     @PostConstruct
     public void init() {
@@ -160,7 +165,7 @@ public class FileUtil {
     }
 
     // 上传到服务器
-    public Map<String, Object> uploadImg(MultipartFile file, int userid, String field) throws NoSuchAlgorithmException {
+    public Map<String, Object> uploadImg(MultipartFile file, int userid, String field) throws NoSuchAlgorithmException, IOException {
         Map<String, Object> map = new HashMap<>();
 
         // 上传到数据库对象
@@ -173,16 +178,17 @@ public class FileUtil {
         String uuid = IdUtil.uuid();
         String originalFilename = file.getOriginalFilename();
         assert originalFilename != null;
-        String fileName = getType(originalFilename); // 结尾加上类型
+        String type = getType(originalFilename); // 结尾加上类型
         String path;
         String url;
+        String reduceUrl;
         // blog不增加uuid
-        if (field.equals(fileUtil.blogField)) {
+        if (field.equals(fileUtil.BLOG_FIELD)) {
             path = fileUtil.uploadPath + "blog/" + originalFilename;
             url = fileUtil.downloadPath + "blog/" + originalFilename;
         } else {
-            path = fileUtil.uploadPath + uuid + fileName;
-            url = fileUtil.downloadPath + uuid + fileName;
+            path = fileUtil.uploadPath + uuid + type;
+            url = fileUtil.downloadPath + uuid + type;
         }
 
         // 上传到服务器
@@ -192,19 +198,25 @@ public class FileUtil {
         String md5 = Md5Util.md5(jFile);
 
         // 文件去重
-        String oldUrl = md5Exists(md5);
-        if (oldUrl != null) { // 重复了
-            url = oldUrl;
+        Img md5Exists = md5Exists(md5);
+        if (md5Exists != null) {
+            // 重复图片
+            url = md5Exists.getUrl();
+            reduceUrl = md5Exists.getReduceUrl();
             if (jFile.delete()) {
-                map.put("file", "重复文件，删除了，用旧的");
+                map.put("fileInfo", "重复文件，删除了，用旧的");
             } else {
-                throw new BusinessException("457", "上传文件异常");
+                throw new BusinessException("557", "上传文件异常");
             }
+        } else {
+            // 设置浓缩图
+            reduceUrl = setReduceImg(jFile, field);
         }
 
         // 上传到数据库
         img.setMd5(md5);
         img.setUrl(url);
+        img.setReduceUrl(reduceUrl);
         fileUtil.imgMapper.insert(img);
 
         // 返回图片id
@@ -213,13 +225,51 @@ public class FileUtil {
         return map;
     }
 
+    // 设置浓缩图 返回url
+    public String setReduceImg(File file, String field) throws IOException {
+
+        // 浓缩图路径
+        String reducePath = file.getPath() + ".jpg";
+
+        // 图片高度
+        BufferedImage image = ImageIO.read(file);
+        int height = image.getHeight();
+
+        // 获取类型
+        String name = file.getName();
+        String type = getType(name);
+        if (field.equals(BLOG_BANNER)) {
+            // 压缩
+            Thumbnails.of(file).size(SCREEN_WIDTH / BLOG_COLUMNS, height).toFile(reducePath);
+            // 返回路径
+            return fileUtil.downloadPath + name + ".jpg";
+        } else if (containsType(type)) {
+            Thumbnails.of(file).scale(1).toFile(reducePath);
+            // 返回路径
+            return fileUtil.downloadPath + name + ".jpg";
+        }
+
+
+        return null;
+    }
+
+    // 包含可处理图片
+    private boolean containsType(String type) {
+        for (String s : SUPPORT_TYPE) {
+            if (type.equals(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // md5是否已经存在
-    private String md5Exists(String md5) {
+    private Img md5Exists(String md5) {
         QueryWrapper<Img> wrapper = new QueryWrapper<>();
         wrapper.eq("md5", md5);
         List<Img> files = fileUtil.imgMapper.selectList(wrapper);
         if (files.size() > 0) {
-            return files.get(0).getUrl();
+            return files.get(0);
         }
         return null;
     }

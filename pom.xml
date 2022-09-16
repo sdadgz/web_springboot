@@ -18,6 +18,13 @@
     </properties>
     <dependencies>
 
+        <!--   压缩图片     -->
+        <dependency>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+            <version>0.4.17</version>
+        </dependency>
+
         <!--        jwt-->
         <dependency>
             <groupId>com.auth0</groupId>

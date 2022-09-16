@@ -91,10 +91,25 @@ public class BlogController {
 
         for (int i = 0; i < files.length; i++) {
             FileUtil fileUtil = new FileUtil();
-            int imgId;
+            int imgId = 0;
             // 获取未使用过的博客首页图片
+
+            ArrayList<Integer> usedArr = new ArrayList<>();
             do {
-                imgId = imgs.get(RandomUtil.getInt(imgs.size())).getId();
+                // 伪随机数
+                int rand = RandomUtil.getInt(imgs.size());
+                // 判断是否全加里面了
+                if (usedArr.size() >= imgs.size()) {
+                    imgId = imgs.get(rand).getId();
+                    break;
+                }
+                // 判断是否重复
+                while (usedArr.contains(rand)) {
+                    rand = RandomUtil.getInt(imgs.size());
+                }
+                usedArr.add(rand);
+
+                imgId = imgs.get(rand).getId();
             } while (isUsed(imgId));
 
             Blog blog = fileUtil.mdUpload(files[i], "", request, imgId, "");
