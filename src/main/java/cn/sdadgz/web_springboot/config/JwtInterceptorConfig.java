@@ -20,6 +20,8 @@ public class JwtInterceptorConfig implements WebMvcConfigurer {
                         "/user", // 用户注册
                         "/blog/*/blogs", // 博客s
                         "/blog/*/blog/*", // 博客
+                        "/img/*/banner", // 主页banner
+                        "/img/*/background", // 背景图片
                         "/static/**");
     }
 }

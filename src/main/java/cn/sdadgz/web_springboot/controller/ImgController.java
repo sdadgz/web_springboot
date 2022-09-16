@@ -2,18 +2,16 @@ package cn.sdadgz.web_springboot.controller;
 
 import cn.sdadgz.web_springboot.Utils.FileUtil;
 import cn.sdadgz.web_springboot.Utils.IdUtil;
+import cn.sdadgz.web_springboot.Utils.SameCode.Img.ImgSame;
+import cn.sdadgz.web_springboot.Utils.SameCode.User.UserSame;
 import cn.sdadgz.web_springboot.Utils.SameCode.Page.Page;
 import cn.sdadgz.web_springboot.Utils.SameCode.User.UserBan;
 import cn.sdadgz.web_springboot.common.Result;
 import cn.sdadgz.web_springboot.config.BusinessException;
-import cn.sdadgz.web_springboot.entity.Blog;
 import cn.sdadgz.web_springboot.entity.Img;
-import cn.sdadgz.web_springboot.entity.User;
 import cn.sdadgz.web_springboot.mapper.ImgMapper;
 import cn.sdadgz.web_springboot.mapper.UserMapper;
-import cn.sdadgz.web_springboot.service.IUserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,12 +46,29 @@ public class ImgController {
     @Value("${my.file-config.downloadPath}")
     private String downloadPath;
 
-    @GetMapping("/banner")
-    public Result banner(HttpServletRequest request){
+    private final String banner = "首页横幅";
 
-        return Result.success();
+    private final String background = "全局背景图片";
+
+    // 获取首页横幅
+    @GetMapping("/{username}/banner")
+    public Result banner(HttpServletRequest request, @PathVariable String username) {
+
+        List<Img> imgs = ImgSame.getImgs(banner, username, request);
+
+        return Result.success(imgs);
     }
 
+    // 获取背景图片
+    @GetMapping("/{username}/background")
+    public Result background(HttpServletRequest request, @PathVariable String username) {
+
+        List<Img> imgs = ImgSame.getImgs(background, username, request);
+
+        return Result.success(imgs);
+    }
+
+    // 修改博客
     @PutMapping("/update")
     public Result update(@RequestBody Map<String, Object> paramMap,
                          HttpServletRequest request) {
@@ -129,7 +144,7 @@ public class ImgController {
                        HttpServletRequest request) {
 
         // 遣返
-        new UserBan().getTheFuckOut(username,request);
+        new UserBan().getTheFuckOut(username, request);
 
         Page<ImgMapper, Img> page = new Page<>();
         Map<String, Object> map = page.getPage(currentPage, pageSize, request, imgMapper);
@@ -211,6 +226,7 @@ public class ImgController {
         return Result.success(map);
     }
 
+    // 批量上传
     @PostMapping("/uploads")
     public Result uploads(@RequestPart("files") MultipartFile[] files,
                           @RequestParam("field") String field,

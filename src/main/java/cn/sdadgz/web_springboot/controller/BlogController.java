@@ -78,8 +78,7 @@ public class BlogController {
     public Result upload(@RequestPart("files") MultipartFile[] files,
                          HttpServletRequest request) throws IOException {
 
-        // 初始化
-        FileUtil fileUtil = new FileUtil();
+        Map<String, Object> map = new HashMap<>();
 
         // 获取本人博客首页图片
         LambdaQueryWrapper<Img> wrapper = new LambdaQueryWrapper<>();
@@ -90,12 +89,27 @@ public class BlogController {
             throw new BusinessException("489", "还没有上传博客首页图片");
         }
 
-        for (MultipartFile file : files) {
-            int imgId = imgs.get(RandomUtil.getInt(imgs.size())).getId();
-            fileUtil.mdUpload(file, "", request, imgId, "");
+        for (int i = 0; i < files.length; i++) {
+            FileUtil fileUtil = new FileUtil();
+            int imgId;
+            // 获取未使用过的博客首页图片
+            do {
+                imgId = imgs.get(RandomUtil.getInt(imgs.size())).getId();
+            } while (isUsed(imgId));
+
+            Blog blog = fileUtil.mdUpload(files[i], "", request, imgId, "");
+            map.put(String.valueOf(i), blog);
         }
 
-        return Result.success();
+        return Result.success(map);
+    }
+
+    // 图片是否被使用
+    private boolean isUsed(int imgId) {
+        // blog里面的
+        LambdaQueryWrapper<Blog> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Blog::getImgId, imgId);
+        return blogMapper.exists(wrapper);
     }
 
     // 获取某个博客

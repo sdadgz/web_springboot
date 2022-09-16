@@ -80,10 +80,13 @@ public class FileUtil {
 //        LocalDateTime createTime = fileUtil.getCreateTime(file); // 被阉割
         LocalDateTime createTime = TimeUtil.now();
 //        String text = fileUtil.md((File) file);
-        String path = fileUtil.uploadPath + "blog/temp.md";
+        String path = fileUtil.uploadPath + "blog/" + originalFilename;
         uploadToServer(file, path);
         File jFile = new File(path);
         String text = md(jFile);
+        if (!jFile.delete()) {
+            throw new BusinessException("588", "文件删除失败");
+        }
 
         Blog blog = new Blog();
         blog.setUserId(userid);
