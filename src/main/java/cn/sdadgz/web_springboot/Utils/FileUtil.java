@@ -45,7 +45,7 @@ public class FileUtil {
     private BlogMapper blogMapper;
 
     private final int SCREEN_WIDTH = 1920; // 屏幕宽度
-    private final int BLOG_COLUMNS = 4; // 博客分几栏
+    private final int BLOG_COLUMNS = 2; // 博客分几栏
 
     private final String[] SUPPORT_TYPE = {".jpg", ".png", ".jpeg"}; // 支持压缩的类型
 
@@ -210,7 +210,7 @@ public class FileUtil {
             }
         } else {
             // 设置浓缩图
-            reduceUrl = setReduceImg(jFile, field);
+            reduceUrl = setReduceImg(jFile);
         }
 
         // 上传到数据库
@@ -226,7 +226,7 @@ public class FileUtil {
     }
 
     // 设置浓缩图 返回url
-    public String setReduceImg(File file, String field) throws IOException {
+    public String setReduceImg(File file) throws IOException {
 
         // 浓缩图路径
         String reducePath = file.getPath() + ".jpg";
@@ -236,19 +236,15 @@ public class FileUtil {
         int height = image.getHeight();
 
         // 获取类型
-        String name = file.getName();
-        String type = getType(name);
-        if (field.equals(BLOG_BANNER)) {
+        String name = reducePath.substring(fileUtil.uploadPath.length());
+        String fileName = file.getName();
+        String type = getType(fileName);
+        if (containsType(type)) {
             // 压缩
             Thumbnails.of(file).size(SCREEN_WIDTH / BLOG_COLUMNS, height).toFile(reducePath);
             // 返回路径
-            return fileUtil.downloadPath + name + ".jpg";
-        } else if (containsType(type)) {
-            Thumbnails.of(file).scale(1).toFile(reducePath);
-            // 返回路径
-            return fileUtil.downloadPath + name + ".jpg";
+            return fileUtil.downloadPath + name;
         }
-
 
         return null;
     }

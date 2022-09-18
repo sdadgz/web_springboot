@@ -34,7 +34,7 @@ public class ImgSame {
 
         // 不拦截，共享单车
         LambdaQueryWrapper<Img> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Img::getField, field);
+        wrapper.like(Img::getField, field);
         wrapper.eq(Img::getUserId, userId);
 
         return imgSame.imgMapper.selectList(wrapper);

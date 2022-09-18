@@ -58,6 +58,8 @@ public class BlogController {
     @Value("${my.file-config.downloadPath}")
     private String downloadPath;
 
+    private final int DEFAULT_IMG_ID = 0;
+
 
     // 上传并新建一个博客
     @PostMapping("/upload")
@@ -79,19 +81,21 @@ public class BlogController {
                          HttpServletRequest request) throws IOException {
 
         Map<String, Object> map = new HashMap<>();
+        FileUtil fileUtil = new FileUtil();
 
         // 获取本人博客首页图片
         LambdaQueryWrapper<Img> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Img::getUserId, IdUtil.getId(request)); // 用户id
-        wrapper.eq(Img::getField, "博客首页");
+        wrapper.like(Img::getField, "博客首页");
         List<Img> imgs = imgMapper.selectList(wrapper);
         if (imgs.size() < 1) {
-            throw new BusinessException("489", "还没有上传博客首页图片");
+            for (MultipartFile file : files) {
+                fileUtil.mdUpload(file, "", request, DEFAULT_IMG_ID, "");
+            }
         }
 
         for (int i = 0; i < files.length; i++) {
-            FileUtil fileUtil = new FileUtil();
-            int imgId = 0;
+            int imgId;
             // 获取未使用过的博客首页图片
 
             ArrayList<Integer> usedArr = new ArrayList<>();
@@ -104,10 +108,10 @@ public class BlogController {
                     break;
                 }
                 // 判断是否重复
-                while (usedArr.contains(rand)) {
+                while (usedArr.contains(imgs.get(rand).getId())) {
                     rand = RandomUtil.getInt(imgs.size());
                 }
-                usedArr.add(rand);
+                usedArr.add(imgs.get(rand).getId());
 
                 imgId = imgs.get(rand).getId();
             } while (isUsed(imgId));

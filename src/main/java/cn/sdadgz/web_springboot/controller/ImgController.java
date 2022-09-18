@@ -200,19 +200,19 @@ public class ImgController {
             String path = img.getUrl();
             if (path.contains(downloadPath)) { // 是上传的图片，不是网图
                 path = path.substring(downloadPath.length());
+                File file = new File(uploadPath + path);
+                boolean delete = file.delete();
+                resultMap.put("realDelete", delete);
             }
-            File file = new File(uploadPath + path);
-            boolean delete = file.delete();
-            resultMap.put("realDelete", delete);
 
             // 浓缩图删除
             String reducePath = img.getReduceUrl();
-            if (reducePath.contains(downloadPath)) { // 是上传的图片，不是网图
+            if (reducePath != null && reducePath.contains(downloadPath)) { // 是上传的图片，不是网图
                 reducePath = reducePath.substring(downloadPath.length());
+                File reduceFile = new File(uploadPath + reducePath);
+                boolean reduceDelete = reduceFile.delete();
+                resultMap.put("reduceRealDelete", reduceDelete);
             }
-            File reduceFile = new File(uploadPath + reducePath);
-            boolean reduceDelete = reduceFile.delete();
-            resultMap.put("reduceRealDelete", reduceDelete);
 
             // 数据库删除
             for (Img img1 : imgs) {
