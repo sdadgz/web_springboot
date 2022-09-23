@@ -34,9 +34,8 @@ mybatis-plus:
 
 my:
   server: # 上传到服务器需要改这个
-    name: https://sdadgz.cn
+    name: https://localhost
     uploadPath: '/usr/local/springboot/static/' # 文件下载到哪里，记得屁股加个杠
-
 
   file-config:
     uploadPath: '${my.server.uploadPath}'
