@@ -83,8 +83,11 @@ public class FileUtil {
 
         // 去重复文件名
         String originalFilename = user.getName() + StrUtil.UNDERSCORE + file.getOriginalFilename();
-        if (filenameExists(originalFilename)) {
-            throw new BusinessException("481", "文件名已存在");
+        while (filenameExists(originalFilename)) {
+            // 获取类型
+            String type = getType(originalFilename);
+            // 除类型以外的
+            originalFilename = getOriginalFilename(originalFilename) + StrUtil.COPY + type;
         }
         uploadFile.setOriginalFilename(originalFilename);
 

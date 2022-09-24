@@ -43,6 +43,19 @@ public class FileController {
     @Value("${my.file-config.downloadPath}")
     private String downloadPath;
 
+    // 修改
+    @PutMapping("/update")
+    public Result update(@RequestBody File file,
+                         HttpServletRequest request) {
+
+        // 遣返
+        UserBan.getTheFuckOut(fileMapper.selectById(file.getId()).getUserId(), request);
+
+        int i = fileMapper.updateById(file);
+
+        return Result.success(i);
+    }
+
     // 删除
     @DeleteMapping("")
     public Result delete(@RequestParam("id") int id,
