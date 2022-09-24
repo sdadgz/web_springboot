@@ -16,7 +16,7 @@ public class Md5Util {
         md.update(strByte);
         BigInteger b = new BigInteger(1,md.digest());
 
-        return b.toString();
+        return b.toString(16);
     }
 
     public static String md5(File file){

@@ -1,6 +1,9 @@
 package cn.sdadgz.web_springboot.config;
 
+import cn.sdadgz.web_springboot.Utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -16,7 +19,8 @@ public class StaticInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String url = request.getRequestURL().toString();
-        return false;
+
+        // 预留
+        return true;
     }
 }

@@ -14,9 +14,6 @@ public class StaticInterceptorConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(staticInterceptor).addPathPatterns("/static/**")
-                .excludePathPatterns(
-                        "/static/*", // 图片
-                        "/static/blog/*");
+        registry.addInterceptor(staticInterceptor).addPathPatterns("/static/repository/*");
     }
 }

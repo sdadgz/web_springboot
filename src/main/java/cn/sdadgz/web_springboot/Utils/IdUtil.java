@@ -6,6 +6,7 @@ import java.util.Random;
 
 public class IdUtil {
 
+    // uuid
     public static String uuid() throws NoSuchAlgorithmException {
         // 时间加伪随机数
         String time = String.valueOf(System.currentTimeMillis());
@@ -16,10 +17,12 @@ public class IdUtil {
         return Md5Util.md5(Long.toString(num, 36));
     }
 
+    // 获取userId
     public static int getId(HttpServletRequest request) {
         return Integer.parseInt(JwtUtil.getAudience(request.getHeader("token")));
     }
 
+    // 获取username
     public static String getName(HttpServletRequest request) {
         return JwtUtil.getClaimByName(request.getHeader("token"), "username").asString();
     }

@@ -16,14 +16,14 @@ public class Generator {
 //        String localPath = "D:/CODE/";
 
         // 表名
-        String tableName = "img";
+        String tableName = "file";
 
         FastAutoGenerator.create(
-                        "jdbc:mysql://sdadgz.cn:3306/website",
+                        "jdbc:mysql://sdadgz.cn:3307/website",
                         "root",
                         "123456")
                 .globalConfig(builder -> {
-                    builder.author("eula") // 设置作者
+                    builder.author("sdadgz") // 设置作者
                             .fileOverride() // 覆盖已生成文件
                             .enableSwagger() // 开启 swagger 模式
                             .disableOpenDir()//完成后不打开文件夹

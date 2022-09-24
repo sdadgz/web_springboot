@@ -14,7 +14,7 @@ public class JwtInterceptorConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(interceptor).addPathPatterns("/**")
+        registry.addInterceptor(interceptor).addPathPatterns("/**").order(-1) // 似乎是小的先走
                 .excludePathPatterns(
                         "/user/login", // 用户登录
                         "/user", // 用户注册

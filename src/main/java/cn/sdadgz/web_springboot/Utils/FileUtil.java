@@ -3,9 +3,14 @@ package cn.sdadgz.web_springboot.Utils;
 import cn.sdadgz.web_springboot.config.BusinessException;
 import cn.sdadgz.web_springboot.entity.Blog;
 import cn.sdadgz.web_springboot.entity.Img;
+import cn.sdadgz.web_springboot.entity.User;
 import cn.sdadgz.web_springboot.mapper.BlogMapper;
+import cn.sdadgz.web_springboot.mapper.FileMapper;
 import cn.sdadgz.web_springboot.mapper.ImgMapper;
+import cn.sdadgz.web_springboot.mapper.UserMapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -27,10 +32,11 @@ import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.*;
 
+@Slf4j
 @Component
 public class FileUtil {
 
-    static FileUtil fileUtil;
+    private static FileUtil fileUtil;
 
     @Value("${my.file-config.uploadPath}")
     private String uploadPath;
@@ -44,6 +50,12 @@ public class FileUtil {
     @Resource
     private BlogMapper blogMapper;
 
+    @Resource
+    private UserMapper userMapper;
+
+    @Resource
+    private FileMapper fileMapper;
+
     private final int SCREEN_WIDTH = 1920; // 屏幕宽度
     private final int BLOG_COLUMNS = 2; // 博客分几栏
 
@@ -55,6 +67,65 @@ public class FileUtil {
     @PostConstruct
     public void init() {
         fileUtil = this;
+    }
+
+    // 文件上传
+    public Map<String, Object> fileUpload(MultipartFile file, HttpServletRequest request) {
+        // 初始化
+        HashMap<String, Object> map = new HashMap<>();
+        cn.sdadgz.web_springboot.entity.File uploadFile = new cn.sdadgz.web_springboot.entity.File();
+        uploadFile.setCreatetime(TimeUtil.now());
+
+        // 获取用户
+        int userId = IdUtil.getId(request);
+        User user = fileUtil.userMapper.selectById(userId);
+        uploadFile.setUserId(userId);
+
+        // 去重复文件名
+        String originalFilename = user.getName() + StrUtil.UNDERSCORE + file.getOriginalFilename();
+        if (filenameExists(originalFilename)) {
+            throw new BusinessException("481", "文件名已存在");
+        }
+        uploadFile.setOriginalFilename(originalFilename);
+
+        // 上传
+        String url = fileUtil.downloadPath + StrUtil.REPOSITORY + StrUtil.LEVER + originalFilename;
+        String path = fileUtil.uploadPath + StrUtil.REPOSITORY + StrUtil.LEVER + originalFilename;
+        uploadToServer(file, path);
+        uploadFile.setUrl(url);
+
+        // md5
+        File jFile = new File(path);
+        String md5 = Md5Util.md5(jFile);
+        uploadFile.setMd5(md5);
+
+        // 去重
+        cn.sdadgz.web_springboot.entity.File exists = fileExists(md5);
+        if (exists != null) {
+            // 重复了，都多余了，爱谁谁
+            uploadFile.setUrl(exists.getUrl());
+            // 删除文件
+            if (jFile.delete()) {
+                map.put("fileInfo", "重复文件，删除了，用旧的");
+            } else {
+                throw new BusinessException("557", "上传文件异常");
+            }
+        }
+
+        // 数据库
+        fileUtil.fileMapper.insert(uploadFile);
+
+        // 返回id
+        map.put("id", uploadFile.getId());
+
+        return map;
+    }
+
+    // 文件名已经存在
+    private boolean filenameExists(String filename) {
+        LambdaQueryWrapper<cn.sdadgz.web_springboot.entity.File> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(cn.sdadgz.web_springboot.entity.File::getOriginalFilename, filename);
+        return fileUtil.fileMapper.exists(wrapper);
     }
 
     // 笔记上传
@@ -198,7 +269,7 @@ public class FileUtil {
         String md5 = Md5Util.md5(jFile);
 
         // 文件去重
-        Img md5Exists = md5Exists(md5);
+        Img md5Exists = imgExists(md5);
         if (md5Exists != null) {
             // 重复图片
             url = md5Exists.getUrl();
@@ -260,10 +331,21 @@ public class FileUtil {
     }
 
     // md5是否已经存在
-    private Img md5Exists(String md5) {
+    private Img imgExists(String md5) {
         QueryWrapper<Img> wrapper = new QueryWrapper<>();
         wrapper.eq("md5", md5);
         List<Img> files = fileUtil.imgMapper.selectList(wrapper);
+        if (files.size() > 0) {
+            return files.get(0);
+        }
+        return null;
+    }
+
+    // md5是否已经存在
+    private cn.sdadgz.web_springboot.entity.File fileExists(String md5) {
+        QueryWrapper<cn.sdadgz.web_springboot.entity.File> wrapper = new QueryWrapper<>();
+        wrapper.eq("md5", md5);
+        List<cn.sdadgz.web_springboot.entity.File> files = fileUtil.fileMapper.selectList(wrapper);
         if (files.size() > 0) {
             return files.get(0);
         }
@@ -287,5 +369,12 @@ public class FileUtil {
             return "";
         }
         return fileName.substring(fileName.lastIndexOf('.'));
+    }
+
+    private String getOriginalFilename(String fileName) {
+        if (!fileName.contains(".")) {
+            return fileName;
+        }
+        return fileName.substring(0, fileName.lastIndexOf('.'));
     }
 }

@@ -1,6 +1,7 @@
 package cn.sdadgz.web_springboot;
 
 import cn.sdadgz.web_springboot.Utils.FileUtil;
+import cn.sdadgz.web_springboot.Utils.Md5Util;
 import cn.sdadgz.web_springboot.Utils.SameCode.User.UserSame;
 import cn.sdadgz.web_springboot.Utils.TimeUtil;
 import cn.sdadgz.web_springboot.entity.Img;
@@ -38,11 +39,7 @@ class WebSpringbootApplicationTests {
         String path = "D:\\下载\\不用思考，删这个文件夹\\258969461563168455685717945467846336308illust_91452046_20210724_134755.jpg";
         String reducePath = "D:\\下载\\不用思考，删这个文件夹\\reduce.jpg";
 
-        int[] arr = {1,55,315,4651,21,44,2213,0,-5};
-
-        Arrays.sort(arr);
-
-        System.out.println(Arrays.toString(arr));
+        System.out.println(Md5Util.md5(path));
 
 //        Thumbnails.of(path).scale(1).outputQuality(.8).toFile(path + ".jpg");
     }
