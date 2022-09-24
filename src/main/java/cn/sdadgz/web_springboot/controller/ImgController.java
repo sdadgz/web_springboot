@@ -2,8 +2,6 @@ package cn.sdadgz.web_springboot.controller;
 
 import cn.sdadgz.web_springboot.Utils.FileUtil;
 import cn.sdadgz.web_springboot.Utils.IdUtil;
-import cn.sdadgz.web_springboot.Utils.SameCode.Img.ImgSame;
-import cn.sdadgz.web_springboot.Utils.SameCode.User.UserSame;
 import cn.sdadgz.web_springboot.Utils.SameCode.Page.Page;
 import cn.sdadgz.web_springboot.Utils.SameCode.User.UserBan;
 import cn.sdadgz.web_springboot.common.Result;
@@ -11,6 +9,7 @@ import cn.sdadgz.web_springboot.config.BusinessException;
 import cn.sdadgz.web_springboot.entity.Img;
 import cn.sdadgz.web_springboot.mapper.ImgMapper;
 import cn.sdadgz.web_springboot.mapper.UserMapper;
+import cn.sdadgz.web_springboot.service.IImgService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +40,9 @@ public class ImgController {
     @Resource
     private UserMapper userMapper;
 
+    @Resource
+    private IImgService imgService;
+
     @Value("${my.file-config.uploadPath}")
     private String uploadPath;
 
@@ -55,7 +57,7 @@ public class ImgController {
     @GetMapping("/{username}/banner")
     public Result banner(HttpServletRequest request, @PathVariable String username) {
 
-        List<Img> imgs = ImgSame.getImgs(banner, username, request);
+        List<Img> imgs = imgService.getImgs(banner, username);
 
         return Result.success(imgs);
     }
@@ -64,7 +66,7 @@ public class ImgController {
     @GetMapping("/{username}/background")
     public Result background(HttpServletRequest request, @PathVariable String username) {
 
-        List<Img> imgs = ImgSame.getImgs(background, username, request);
+        List<Img> imgs = imgService.getImgs(background, username);
 
         return Result.success(imgs);
     }
@@ -145,7 +147,7 @@ public class ImgController {
                        HttpServletRequest request) {
 
         // 遣返
-        new UserBan().getTheFuckOut(username, request);
+        UserBan.getTheFuckOut(username, request);
 
         Page<ImgMapper, Img> page = new Page<>();
         Map<String, Object> map = page.getPage(currentPage, pageSize, request, imgMapper);

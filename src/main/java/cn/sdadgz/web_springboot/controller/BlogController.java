@@ -167,11 +167,16 @@ public class BlogController {
 
     // 删除博客
     @DeleteMapping("")
-    public Result deleteBlog(@RequestBody Map<String, Integer[]> objectMap) {
+    public Result deleteBlog(@RequestBody Map<String, Integer[]> objectMap,
+                             HttpServletRequest request) {
+
+        int userId = IdUtil.getId(request);
 
         Integer[] idList = objectMap.get("idList");
 
         for (Integer integer : idList) {
+            Blog blog = blogMapper.selectById(integer);
+
             blogMapper.deleteById(integer);
         }
 
@@ -186,7 +191,7 @@ public class BlogController {
                        HttpServletRequest request) {
 
         // 遣返
-        new UserBan().getTheFuckOut(username, request);
+        UserBan.getTheFuckOut(username, request);
 
         Page<BlogMapper, Blog> page = new Page<>();
         Map<String, Object> map = page.getPage(currentPage, pageSize, request, blogMapper);

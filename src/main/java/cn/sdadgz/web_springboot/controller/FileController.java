@@ -28,6 +28,14 @@ public class FileController {
     @Resource
     private FileMapper fileMapper;
 
+    // 删除
+    @DeleteMapping("")
+    public Result delete(@RequestParam("id") int id,
+                         HttpServletRequest request) {
+
+        return Result.success();
+    }
+
     // 分页
     @GetMapping("/{username}/page")
     public Result page(@RequestParam("currentPage") int currentPage,
@@ -35,7 +43,7 @@ public class FileController {
                        HttpServletRequest request,
                        @PathVariable("username") String username) {
 
-        new UserBan().getTheFuckOut(username, request);
+        UserBan.getTheFuckOut(username, request);
 
         Page<FileMapper, File> page = new Page<>();
         Map<String, Object> map = page.getPage(currentPage, pageSize, request, fileMapper);

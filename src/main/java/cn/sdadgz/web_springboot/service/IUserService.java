@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author eula
@@ -13,4 +13,12 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IUserService extends IService<User> {
 
+    // 根据用户名获取用户id
+    int getUserIdByName(String username);
+
+    // 根据用户名获取用户
+    User getUserByName(String username);
+
+    // 用户名已被占用
+    boolean nameExists(String username);
 }

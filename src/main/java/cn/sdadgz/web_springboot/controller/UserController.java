@@ -6,6 +6,7 @@ import cn.sdadgz.web_springboot.common.Result;
 import cn.sdadgz.web_springboot.config.BusinessException;
 import cn.sdadgz.web_springboot.entity.User;
 import cn.sdadgz.web_springboot.mapper.UserMapper;
+import cn.sdadgz.web_springboot.service.IUserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +31,9 @@ public class UserController {
     @Resource
     UserMapper userMapper;
 
+    @Resource
+    IUserService userService;
+
     // 新建用户
     @PostMapping("")
     public Result setUser(@RequestBody User user) throws NoSuchAlgorithmException {
@@ -45,25 +49,21 @@ public class UserController {
         return Result.success(map);
     }
 
-    // 返回token及基本信息
+    // 登录并返回token及基本信息
     private Map<String, Object> loginF(User user) throws NoSuchAlgorithmException {
         Map<String, Object> map = new HashMap<>();
         String username = user.getName();
         String password = user.getPassword();
 
-        QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.eq("name", username);
-        List<User> list = userMapper.selectList(wrapper);
+        // 获取用户
+        User userByName = userService.getUserByName(username);
 
-        if (list.size() > 0) {
-            boolean b = list.get(0).getPassword().equals(password);
-            if (b) {
-                User trueUser = list.get(0);
-                String token = JwtUtil.CreateToken(trueUser.getId().toString(), trueUser.getName(), trueUser.getPassword());
-                map.put("user", trueUser);
-                map.put("token", token);
-                return map;
-            }
+        boolean b = userByName.getPassword().equals(password);
+        if (b) {
+            String token = JwtUtil.CreateToken(userByName.getId().toString(), userByName.getName(), userByName.getPassword());
+            map.put("user", userByName);
+            map.put("token", token);
+            return map;
         }
         throw new BusinessException("485", "用户名或密码错误");
     }
@@ -71,9 +71,10 @@ public class UserController {
     // 用户名已被占用
     @GetMapping("")
     public Result exists(@RequestParam("username") String username) {
-        QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.eq("name", username);
-        boolean exists = userMapper.exists(wrapper);
+
+        boolean exists = userService.nameExists(username);
+
         return Result.success(exists);
     }
+
 }
