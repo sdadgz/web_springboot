@@ -58,7 +58,7 @@ public class BlogController {
     @Value("${my.file-config.downloadPath}")
     private String downloadPath;
 
-    private final int DEFAULT_IMG_ID = 0;
+    private final int DEFAULT_IMG_ID = 0; // 默认图片id
 
 
     // 上传并新建一个博客
@@ -176,6 +176,10 @@ public class BlogController {
 
         for (Integer integer : idList) {
             Blog blog = blogMapper.selectById(integer);
+            // 阻止用户跨权限
+            if (userId > 0 && blog.getUserId() != userId) {
+                throw new BusinessException("498", "权限不足");
+            }
 
             blogMapper.deleteById(integer);
         }
