@@ -9,8 +9,6 @@ import java.util.List;
 public interface Mapper<T> extends BaseMapper<T> {
 
     // 正常用户分页
-    List<T> getPageByUserId(@Param("userId") Integer userId, @Param("startPage") Integer startPage, @Param("pageSize") Integer pageSize);
+    List<T> getPage(@Param("userId") Integer userId, @Param("startPage") Integer startPage, @Param("pageSize") Integer pageSize);
 
-    // 海克斯科技用户分页
-    List<T> getPage(@Param("startPage") Integer startPage, @Param("pageSize") Integer pageSize);
 }

@@ -29,8 +29,6 @@ public interface BlogMapper extends BaseMapper<Blog>, cn.sdadgz.web_springboot.U
     List<Blog> getBlogsByUserId(@Param("userId") Integer userId);
 
     // 正常用户分页
-    List<Blog> getPageByUserId(@Param("userId") Integer userId, @Param("startPage") Integer startPage, @Param("pageSize") Integer pageSize);
+    List<Blog> getPage(@Param("userId") Integer userId, @Param("startPage") Integer startPage, @Param("pageSize") Integer pageSize);
 
-    // 海克斯科技用户分页
-    List<Blog> getPage(@Param("startPage") Integer startPage, @Param("pageSize") Integer pageSize);
 }

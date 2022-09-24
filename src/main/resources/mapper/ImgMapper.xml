@@ -3,22 +3,16 @@
 <mapper namespace="cn.sdadgz.web_springboot.mapper.ImgMapper">
 
     <!--  正常用户分页  -->
-    <select id="getPageByUserId" resultMap="ImgMap">
-        select *
-        from img i
-                 left join user u on u.id = i.user_id
-        where i.user_id = #{userId}
-          and !i.is_delete
-        order by i.id desc
-        limit #{startPage},#{pageSize}
-    </select>
-
-    <!--  海克斯科技用户分页  -->
     <select id="getPage" resultMap="ImgMap">
         select *
         from img i
-                 left join user u on u.id = i.user_id
-        where !is_delete
+        left join user u on u.id = i.user_id
+        <where>
+            <if test="userId != null">
+                i.user_id = #{userId}
+            </if>
+            and !i.is_delete
+        </where>
         order by i.id desc
         limit #{startPage},#{pageSize}
     </select>

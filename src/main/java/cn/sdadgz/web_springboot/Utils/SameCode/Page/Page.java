@@ -28,10 +28,10 @@ public class Page<MP extends Mapper<T>, T> {
         // 获取用户id
         int id = IdUtil.getId(request);
         if (id > 0) { // 正常用户
-            lists = mapper.getPageByUserId(id, startPage, pageSize);
+            lists = mapper.getPage(id, startPage, pageSize);
             wrapper.eq("user_id", id);
         } else { // 海克斯科技用户
-            lists = mapper.getPage(startPage, pageSize);
+            lists = mapper.getPage(null, startPage, pageSize);
         }
 
         total = mapper.selectCount(wrapper);

@@ -37,20 +37,15 @@
     </select>
 
     <!--  正常用户分页  -->
-    <select id="getPageByUserId" resultMap="BlogMap">
-        select *
-        from blog b
-                 left join user u on u.id = b.user_id
-        where user_id = #{userId}
-        order by b.id desc
-        limit #{startPage},#{pageSize}
-    </select>
-
-    <!--  海克斯科技用户分页  -->
     <select id="getPage" resultMap="BlogMap">
         select *
         from blog b
-                 left join user u on u.id = b.user_id
+        left join user u on u.id = b.user_id
+        <where>
+            <if test="userId != null">
+                user_id = #{userId}
+            </if>
+        </where>
         order by b.id desc
         limit #{startPage},#{pageSize}
     </select>

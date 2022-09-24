@@ -20,8 +20,5 @@ import java.util.List;
 public interface ImgMapper extends BaseMapper<Img>, cn.sdadgz.web_springboot.Utils.SameCode.Page.Mapper<Img> {
 
     // 正常用户分页
-    List<Img> getPageByUserId(@Param("userId") Integer userId, @Param("startPage") Integer startPage, @Param("pageSize") Integer pageSize);
-
-    // 海克斯科技用户分页
-    List<Img> getPage(@Param("startPage") Integer startPage, @Param("pageSize") Integer pageSize);
+    List<Img> getPage(@Param("userId") Integer userId, @Param("startPage") Integer startPage, @Param("pageSize") Integer pageSize);
 }
