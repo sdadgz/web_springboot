@@ -10,9 +10,22 @@ import java.util.List;
 import java.util.Map;
 
 public class Page<MP extends Mapper<T>, T> {
+
+    // 获取分页
     public Map<String, Object> getPage(int currentPage,
                                        int pageSize,
                                        HttpServletRequest request,
+                                       MP mapper) {
+
+        int id = IdUtil.getId(request);
+
+        return getPage(currentPage, pageSize, id, mapper);
+    }
+
+    // 获取分页
+    public Map<String, Object> getPage(int currentPage,
+                                       int pageSize,
+                                       int id,
                                        MP mapper) {
 
         // 设置开始页
@@ -20,18 +33,13 @@ public class Page<MP extends Mapper<T>, T> {
 
         // 初始化
         Map<String, Object> map = new HashMap<>();
+        QueryWrapper<T> wrapper = new QueryWrapper<>();
         List<T> lists;
         Long total;
 
-        QueryWrapper<T> wrapper = new QueryWrapper<>();
-
-        // 获取用户id
-        int id = IdUtil.getId(request);
-        if (id > 0) { // 正常用户
-            lists = mapper.getPage(id, startPage, pageSize);
+        lists = mapper.getPage(id > 0 ? id : null, startPage, pageSize);
+        if (id > 0) {
             wrapper.eq("user_id", id);
-        } else { // 海克斯科技用户
-            lists = mapper.getPage(null, startPage, pageSize);
         }
 
         total = mapper.selectCount(wrapper);
@@ -41,4 +49,5 @@ public class Page<MP extends Mapper<T>, T> {
 
         return map;
     }
+
 }

@@ -4,6 +4,11 @@ server:
     key-store: classpath:sdadgz.cn.jks
     key-store-type: JKS
 
+  servlet:
+    encoding:
+      force: true # 静态资源乱码
+      charset: utf-8
+
 spring:
   datasource:
     url: jdbc:mysql://sdadgz.cn:3307/website

@@ -9,6 +9,7 @@ import cn.sdadgz.web_springboot.config.BusinessException;
 import cn.sdadgz.web_springboot.entity.File;
 import cn.sdadgz.web_springboot.mapper.FileMapper;
 import cn.sdadgz.web_springboot.service.IFileService;
+import cn.sdadgz.web_springboot.service.IUserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,6 +37,9 @@ public class FileController {
 
     @Resource
     private IFileService fileService;
+
+    @Resource
+    private IUserService userService;
 
     @Value("${my.file-config.uploadPath}")
     private String uploadPath;
@@ -114,10 +118,8 @@ public class FileController {
                        HttpServletRequest request,
                        @PathVariable("username") String username) {
 
-        UserBan.getTheFuckOut(username, request);
-
         Page<FileMapper, File> page = new Page<>();
-        Map<String, Object> map = page.getPage(currentPage, pageSize, request, fileMapper);
+        Map<String, Object> map = page.getPage(currentPage, pageSize, userService.getUserIdByName(username), fileMapper);
 
         return Result.success(map);
     }
