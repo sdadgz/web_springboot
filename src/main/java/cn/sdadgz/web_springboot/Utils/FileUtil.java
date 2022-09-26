@@ -305,17 +305,18 @@ public class FileUtil {
         // 浓缩图路径
         String reducePath = file.getPath() + ".jpg";
 
-        // 图片高度
-        BufferedImage image = ImageIO.read(file);
-        int height = image.getHeight();
-
         // 获取类型
         String name = reducePath.substring(fileUtil.uploadPath.length());
         String fileName = file.getName();
         String type = getType(fileName);
         if (containsType(type)) {
+            // 图片高度
+            BufferedImage image = ImageIO.read(file);
+            int height = image.getHeight();
+
             // 压缩
             Thumbnails.of(file).size(SCREEN_WIDTH / BLOG_COLUMNS, height).toFile(reducePath);
+
             // 返回路径
             return fileUtil.downloadPath + name;
         }
