@@ -16,7 +16,7 @@ public class JwtUtil {
     //创建token
     public static String CreateToken(String userid, String username, String password) throws NoSuchAlgorithmException {
         Calendar now = Calendar.getInstance();
-        now.add(Calendar.HOUR, 2);
+        now.add(Calendar.HOUR, 24);
         Date time = now.getTime();
         return JWT.create().withAudience(userid)//签发对象
                 .withIssuedAt(new Date())//创建日期

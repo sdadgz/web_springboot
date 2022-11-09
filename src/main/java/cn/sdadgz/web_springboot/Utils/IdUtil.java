@@ -1,9 +1,14 @@
 package cn.sdadgz.web_springboot.Utils;
 
+import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.RequestHeader;
+
 import javax.servlet.http.HttpServletRequest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
+@Slf4j
 public class IdUtil {
 
     // uuid
@@ -25,5 +30,20 @@ public class IdUtil {
     // 获取username
     public static String getName(HttpServletRequest request) {
         return JwtUtil.getClaimByName(request.getHeader("token"), "username").asString();
+    }
+
+    // 获取ip
+    public static String getIp(HttpServletRequest request) {
+        //目前则是网关ip
+        String ip = "";
+        log.info("访问者ip：{}", ip);
+        if (request != null) {
+            ip = request.getHeader("X-FORWARDED-FOR");
+            if (ip == null || "".equals(ip)) {
+                ip = request.getRemoteAddr();
+            }
+        }
+
+        return ip;
     }
 }

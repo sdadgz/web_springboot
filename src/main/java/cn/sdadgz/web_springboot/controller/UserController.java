@@ -1,6 +1,8 @@
 package cn.sdadgz.web_springboot.controller;
 
+import cn.sdadgz.web_springboot.Utils.IdUtil;
 import cn.sdadgz.web_springboot.Utils.JwtUtil;
+import cn.sdadgz.web_springboot.Utils.SameCode.User.UserUtil;
 import cn.sdadgz.web_springboot.Utils.TimeUtil;
 import cn.sdadgz.web_springboot.common.Result;
 import cn.sdadgz.web_springboot.config.BusinessException;
@@ -11,6 +13,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
@@ -34,11 +38,22 @@ public class UserController {
     @Resource
     IUserService userService;
 
+    // 测试获取ip
+    @GetMapping("/ip")
+    public Result getIp(HttpServletRequest request) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("ip", IdUtil.getIp(request));
+        return Result.success(map);
+    }
+
     // 新建用户
     @PostMapping("")
     public Result setUser(@RequestBody User user) throws NoSuchAlgorithmException {
         user.setCreatetime(TimeUtil.now());
+        String password = user.getPassword();
+        user.setPassword(UserUtil.getPassword(password));
         userMapper.insert(user);
+        user.setPassword(password);
         return Result.success(loginF(user));
     }
 
@@ -58,7 +73,8 @@ public class UserController {
         // 获取用户
         User userByName = userService.getUserByName(username);
 
-        boolean b = userByName.getPassword().equals(password);
+//        boolean b = userByName.getPassword().equals(password);
+        boolean b = UserUtil.verify(user, userByName);
         if (b) {
             String token = JwtUtil.CreateToken(userByName.getId().toString(), userByName.getName(), userByName.getPassword());
             map.put("user", userByName);

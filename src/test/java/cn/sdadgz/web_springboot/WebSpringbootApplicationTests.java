@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import javax.annotation.Resource;
 import java.io.*;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 @SpringBootTest
 class WebSpringbootApplicationTests {
@@ -27,18 +28,8 @@ class WebSpringbootApplicationTests {
 
     @Test
     void contextLoads() throws IOException, NoSuchAlgorithmException {
-        String path = "D:\\下载\\不用思考，删这个文件夹\\258969461563168455685717945467846336308illust_91452046_20210724_134755.jpg";
-        String reducePath = "D:\\下载\\不用思考，删这个文件夹\\reduce.jpg";
-
-        System.out.println(Md5Util.md5(path));
-
-//        Thumbnails.of(path).scale(1).outputQuality(.8).toFile(path + ".jpg");
-    }
-
-    @Test
-    void error(){
-        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(User::getName,"sdadgz");
-        userMapper.selectCount(wrapper);
+        User user = new User();
+        user.setPassword("36df389cf36bd9a12114939a021db844");
+        userMapper.update(user, null);
     }
 }
