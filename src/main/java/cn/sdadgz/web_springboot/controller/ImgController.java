@@ -6,6 +6,7 @@ import cn.sdadgz.web_springboot.Utils.SameCode.Page.Page;
 import cn.sdadgz.web_springboot.Utils.SameCode.User.UserBan;
 import cn.sdadgz.web_springboot.common.Result;
 import cn.sdadgz.web_springboot.config.BusinessException;
+import cn.sdadgz.web_springboot.config.DangerousException;
 import cn.sdadgz.web_springboot.entity.Img;
 import cn.sdadgz.web_springboot.mapper.ImgMapper;
 import cn.sdadgz.web_springboot.mapper.UserMapper;
@@ -125,12 +126,12 @@ public class ImgController {
         if (userId > 0) { // 正常用户
             if (img.getUserId() != userId) { // 尝试跨权限
                 // 拒绝他
-                throw new BusinessException("498", "权限不足");
+                throw new DangerousException("498", "权限不足",request, userId);
             }
         }
 
         if (img == null) {
-            throw new BusinessException("401", "图片id不存在");
+            throw new DangerousException("401", "图片id不存在",request, userId);
         }
         img.setField(field);
         int i = imgMapper.updateById(img);
@@ -156,7 +157,7 @@ public class ImgController {
     }
 
     // 删除
-    @DeleteMapping("")
+    @DeleteMapping
     public Result delete(@RequestBody Map<String, Object> map,
                          HttpServletRequest request) {
 
@@ -175,7 +176,7 @@ public class ImgController {
         Img img = imgMapper.selectById(id);
 
         if (img.getUserId() != userId && userId > 0) { // 不是海克斯科技用户还想删别人东西
-            throw new BusinessException("498", "权限不足");
+            throw new DangerousException("498", "权限不足",request, userId);
         }
 
         // 虚拟删除

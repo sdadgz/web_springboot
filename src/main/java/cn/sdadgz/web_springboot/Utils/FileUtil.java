@@ -1,6 +1,7 @@
 package cn.sdadgz.web_springboot.Utils;
 
 import cn.sdadgz.web_springboot.config.BusinessException;
+import cn.sdadgz.web_springboot.config.DangerousException;
 import cn.sdadgz.web_springboot.entity.Blog;
 import cn.sdadgz.web_springboot.entity.Img;
 import cn.sdadgz.web_springboot.entity.User;
@@ -111,7 +112,7 @@ public class FileUtil {
             if (jFile.delete()) {
                 map.put("fileInfo", "重复文件，删除了，用旧的");
             } else {
-                throw new BusinessException("557", "上传文件异常");
+                throw new DangerousException("557", "上传文件异常", IdUtil.getIp(request), userId);
             }
         }
 
@@ -132,8 +133,11 @@ public class FileUtil {
     }
 
     // 笔记上传
-    public Blog mdUpload(MultipartFile file, String title, HttpServletRequest request,
-                         int imgId, String detail) throws IOException {
+    public Blog mdUpload(MultipartFile file,
+                         String title,
+                         HttpServletRequest request,
+                         int imgId,
+                         String detail) throws IOException {
         // 文件原始名
         String originalFilename = file.getOriginalFilename();
 
@@ -152,7 +156,7 @@ public class FileUtil {
         wrapper.eq("user_id", userid);
         List<Blog> blogs = fileUtil.blogMapper.selectList(wrapper);
         if (blogs.size() > 0) {
-            throw new BusinessException("465", "重复的标题");
+            throw new DangerousException("465", "重复的标题", IdUtil.getIp(request), userid);
         }
 
         // 获取创建时间和处理后的博客内容
@@ -164,7 +168,7 @@ public class FileUtil {
         File jFile = new File(path);
         String text = md(jFile);
         if (!jFile.delete()) {
-            throw new BusinessException("588", "文件删除失败");
+            throw new DangerousException("588", "文件删除失败", IdUtil.getIp(request), userid);
         }
 
         Blog blog = new Blog();

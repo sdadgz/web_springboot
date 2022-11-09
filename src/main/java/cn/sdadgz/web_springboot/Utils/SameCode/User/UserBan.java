@@ -2,6 +2,7 @@ package cn.sdadgz.web_springboot.Utils.SameCode.User;
 
 import cn.sdadgz.web_springboot.Utils.IdUtil;
 import cn.sdadgz.web_springboot.config.BusinessException;
+import cn.sdadgz.web_springboot.config.DangerousException;
 import cn.sdadgz.web_springboot.entity.User;
 import cn.sdadgz.web_springboot.mapper.UserMapper;
 import cn.sdadgz.web_springboot.service.IUserService;
@@ -51,7 +52,7 @@ public class UserBan {
 
         if (requestId > 0) {
             if (requestId != userId) {
-                throw new BusinessException("498", "权限不足");
+                throw new DangerousException("498", "权限不足", IdUtil.getIp(request), requestId);
             }
         }
     }

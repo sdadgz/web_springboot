@@ -1,8 +1,11 @@
 package cn.sdadgz.web_springboot.config;
 
+import cn.sdadgz.web_springboot.Utils.IdUtil;
 import cn.sdadgz.web_springboot.Utils.JwtUtil;
+import cn.sdadgz.web_springboot.Utils.StrUtil;
 import cn.sdadgz.web_springboot.entity.User;
 import cn.sdadgz.web_springboot.mapper.UserMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -13,10 +16,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
 
 @Component
+@Slf4j
 public class JwtAuthenticationInterceptor implements HandlerInterceptor {
 
     @Resource
-    UserMapper userMapper;
+    private UserMapper userMapper;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -37,25 +41,25 @@ public class JwtAuthenticationInterceptor implements HandlerInterceptor {
         try {
             userid = JwtUtil.getAudience(token);//获取token中的签发对象
         } catch (Exception e) {
-            throw new BusinessException("499", "数据校验失败");
+            throw new DangerousException("499", "数据校验失败", IdUtil.getIp(request), StrUtil.NO_USER);
         }
         //带着token验证载荷username是否正确
-        User RealUser = null;
-        RealUser = userMapper.selectById(userid);
-        if (RealUser == null) { // 用户不存在
-            throw new BusinessException("499", "认证错误");
+        User realUser = null;
+        realUser = userMapper.selectById(userid);
+        if (realUser == null) { // 用户不存在
+            throw new DangerousException("499", "认证错误", request, Integer.parseInt(userid));
         }
         //姓名不匹配返回
-        if (!Objects.equals(RealUser.getName(), JwtUtil.getClaimByName(token, "username").asString())) {
-            throw new BusinessException("499", "认证错误");
+        if (!Objects.equals(realUser.getName(), JwtUtil.getClaimByName(token, "username").asString())) {
+            throw new DangerousException("499", "认证错误", request, Integer.parseInt(userid));
         }
         //检查是否过期
         if (JwtUtil.checkDate(token)) {
             throw new BusinessException("499", "token过期");
         }
-        System.out.println("tocken验证成功");
+        log.info("tocken验证成功");
         //布尔值验证
-        return JwtUtil.vertifyToken(token, userid, RealUser.getPassword());
+        return JwtUtil.vertifyToken(token, userid, realUser.getPassword());
     }
 
     @Override

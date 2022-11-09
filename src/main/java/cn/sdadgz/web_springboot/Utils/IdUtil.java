@@ -36,7 +36,6 @@ public class IdUtil {
     public static String getIp(HttpServletRequest request) {
         //目前则是网关ip
         String ip = "";
-        log.info("访问者ip：{}", ip);
         if (request != null) {
             ip = request.getHeader("X-FORWARDED-FOR");
             if (ip == null || "".equals(ip)) {
@@ -44,6 +43,7 @@ public class IdUtil {
             }
         }
 
+        log.info("访问者ip：{}", ip);
         return ip;
     }
 }

@@ -6,6 +6,7 @@ import cn.sdadgz.web_springboot.Utils.SameCode.User.UserUtil;
 import cn.sdadgz.web_springboot.Utils.TimeUtil;
 import cn.sdadgz.web_springboot.common.Result;
 import cn.sdadgz.web_springboot.config.BusinessException;
+import cn.sdadgz.web_springboot.config.DangerousException;
 import cn.sdadgz.web_springboot.entity.User;
 import cn.sdadgz.web_springboot.mapper.UserMapper;
 import cn.sdadgz.web_springboot.service.IUserService;
@@ -47,33 +48,31 @@ public class UserController {
     }
 
     // 新建用户
-    @PostMapping("")
-    public Result setUser(@RequestBody User user) throws NoSuchAlgorithmException {
+    @PostMapping
+    public Result setUser(@RequestBody User user, HttpServletRequest request) throws NoSuchAlgorithmException {
         user.setCreatetime(TimeUtil.now());
         String password = user.getPassword();
         user.setPassword(UserUtil.getPassword(password));
         userMapper.insert(user);
         user.setPassword(password);
-        return Result.success(loginF(user));
+        return Result.success(loginF(user, request));
     }
 
-    // 登录
+    // 登录 放行
     @PostMapping("/login")
-    public Result login(@RequestBody User user) throws NoSuchAlgorithmException {
-        Map<String, Object> map = loginF(user);
+    public Result login(@RequestBody User user, HttpServletRequest request) throws NoSuchAlgorithmException {
+        Map<String, Object> map = loginF(user, request);
         return Result.success(map);
     }
 
     // 登录并返回token及基本信息
-    private Map<String, Object> loginF(User user) throws NoSuchAlgorithmException {
+    private Map<String, Object> loginF(User user, HttpServletRequest request) throws NoSuchAlgorithmException {
         Map<String, Object> map = new HashMap<>();
         String username = user.getName();
-        String password = user.getPassword();
 
         // 获取用户
         User userByName = userService.getUserByName(username);
 
-//        boolean b = userByName.getPassword().equals(password);
         boolean b = UserUtil.verify(user, userByName);
         if (b) {
             String token = JwtUtil.CreateToken(userByName.getId().toString(), userByName.getName(), userByName.getPassword());
@@ -81,11 +80,11 @@ public class UserController {
             map.put("token", token);
             return map;
         }
-        throw new BusinessException("485", "用户名或密码错误");
+        throw new DangerousException("499", "用户名或密码错误", request, userByName.getId());
     }
 
     // 用户名已被占用
-    @GetMapping("")
+    @GetMapping
     public Result exists(@RequestParam("username") String username) {
 
         boolean exists = userService.nameExists(username);

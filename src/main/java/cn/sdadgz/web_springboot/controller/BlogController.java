@@ -8,6 +8,7 @@ import cn.sdadgz.web_springboot.Utils.SameCode.User.UserBan;
 import cn.sdadgz.web_springboot.Utils.TimeUtil;
 import cn.sdadgz.web_springboot.common.Result;
 import cn.sdadgz.web_springboot.config.BusinessException;
+import cn.sdadgz.web_springboot.config.DangerousException;
 import cn.sdadgz.web_springboot.entity.Blog;
 import cn.sdadgz.web_springboot.entity.Img;
 import cn.sdadgz.web_springboot.entity.User;
@@ -157,7 +158,7 @@ public class BlogController {
         if (userId > 0) {
             Blog dbBlog = blogMapper.selectById(id);
             if (dbBlog.getUserId() != userId) {
-                throw new BusinessException("498", "权限不足");
+                throw new DangerousException("498", "权限不足",request, userId);
             }
         }
         int i = blogMapper.updateById(blog);
@@ -166,7 +167,7 @@ public class BlogController {
     }
 
     // 删除博客
-    @DeleteMapping("")
+    @DeleteMapping
     public Result deleteBlog(@RequestBody Map<String, Integer[]> objectMap,
                              HttpServletRequest request) {
 
@@ -178,7 +179,7 @@ public class BlogController {
             Blog blog = blogMapper.selectById(integer);
             // 阻止用户跨权限
             if (userId > 0 && blog.getUserId() != userId) {
-                throw new BusinessException("498", "权限不足");
+                throw new DangerousException("498", "权限不足",request, userId);
             }
 
             blogMapper.deleteById(integer);

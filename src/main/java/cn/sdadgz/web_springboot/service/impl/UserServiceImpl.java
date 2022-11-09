@@ -40,7 +40,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
         // 非法的用户名
         if (users.size() != 1) {
-            throw new BusinessException("404", "错误的用户名");
+            throw new BusinessException("499", "用户名或密码错误");
         }
         return users.get(0);
     }

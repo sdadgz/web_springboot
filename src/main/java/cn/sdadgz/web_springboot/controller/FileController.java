@@ -6,6 +6,7 @@ import cn.sdadgz.web_springboot.Utils.SameCode.Page.Page;
 import cn.sdadgz.web_springboot.Utils.SameCode.User.UserBan;
 import cn.sdadgz.web_springboot.common.Result;
 import cn.sdadgz.web_springboot.config.BusinessException;
+import cn.sdadgz.web_springboot.config.DangerousException;
 import cn.sdadgz.web_springboot.entity.File;
 import cn.sdadgz.web_springboot.mapper.FileMapper;
 import cn.sdadgz.web_springboot.service.IFileService;
@@ -61,7 +62,7 @@ public class FileController {
     }
 
     // 删除
-    @DeleteMapping("")
+    @DeleteMapping
     public Result delete(@RequestParam("id") int id,
                          HttpServletRequest request) {
 
@@ -73,7 +74,7 @@ public class FileController {
 
         // 阻止跨权限
         if (userId > 0 && userId != file.getUserId()) {
-            throw new BusinessException("498", "权限不足");
+            throw new DangerousException("498", "权限不足",request, userId);
         }
 
         // 删除
