@@ -5,20 +5,17 @@ import cn.sdadgz.web_springboot.Utils.JwtUtil;
 import cn.sdadgz.web_springboot.Utils.SameCode.User.UserUtil;
 import cn.sdadgz.web_springboot.Utils.TimeUtil;
 import cn.sdadgz.web_springboot.common.Result;
-import cn.sdadgz.web_springboot.config.BusinessException;
 import cn.sdadgz.web_springboot.config.DangerousException;
 import cn.sdadgz.web_springboot.entity.User;
 import cn.sdadgz.web_springboot.mapper.UserMapper;
+import cn.sdadgz.web_springboot.service.IIpBanService;
 import cn.sdadgz.web_springboot.service.IUserService;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,6 +36,13 @@ public class UserController {
     @Resource
     IUserService userService;
 
+    @Resource
+    private IIpBanService ipBanService;
+
+    private static final String USERNAME = "username";
+    private static final String OLD_PASSWORD = "oldPassword";
+    private static final String NEW_PASSWORD = "newPassword";
+
     // 测试获取ip
     @GetMapping("/ip")
     public Result getIp(HttpServletRequest request) {
@@ -47,12 +51,32 @@ public class UserController {
         return Result.success(map);
     }
 
+    // 修改密码
+    @PutMapping("/password")
+    public Result update(HttpServletRequest request,
+                         @RequestBody Map<String, String> map) throws NoSuchAlgorithmException {
+
+        // 初始化
+        String username = map.get(USERNAME);
+        String oldPassword = map.get(OLD_PASSWORD);
+        String newPassword = map.get(NEW_PASSWORD);
+
+        // 验证
+        User userByName = userService.getUserByName(username);
+        UserUtil.verify(new User().setPassword(oldPassword), userByName, request);
+
+        userByName.setPassword(UserUtil.encryptPassword(newPassword));
+        userMapper.updateById(userByName);
+
+        return Result.success();
+    }
+
     // 新建用户
     @PostMapping
     public Result setUser(@RequestBody User user, HttpServletRequest request) throws NoSuchAlgorithmException {
         user.setCreatetime(TimeUtil.now());
         String password = user.getPassword();
-        user.setPassword(UserUtil.getPassword(password));
+        user.setPassword(UserUtil.encryptPassword(password));
         userMapper.insert(user);
         user.setPassword(password);
         return Result.success(loginF(user, request));
@@ -73,14 +97,16 @@ public class UserController {
         // 获取用户
         User userByName = userService.getUserByName(username);
 
-        boolean b = UserUtil.verify(user, userByName);
-        if (b) {
-            String token = JwtUtil.CreateToken(userByName.getId().toString(), userByName.getName(), userByName.getPassword());
-            map.put("user", userByName);
-            map.put("token", token);
-            return map;
-        }
-        throw new DangerousException("499", "用户名或密码错误", request, userByName.getId());
+        // 冻结用户，保护用户密码不被暴力破解
+        ipBanService.protect(userByName);
+
+        // 验证密码
+        UserUtil.verify(user, userByName, request);
+
+        String token = JwtUtil.CreateToken(userByName.getId().toString(), userByName.getName(), userByName.getPassword());
+        map.put("user", userByName);
+        map.put("token", token);
+        return map;
     }
 
     // 用户名已被占用
