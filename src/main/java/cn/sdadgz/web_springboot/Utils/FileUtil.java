@@ -75,10 +75,10 @@ public class FileUtil {
         // 初始化
         HashMap<String, Object> map = new HashMap<>();
         cn.sdadgz.web_springboot.entity.File uploadFile = new cn.sdadgz.web_springboot.entity.File();
-        uploadFile.setCreatetime(TimeUtil.now());
+        uploadFile.setCreateTime(TimeUtil.now());
 
         // 获取用户
-        int userId = IdUtil.getId(request);
+        int userId = IdUtil.getUserId(request);
         User user = fileUtil.userMapper.selectById(userId);
         uploadFile.setUserId(userId);
 
@@ -137,7 +137,8 @@ public class FileUtil {
                          String title,
                          HttpServletRequest request,
                          int imgId,
-                         String detail) throws IOException {
+                         String detail,
+                         LocalDateTime createTime) throws IOException {
         // 文件原始名
         String originalFilename = file.getOriginalFilename();
 
@@ -148,7 +149,7 @@ public class FileUtil {
         }
 
         // 获取用户id
-        int userid = IdUtil.getId(request);
+        int userid = IdUtil.getUserId(request);
 
         // 防止重复标题
         QueryWrapper<Blog> wrapper = new QueryWrapper<>();
@@ -156,19 +157,19 @@ public class FileUtil {
         wrapper.eq("user_id", userid);
         List<Blog> blogs = fileUtil.blogMapper.selectList(wrapper);
         if (blogs.size() > 0) {
-            throw new DangerousException("465", "重复的标题", IdUtil.getIp(request), userid);
+            throw new BusinessException("465", "重复的标题");
         }
 
         // 获取创建时间和处理后的博客内容
 //        LocalDateTime createTime = fileUtil.getCreateTime(file); // 被阉割
-        LocalDateTime createTime = TimeUtil.now();
+//        LocalDateTime createTime = TimeUtil.now();
 //        String text = fileUtil.md((File) file);
         String path = fileUtil.uploadPath + "blog/" + originalFilename;
         uploadToServer(file, path);
         File jFile = new File(path);
         String text = md(jFile);
         if (!jFile.delete()) {
-            throw new DangerousException("588", "文件删除失败", IdUtil.getIp(request), userid);
+            throw new BusinessException("588", "文件删除失败");
         }
 
         Blog blog = new Blog();
@@ -177,7 +178,7 @@ public class FileUtil {
         blog.setImgId(imgId);
         blog.setTitle(title);
         blog.setDetail(detail);
-        blog.setCreatetime(createTime);
+        blog.setCreateTime(createTime);
         fileUtil.blogMapper.insert(blog);
 
         return blog;
@@ -219,14 +220,6 @@ public class FileUtil {
     }
 
     // 获取文件创建时间
-    public LocalDateTime getCreateTime(MultipartFile file) {
-        String path = fileUtil.uploadPath + "temp/temp.md";
-        uploadToServer(file, path);
-        Date date = getCreateTime(path);
-        return TimeUtil.translate(date);
-    }
-
-    // 获取文件创建时间
     private Date getCreateTime(String fullFileName) {
         Path path = Paths.get(fullFileName);
         BasicFileAttributeView basicview = Files.getFileAttributeView(path, BasicFileAttributeView.class, LinkOption.NOFOLLOW_LINKS);
@@ -248,7 +241,7 @@ public class FileUtil {
 
         // 上传到数据库对象
         Img img = new Img();
-        img.setCreatetime(TimeUtil.now());
+        img.setCreateTime(TimeUtil.now());
         img.setUserId(userid);
         img.setField(field);
 

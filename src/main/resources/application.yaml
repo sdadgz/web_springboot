@@ -24,12 +24,14 @@ spring:
   resources:
     static-locations: file:${my.file-config.uploadPath}
 
-mybatis:
-  mapper-locations: mapper/*.xml
-  configuration:
-    map-underscore-to-camel-case: true
-    auto-mapping-behavior: full
-  type-aliases-package: cn.sdadgz.web_springboot.entity
+# mybatis原生，删了试试会不会报错
+#mybatis:
+#  mapper-locations: mapper/*.xml
+#  configuration:
+#    map-underscore-to-camel-case: true
+#    auto-mapping-behavior: full
+#  type-aliases-package: cn.sdadgz.web_springboot.entity
+
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

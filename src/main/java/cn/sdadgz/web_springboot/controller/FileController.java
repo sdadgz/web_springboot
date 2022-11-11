@@ -6,7 +6,6 @@ import cn.sdadgz.web_springboot.Utils.SameCode.Page.Page;
 import cn.sdadgz.web_springboot.Utils.SameCode.User.UserBan;
 import cn.sdadgz.web_springboot.common.Result;
 import cn.sdadgz.web_springboot.config.BusinessException;
-import cn.sdadgz.web_springboot.config.DangerousException;
 import cn.sdadgz.web_springboot.entity.File;
 import cn.sdadgz.web_springboot.mapper.FileMapper;
 import cn.sdadgz.web_springboot.service.IFileService;
@@ -67,12 +66,12 @@ public class FileController {
         Map<String, Object> map = new HashMap<>();
 
         // 获取请求中的用户id
-        int userId = IdUtil.getId(request);
+        int userId = IdUtil.getUserId(request);
         File file = fileMapper.selectById(id);
 
         // 阻止跨权限
         if (userId > 0 && userId != file.getUserId()) {
-            throw new DangerousException("498", "权限不足",request, userId);
+            throw new BusinessException("498", "权限不足");
         }
 
         // 删除

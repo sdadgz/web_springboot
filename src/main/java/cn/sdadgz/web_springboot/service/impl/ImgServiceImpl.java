@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author eula
@@ -39,5 +39,10 @@ public class ImgServiceImpl extends ServiceImpl<ImgMapper, Img> implements IImgS
         wrapper.eq(Img::getUserId, userId);
 
         return imgMapper.selectList(wrapper);
+    }
+
+    @Override
+    public List<Img> getNeverUseImg(String field, Integer userId) {
+        return imgMapper.getNeverUseImgs(field, userId);
     }
 }

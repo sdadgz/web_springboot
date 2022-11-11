@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author eula
@@ -17,4 +17,7 @@ public interface IImgService extends IService<Img> {
 
     // 获取图片
     List<Img> getImgs(String field, String username);
+
+    // 获取没有被使用过的图片
+    List<Img> getNeverUseImg(String field, Integer userId);
 }

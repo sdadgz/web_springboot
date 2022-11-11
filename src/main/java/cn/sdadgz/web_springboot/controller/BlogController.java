@@ -1,33 +1,25 @@
 package cn.sdadgz.web_springboot.controller;
 
-import cn.sdadgz.web_springboot.Utils.FileUtil;
-import cn.sdadgz.web_springboot.Utils.IdUtil;
-import cn.sdadgz.web_springboot.Utils.RandomUtil;
+import cn.sdadgz.web_springboot.Utils.*;
 import cn.sdadgz.web_springboot.Utils.SameCode.Page.Page;
 import cn.sdadgz.web_springboot.Utils.SameCode.User.UserBan;
-import cn.sdadgz.web_springboot.Utils.TimeUtil;
 import cn.sdadgz.web_springboot.common.Result;
 import cn.sdadgz.web_springboot.config.BusinessException;
-import cn.sdadgz.web_springboot.config.DangerousException;
 import cn.sdadgz.web_springboot.entity.Blog;
 import cn.sdadgz.web_springboot.entity.Img;
-import cn.sdadgz.web_springboot.entity.User;
 import cn.sdadgz.web_springboot.mapper.BlogMapper;
 import cn.sdadgz.web_springboot.mapper.ImgMapper;
 import cn.sdadgz.web_springboot.mapper.UserMapper;
-import cn.sdadgz.web_springboot.service.IBlogService;
 import cn.sdadgz.web_springboot.service.IImgService;
-import cn.sdadgz.web_springboot.service.IUserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -40,6 +32,7 @@ import java.util.*;
  * @author eula
  * @since 2022-08-26
  */
+@Slf4j
 @RestController
 @RequestMapping("/blog")
 public class BlogController {
@@ -53,14 +46,25 @@ public class BlogController {
     @Resource
     ImgMapper imgMapper;
 
+    @Resource
+    IImgService imgService;
+
     @Value("${my.file-config.uploadPath}")
     private String uploadPath;
 
     @Value("${my.file-config.downloadPath}")
     private String downloadPath;
 
-    private final int DEFAULT_IMG_ID = 0; // 默认图片id
+    private static final int DEFAULT_IMG_ID = 0; // 默认图片id
+    private static final String BLOG_IMG = "博客首页";
 
+    // TODO 时间测试
+    @PostMapping("/time")
+    public Result timeTest(@RequestParam("time")
+                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime time) {
+        log.info("从前端获取的时间是：{}", time);
+        return Result.success();
+    }
 
     // 上传并新建一个博客
     @PostMapping("/upload")
@@ -68,68 +72,51 @@ public class BlogController {
                          @RequestParam("imgId") int imgId,
                          @RequestParam("title") String title,
                          @RequestParam("detail") String detail,
+                         @RequestParam(value = "createTime", required = false)
+                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime createTime,
                          HttpServletRequest request) throws IOException {
 
         FileUtil fileUtil = new FileUtil();
-        Blog blog = fileUtil.mdUpload(file, title, request, imgId, detail);
+        Blog blog = fileUtil.mdUpload(file, title, request, imgId, detail, createTime);
+
+        // 使用前端传来的时间作为创建时间
+        blog.setCreateTime(createTime);
+        blogMapper.updateById(blog);
 
         return Result.success(blog);
     }
 
     // 批量上传博客
     @PostMapping("/uploads")
-    public Result upload(@RequestPart("files") MultipartFile[] files,
+    public Result upload(@RequestPart("files") MultipartFile files,
+                         @RequestParam(value = "createTime", required = false)
+                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime createTime,
                          HttpServletRequest request) throws IOException {
 
+        // 初始化
         Map<String, Object> map = new HashMap<>();
         FileUtil fileUtil = new FileUtil();
+        int userId = IdUtil.getUserId(request);
+
+        // 时间不存在使用当前时间
+        if (GeneralUtil.notNull(createTime)) {
+            createTime = TimeUtil.now();
+        }
 
         // 获取本人博客首页图片
         LambdaQueryWrapper<Img> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Img::getUserId, IdUtil.getId(request)); // 用户id
-        wrapper.like(Img::getField, "博客首页");
-        List<Img> imgs = imgMapper.selectList(wrapper);
-        if (imgs.size() < 1) {
-            for (MultipartFile file : files) {
-                fileUtil.mdUpload(file, "", request, DEFAULT_IMG_ID, "");
-            }
-        }
+        wrapper.eq(Img::getUserId, userId); // 用户id
+        wrapper.like(Img::getField, BLOG_IMG);
 
-        for (int i = 0; i < files.length; i++) {
-            int imgId;
-            // 获取未使用过的博客首页图片
-
-            ArrayList<Integer> usedArr = new ArrayList<>();
-            do {
-                // 伪随机数
-                int rand = RandomUtil.getInt(imgs.size());
-                // 判断是否全加里面了
-                if (usedArr.size() >= imgs.size()) {
-                    imgId = imgs.get(rand).getId();
-                    break;
-                }
-                // 判断是否重复
-                while (usedArr.contains(imgs.get(rand).getId())) {
-                    rand = RandomUtil.getInt(imgs.size());
-                }
-                usedArr.add(imgs.get(rand).getId());
-
-                imgId = imgs.get(rand).getId();
-            } while (isUsed(imgId));
-
-            Blog blog = fileUtil.mdUpload(files[i], "", request, imgId, "");
-            map.put(String.valueOf(i), blog);
+        List<Img> neverUseImg = imgService.getNeverUseImg(BLOG_IMG, userId);
+        if (neverUseImg.size() < 1) {
+            fileUtil.mdUpload(files, "", request, DEFAULT_IMG_ID, "", createTime);
+        } else {
+            Integer imgId = neverUseImg.get(RandomUtil.getInt(neverUseImg.size())).getId();
+            fileUtil.mdUpload(files, StrUtil.EMPTY_STRING, request, imgId, StrUtil.EMPTY_STRING, createTime);
         }
 
         return Result.success(map);
-    }
-
-    // 图片是否被使用
-    private boolean isUsed(int imgId) {
-        // blog里面的
-        LambdaQueryWrapper<Blog> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Blog::getImgId, imgId);
-        return blogMapper.exists(wrapper);
     }
 
     // 获取某个博客
@@ -153,12 +140,12 @@ public class BlogController {
     public Result updateBlog(@RequestBody Blog blog,
                              HttpServletRequest request) {
 
-        int userId = IdUtil.getId(request);
+        int userId = IdUtil.getUserId(request);
         int id = blog.getId();
         if (userId > 0) {
             Blog dbBlog = blogMapper.selectById(id);
             if (dbBlog.getUserId() != userId) {
-                throw new DangerousException("498", "权限不足",request, userId);
+                throw new BusinessException("498", "权限不足");
             }
         }
         int i = blogMapper.updateById(blog);
@@ -171,7 +158,7 @@ public class BlogController {
     public Result deleteBlog(@RequestBody Map<String, Integer[]> objectMap,
                              HttpServletRequest request) {
 
-        int userId = IdUtil.getId(request);
+        int userId = IdUtil.getUserId(request);
 
         Integer[] idList = objectMap.get("idList");
 
@@ -179,7 +166,7 @@ public class BlogController {
             Blog blog = blogMapper.selectById(integer);
             // 阻止用户跨权限
             if (userId > 0 && blog.getUserId() != userId) {
-                throw new DangerousException("498", "权限不足",request, userId);
+                throw new BusinessException("498", "权限不足");
             }
 
             blogMapper.deleteById(integer);

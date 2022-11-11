@@ -10,7 +10,7 @@ import javax.annotation.Resource;
 public class JwtInterceptorConfig implements WebMvcConfigurer {
 
     @Resource
-    JwtAuthenticationInterceptor interceptor;
+    JwtInterceptor interceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {

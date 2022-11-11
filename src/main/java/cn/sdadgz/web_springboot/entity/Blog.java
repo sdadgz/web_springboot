@@ -47,7 +47,7 @@ public class Blog implements Serializable {
 
     private String detail;
 
-    private LocalDateTime createtime;
+    private LocalDateTime createTime;
 
 
 }

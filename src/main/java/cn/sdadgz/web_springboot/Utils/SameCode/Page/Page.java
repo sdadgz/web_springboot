@@ -1,7 +1,6 @@
 package cn.sdadgz.web_springboot.Utils.SameCode.Page;
 
 import cn.sdadgz.web_springboot.Utils.IdUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +16,7 @@ public class Page<MP extends Mapper<T>, T> {
                                        HttpServletRequest request,
                                        MP mapper) {
 
-        int id = IdUtil.getId(request);
+        int id = IdUtil.getUserId(request);
 
         return getPage(currentPage, pageSize, id, mapper);
     }

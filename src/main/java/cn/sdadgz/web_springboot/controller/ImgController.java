@@ -6,7 +6,6 @@ import cn.sdadgz.web_springboot.Utils.SameCode.Page.Page;
 import cn.sdadgz.web_springboot.Utils.SameCode.User.UserBan;
 import cn.sdadgz.web_springboot.common.Result;
 import cn.sdadgz.web_springboot.config.BusinessException;
-import cn.sdadgz.web_springboot.config.DangerousException;
 import cn.sdadgz.web_springboot.entity.Img;
 import cn.sdadgz.web_springboot.mapper.ImgMapper;
 import cn.sdadgz.web_springboot.mapper.UserMapper;
@@ -101,7 +100,6 @@ public class ImgController {
         // 使用参数
         if (id != 0) {
             map.put("single", updateF(id, field, request));
-
         }
         // 使用多个参数
         if (idList != null) {
@@ -119,19 +117,19 @@ public class ImgController {
         Map<String, Object> map = new HashMap<>();
 
         // 获取用户id
-        int userId = IdUtil.getId(request);
+        int userId = IdUtil.getUserId(request);
 
         // 获取图片信息并验证
         Img img = imgMapper.selectById(id);
         if (userId > 0) { // 正常用户
             if (img.getUserId() != userId) { // 尝试跨权限
                 // 拒绝他
-                throw new DangerousException("498", "权限不足",request, userId);
+                throw new BusinessException("498", "权限不足");
             }
         }
 
         if (img == null) {
-            throw new DangerousException("401", "图片id不存在",request, userId);
+            throw new BusinessException("433", "图片id不存在");
         }
         img.setField(field);
         int i = imgMapper.updateById(img);
@@ -168,7 +166,7 @@ public class ImgController {
         int id = (int) map.get("id");
 
         // 获取用户id
-        int userId = IdUtil.getId(request);
+        int userId = IdUtil.getUserId(request);
 
         // 获取图片
         LambdaQueryWrapper<Img> wrapper = new LambdaQueryWrapper<>();
@@ -176,7 +174,7 @@ public class ImgController {
         Img img = imgMapper.selectById(id);
 
         if (img.getUserId() != userId && userId > 0) { // 不是海克斯科技用户还想删别人东西
-            throw new DangerousException("498", "权限不足",request, userId);
+            throw new BusinessException("498", "权限不足");
         }
 
         // 虚拟删除
@@ -231,7 +229,7 @@ public class ImgController {
                          @RequestParam("field") String field,
                          HttpServletRequest request) throws NoSuchAlgorithmException, IOException {
         // 获取用户名
-        int userid = IdUtil.getId(request);
+        int userid = IdUtil.getUserId(request);
 
         // 上传到服务器
         FileUtil fileU = new FileUtil();
@@ -246,7 +244,7 @@ public class ImgController {
                           @RequestParam("field") String field,
                           HttpServletRequest request) throws NoSuchAlgorithmException, IOException {
         // 获取用户名
-        int userid = IdUtil.getId(request);
+        int userid = IdUtil.getUserId(request);
 
         Map<String, Object> map = new HashMap<>();
 

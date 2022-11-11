@@ -17,9 +17,18 @@
         limit #{startPage},#{pageSize}
     </select>
 
+    <select id="getNeverUseImgs" resultType="cn.sdadgz.web_springboot.entity.Img">
+        select *
+        from img i
+        where i.field like CONCAT('%', #{field}, '%')
+          and i.id not in (select b.img_id from blog b where b.user_id = #{userId})
+    </select>
+
     <!--  结果集  -->
     <resultMap id="ImgMap" type="Img">
         <association property="user" javaType="User"/>
     </resultMap>
 
+    <!--        开启二级缓存      -->
+    <cache/>
 </mapper>

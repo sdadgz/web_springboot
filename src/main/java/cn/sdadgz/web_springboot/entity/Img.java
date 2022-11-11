@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * <p>
@@ -36,7 +37,7 @@ public class Img implements Serializable {
 
     private Boolean isDelete;
 
-    private LocalDateTime createtime;
+    private LocalDateTime createTime;
 
     private String field;
 

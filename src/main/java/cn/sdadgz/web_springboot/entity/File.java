@@ -37,7 +37,7 @@ public class File implements Serializable {
 
     private Boolean isDelete;
 
-    private LocalDateTime createtime;
+    private LocalDateTime createTime;
 
     private Integer userId;
 

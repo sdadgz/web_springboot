@@ -17,7 +17,7 @@ import java.util.Objects;
 
 @Component
 @Slf4j
-public class JwtAuthenticationInterceptor implements HandlerInterceptor {
+public class JwtInterceptor implements HandlerInterceptor {
 
     @Resource
     private UserMapper userMapper;

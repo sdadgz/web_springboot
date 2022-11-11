@@ -5,7 +5,6 @@ import cn.sdadgz.web_springboot.Utils.JwtUtil;
 import cn.sdadgz.web_springboot.Utils.SameCode.User.UserUtil;
 import cn.sdadgz.web_springboot.Utils.TimeUtil;
 import cn.sdadgz.web_springboot.common.Result;
-import cn.sdadgz.web_springboot.config.DangerousException;
 import cn.sdadgz.web_springboot.entity.User;
 import cn.sdadgz.web_springboot.mapper.UserMapper;
 import cn.sdadgz.web_springboot.service.IIpBanService;
@@ -74,7 +73,7 @@ public class UserController {
     // 新建用户
     @PostMapping
     public Result setUser(@RequestBody User user, HttpServletRequest request) throws NoSuchAlgorithmException {
-        user.setCreatetime(TimeUtil.now());
+        user.setCreateTime(TimeUtil.now());
         String password = user.getPassword();
         user.setPassword(UserUtil.encryptPassword(password));
         userMapper.insert(user);

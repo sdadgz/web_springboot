@@ -23,7 +23,7 @@ public class IdUtil {
     }
 
     // 获取userId
-    public static int getId(HttpServletRequest request) {
+    public static int getUserId(HttpServletRequest request) {
         return Integer.parseInt(JwtUtil.getAudience(request.getHeader("token")));
     }
 

@@ -37,7 +37,7 @@ public class User implements Serializable {
 
     private String avatar;
 
-    private LocalDateTime createtime;
+    private LocalDateTime createTime;
 
     //获取用户时，不会返回密码
     @JsonIgnore

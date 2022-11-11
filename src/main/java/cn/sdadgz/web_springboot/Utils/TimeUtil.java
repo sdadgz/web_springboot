@@ -11,12 +11,4 @@ public class TimeUtil {
     public static LocalDateTime now(){
         return LocalDateTime.now();
     }
-
-    // date转当前类型
-    public static LocalDateTime translate(Date date){
-        Instant instant = date.toInstant();
-        ZoneId zoneId = ZoneId.systemDefault();
-
-        return instant.atZone(zoneId).toLocalDateTime();
-    }
 }
