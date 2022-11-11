@@ -11,6 +11,7 @@ import cn.sdadgz.web_springboot.mapper.ImgMapper;
 import cn.sdadgz.web_springboot.mapper.UserMapper;
 import cn.sdadgz.web_springboot.service.IImgService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import org.apache.ibatis.annotations.Options;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -173,7 +174,8 @@ public class ImgController {
         wrapper.eq(Img::getId, id);
         Img img = imgMapper.selectById(id);
 
-        if (img.getUserId() != userId && userId > 0) { // 不是海克斯科技用户还想删别人东西
+        // 不是海克斯科技用户还想删别人东西
+        if (img.getUserId() != userId && userId > 0) {
             throw new BusinessException("498", "权限不足");
         }
 
@@ -224,6 +226,7 @@ public class ImgController {
         return Result.success(resultMap);
     }
 
+    // 上传
     @PostMapping("/upload")
     public Result upload(@RequestPart("file") MultipartFile file,
                          @RequestParam("field") String field,

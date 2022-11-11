@@ -28,7 +28,4 @@
     <resultMap id="ImgMap" type="Img">
         <association property="user" javaType="User"/>
     </resultMap>
-
-    <!--        开启二级缓存      -->
-    <cache/>
 </mapper>

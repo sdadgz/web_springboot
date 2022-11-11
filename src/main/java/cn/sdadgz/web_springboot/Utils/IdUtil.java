@@ -28,7 +28,7 @@ public class IdUtil {
     }
 
     // 获取username
-    public static String getName(HttpServletRequest request) {
+    public static String getUsername(HttpServletRequest request) {
         return JwtUtil.getClaimByName(request.getHeader("token"), "username").asString();
     }
 

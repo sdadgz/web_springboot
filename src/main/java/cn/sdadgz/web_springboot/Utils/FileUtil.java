@@ -9,6 +9,7 @@ import cn.sdadgz.web_springboot.mapper.BlogMapper;
 import cn.sdadgz.web_springboot.mapper.FileMapper;
 import cn.sdadgz.web_springboot.mapper.ImgMapper;
 import cn.sdadgz.web_springboot.mapper.UserMapper;
+import cn.sdadgz.web_springboot.service.IBlogService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -52,10 +53,15 @@ public class FileUtil {
     private BlogMapper blogMapper;
 
     @Resource
+    private IBlogService blogService;
+
+    @Resource
     private UserMapper userMapper;
 
     @Resource
     private FileMapper fileMapper;
+
+    private static final String BLOG_DIR = "blog";
 
     private final int SCREEN_WIDTH = 1920; // 屏幕宽度
     private final int BLOG_COLUMNS = 2; // 博客分几栏
@@ -139,6 +145,10 @@ public class FileUtil {
                          int imgId,
                          String detail,
                          LocalDateTime createTime) throws IOException {
+
+        // 初始化
+        Blog blog = new Blog();
+
         // 文件原始名
         String originalFilename = file.getOriginalFilename();
 
@@ -148,8 +158,9 @@ public class FileUtil {
             title = originalFilename.substring(0, originalFilename.lastIndexOf('.'));
         }
 
-        // 获取用户id
+        // 获取用户id和名字
         int userid = IdUtil.getUserId(request);
+        String username = IdUtil.getUsername(request);
 
         // 防止重复标题
         QueryWrapper<Blog> wrapper = new QueryWrapper<>();
@@ -157,14 +168,17 @@ public class FileUtil {
         wrapper.eq("user_id", userid);
         List<Blog> blogs = fileUtil.blogMapper.selectList(wrapper);
         if (blogs.size() > 0) {
-            throw new BusinessException("465", "重复的标题");
+//            throw new BusinessException("465", "重复的标题");
+            // 不修改时间
+            createTime = null;
+            blog = fileUtil.blogMapper.getBlog(username, title);
         }
 
         // 获取创建时间和处理后的博客内容
 //        LocalDateTime createTime = fileUtil.getCreateTime(file); // 被阉割
 //        LocalDateTime createTime = TimeUtil.now();
 //        String text = fileUtil.md((File) file);
-        String path = fileUtil.uploadPath + "blog/" + originalFilename;
+        String path = fileUtil.uploadPath + BLOG_DIR + StrUtil.LEVER + originalFilename;
         uploadToServer(file, path);
         File jFile = new File(path);
         String text = md(jFile);
@@ -172,14 +186,13 @@ public class FileUtil {
             throw new BusinessException("588", "文件删除失败");
         }
 
-        Blog blog = new Blog();
         blog.setUserId(userid);
         blog.setText(text);
         blog.setImgId(imgId);
         blog.setTitle(title);
         blog.setDetail(detail);
         blog.setCreateTime(createTime);
-        fileUtil.blogMapper.insert(blog);
+        fileUtil.blogService.saveOrUpdate(blog);
 
         return blog;
     }
