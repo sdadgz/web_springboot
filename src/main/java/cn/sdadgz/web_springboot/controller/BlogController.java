@@ -112,7 +112,10 @@ public class BlogController {
         if (neverUseImg.size() < 1) {
             fileUtil.mdUpload(files, "", request, DEFAULT_IMG_ID, "", createTime);
         } else {
-            Integer imgId = neverUseImg.get(RandomUtil.getInt(neverUseImg.size())).getId();
+            int seed = files.hashCode() + request.hashCode() + map.hashCode() + fileUtil.hashCode() + userId
+                    + wrapper.hashCode() + neverUseImg.hashCode();
+            int rand = RandomUtil.getInt(neverUseImg.size(), seed);
+            Integer imgId = neverUseImg.get(rand).getId();
             fileUtil.mdUpload(files, StrUtil.EMPTY_STRING, request, imgId, StrUtil.EMPTY_STRING, createTime);
         }
 

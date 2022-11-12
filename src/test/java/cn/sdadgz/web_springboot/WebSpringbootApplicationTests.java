@@ -54,6 +54,7 @@ class WebSpringbootApplicationTests {
     void random(){
         Random random = new Random(1);
         int i = random.nextInt();
+        System.out.println(random.hashCode());
         System.out.println(i);
     }
 }
