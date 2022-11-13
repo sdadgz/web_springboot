@@ -1,4 +1,4 @@
-package cn.sdadgz.web_springboot.Utils;
+package cn.sdadgz.web_springboot.utils;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;

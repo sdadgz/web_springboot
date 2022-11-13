@@ -1,6 +1,6 @@
-package cn.sdadgz.web_springboot.Utils.SameCode.User;
+package cn.sdadgz.web_springboot.utils.SameCode.User;
 
-import cn.sdadgz.web_springboot.Utils.Md5Util;
+import cn.sdadgz.web_springboot.utils.Md5Util;
 import cn.sdadgz.web_springboot.config.DangerousException;
 import cn.sdadgz.web_springboot.entity.User;
 

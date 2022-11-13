@@ -40,9 +40,10 @@
         select *
         from blog b
         left join user u on u.id = b.user_id
+        left join img i on i.id = b.img_id
         <where>
             <if test="userId != null">
-                user_id = #{userId}
+                b.user_id = #{userId}
             </if>
         </where>
         order by b.create_time desc, b.id desc

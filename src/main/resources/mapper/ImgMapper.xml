@@ -14,7 +14,7 @@
             and !i.is_delete
         </where>
         order by i.id desc
-        limit #{startPage},#{pageSize}
+        limit #{startPage}, #{pageSize}
     </select>
 
     <select id="getNeverUseImgs" resultType="cn.sdadgz.web_springboot.entity.Img">
@@ -22,6 +22,7 @@
         from img i
         where i.field like CONCAT('%', #{field}, '%')
           and i.id not in (select b.img_id from blog b where b.user_id = #{userId})
+          and !i.is_delete
     </select>
 
     <!--  结果集  -->

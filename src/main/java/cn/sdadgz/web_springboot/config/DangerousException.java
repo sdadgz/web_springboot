@@ -1,11 +1,10 @@
 package cn.sdadgz.web_springboot.config;
 
-import cn.sdadgz.web_springboot.Utils.IdUtil;
+import cn.sdadgz.web_springboot.utils.IdUtil;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.HttpCookie;
 
 @Getter
 @Setter

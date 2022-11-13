@@ -1,6 +1,6 @@
-package cn.sdadgz.web_springboot.Utils.SameCode.Page;
+package cn.sdadgz.web_springboot.utils.SameCode.Page;
 
-import cn.sdadgz.web_springboot.Utils.IdUtil;
+import cn.sdadgz.web_springboot.utils.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 import javax.servlet.http.HttpServletRequest;

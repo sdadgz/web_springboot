@@ -1,8 +1,6 @@
 package cn.sdadgz.web_springboot.config;
 
-import cn.sdadgz.web_springboot.Utils.IdUtil;
-import cn.sdadgz.web_springboot.Utils.TimeUtil;
-import cn.sdadgz.web_springboot.common.Constants;
+import cn.sdadgz.web_springboot.utils.TimeUtil;
 import cn.sdadgz.web_springboot.common.Result;
 import cn.sdadgz.web_springboot.entity.IpBan;
 import cn.sdadgz.web_springboot.mapper.IpBanMapper;
@@ -12,7 +10,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
 @Slf4j

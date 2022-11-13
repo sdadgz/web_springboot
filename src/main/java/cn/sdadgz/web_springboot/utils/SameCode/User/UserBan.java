@@ -1,6 +1,6 @@
-package cn.sdadgz.web_springboot.Utils.SameCode.User;
+package cn.sdadgz.web_springboot.utils.SameCode.User;
 
-import cn.sdadgz.web_springboot.Utils.IdUtil;
+import cn.sdadgz.web_springboot.utils.IdUtil;
 import cn.sdadgz.web_springboot.config.BusinessException;
 import cn.sdadgz.web_springboot.mapper.UserMapper;
 import cn.sdadgz.web_springboot.service.IUserService;

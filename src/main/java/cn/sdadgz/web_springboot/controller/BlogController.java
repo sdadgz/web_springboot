@@ -1,8 +1,10 @@
 package cn.sdadgz.web_springboot.controller;
 
-import cn.sdadgz.web_springboot.Utils.*;
-import cn.sdadgz.web_springboot.Utils.SameCode.Page.Page;
-import cn.sdadgz.web_springboot.Utils.SameCode.User.UserBan;
+import cn.sdadgz.web_springboot.service.IBlogService;
+import cn.sdadgz.web_springboot.service.IUserService;
+import cn.sdadgz.web_springboot.utils.*;
+import cn.sdadgz.web_springboot.utils.SameCode.Page.Page;
+import cn.sdadgz.web_springboot.utils.SameCode.User.UserBan;
 import cn.sdadgz.web_springboot.common.Result;
 import cn.sdadgz.web_springboot.config.BusinessException;
 import cn.sdadgz.web_springboot.entity.Blog;
@@ -11,6 +13,7 @@ import cn.sdadgz.web_springboot.mapper.BlogMapper;
 import cn.sdadgz.web_springboot.mapper.ImgMapper;
 import cn.sdadgz.web_springboot.mapper.UserMapper;
 import cn.sdadgz.web_springboot.service.IImgService;
+import cn.sdadgz.web_springboot.utils.SameCode.User.UserUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,16 +41,22 @@ import java.util.*;
 public class BlogController {
 
     @Resource
-    BlogMapper blogMapper;
+    private BlogMapper blogMapper;
 
     @Resource
-    UserMapper userMapper;
+    private IBlogService blogService;
 
     @Resource
-    ImgMapper imgMapper;
+    private UserMapper userMapper;
 
     @Resource
-    IImgService imgService;
+    private IUserService userService;
+
+    @Resource
+    private ImgMapper imgMapper;
+
+    @Resource
+    private IImgService imgService;
 
     @Value("${my.file-config.uploadPath}")
     private String uploadPath;
@@ -57,14 +66,6 @@ public class BlogController {
 
     private static final int DEFAULT_IMG_ID = 0; // 默认图片id
     private static final String BLOG_IMG = "博客首页";
-
-    // TODO 时间测试
-    @PostMapping("/time")
-    public Result timeTest(@RequestParam("time")
-                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime time) {
-        log.info("从前端获取的时间是：{}", time);
-        return Result.success();
-    }
 
     // 上传并新建一个博客
     @PostMapping("/upload")
@@ -133,9 +134,17 @@ public class BlogController {
 
     // 提供用户名获取blogs
     @GetMapping("/{username}/blogs")
-    public Result getBlogsByUserName(@PathVariable("username") String username) {
-        List<Blog> blogs = blogMapper.getBlogsByName(username);
-        return Result.success(blogs);
+    public Result getBlogsByUserName(@PathVariable("username") String username,
+                                     @RequestParam("currentPage") int currentPage,
+                                     @RequestParam("pageSize") int pageSize) {
+
+        // 用户id
+        int userId = userService.getUserIdByName(username);
+
+        // 分页数据
+        Map<String, Object> map = blogService.getPage(userId, currentPage, pageSize);
+
+        return Result.success(map);
     }
 
     // 修改博客

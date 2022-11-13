@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -16,4 +17,6 @@ import java.util.List;
  */
 public interface IBlogService extends IService<Blog> {
 
+    // 获取用户blog分页
+    Map<String, Object> getPage(int userId, int currentPage, int pageSize);
 }

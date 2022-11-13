@@ -1,6 +1,4 @@
-package cn.sdadgz.web_springboot.Utils;
-
-import java.time.LocalDateTime;
+package cn.sdadgz.web_springboot.utils;
 
 public class GeneralUtil {
     public static boolean notNull(Object obj) {

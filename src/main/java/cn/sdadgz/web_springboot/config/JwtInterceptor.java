@@ -1,8 +1,8 @@
 package cn.sdadgz.web_springboot.config;
 
-import cn.sdadgz.web_springboot.Utils.IdUtil;
-import cn.sdadgz.web_springboot.Utils.JwtUtil;
-import cn.sdadgz.web_springboot.Utils.StrUtil;
+import cn.sdadgz.web_springboot.utils.IdUtil;
+import cn.sdadgz.web_springboot.utils.JwtUtil;
+import cn.sdadgz.web_springboot.utils.StrUtil;
 import cn.sdadgz.web_springboot.entity.User;
 import cn.sdadgz.web_springboot.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;

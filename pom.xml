@@ -18,6 +18,12 @@
     </properties>
     <dependencies>
 
+        <!--    aop     -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
         <!--   压缩图片     -->
         <dependency>
             <groupId>net.coobird</groupId>

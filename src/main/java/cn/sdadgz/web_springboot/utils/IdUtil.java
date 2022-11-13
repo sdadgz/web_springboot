@@ -1,8 +1,6 @@
-package cn.sdadgz.web_springboot.Utils;
+package cn.sdadgz.web_springboot.utils;
 
-import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestHeader;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.NoSuchAlgorithmException;

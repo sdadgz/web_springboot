@@ -1,6 +1,5 @@
 package cn.sdadgz.web_springboot.config;
 
-import cn.sdadgz.web_springboot.Utils.IdUtil;
 import cn.sdadgz.web_springboot.service.IIpBanService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;

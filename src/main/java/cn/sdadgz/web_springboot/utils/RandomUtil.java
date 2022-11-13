@@ -1,4 +1,4 @@
-package cn.sdadgz.web_springboot.Utils;
+package cn.sdadgz.web_springboot.utils;
 
 import java.util.Random;
 

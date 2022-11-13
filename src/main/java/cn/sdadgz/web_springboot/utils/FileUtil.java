@@ -1,4 +1,4 @@
-package cn.sdadgz.web_springboot.Utils;
+package cn.sdadgz.web_springboot.utils;
 
 import cn.sdadgz.web_springboot.config.BusinessException;
 import cn.sdadgz.web_springboot.config.DangerousException;

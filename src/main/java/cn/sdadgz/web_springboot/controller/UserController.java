@@ -1,9 +1,9 @@
 package cn.sdadgz.web_springboot.controller;
 
-import cn.sdadgz.web_springboot.Utils.IdUtil;
-import cn.sdadgz.web_springboot.Utils.JwtUtil;
-import cn.sdadgz.web_springboot.Utils.SameCode.User.UserUtil;
-import cn.sdadgz.web_springboot.Utils.TimeUtil;
+import cn.sdadgz.web_springboot.utils.IdUtil;
+import cn.sdadgz.web_springboot.utils.JwtUtil;
+import cn.sdadgz.web_springboot.utils.SameCode.User.UserUtil;
+import cn.sdadgz.web_springboot.utils.TimeUtil;
 import cn.sdadgz.web_springboot.common.Result;
 import cn.sdadgz.web_springboot.entity.User;
 import cn.sdadgz.web_springboot.mapper.UserMapper;

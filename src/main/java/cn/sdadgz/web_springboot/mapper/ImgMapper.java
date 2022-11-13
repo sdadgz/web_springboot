@@ -1,9 +1,7 @@
 package cn.sdadgz.web_springboot.mapper;
 
-import cn.sdadgz.web_springboot.entity.Blog;
 import cn.sdadgz.web_springboot.entity.Img;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.CacheNamespace;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -18,7 +16,7 @@ import java.util.List;
  * @since 2022-08-27
  */
 @Mapper
-public interface ImgMapper extends BaseMapper<Img>, cn.sdadgz.web_springboot.Utils.SameCode.Page.Mapper<Img> {
+public interface ImgMapper extends BaseMapper<Img>, cn.sdadgz.web_springboot.utils.SameCode.Page.Mapper<Img> {
 
     // 正常用户分页
     List<Img> getPage(@Param("userId") Integer userId,

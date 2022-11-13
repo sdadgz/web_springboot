@@ -1,4 +1,4 @@
-package cn.sdadgz.web_springboot.Utils;
+package cn.sdadgz.web_springboot.utils;
 
 public class StrUtil {
     public final static String UNDERSCORE = "_"; // 下划线
