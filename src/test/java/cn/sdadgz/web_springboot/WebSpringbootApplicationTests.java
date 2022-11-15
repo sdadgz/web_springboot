@@ -10,7 +10,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.Random;
 
 @SpringBootTest
@@ -25,13 +27,6 @@ class WebSpringbootApplicationTests {
 
     @Resource
     UserMapper userMapper;
-
-    @Test
-    void contextLoads() throws IOException, NoSuchAlgorithmException {
-        User user = new User();
-        user.setPassword("36df389cf36bd9a12114939a021db844");
-        userMapper.update(user, null);
-    }
 
     @Test
     void getImgs(){
