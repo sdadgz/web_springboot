@@ -1,5 +1,7 @@
 package cn.sdadgz.web_springboot.controller;
 
+import cn.sdadgz.web_springboot.entity.Img;
+import cn.sdadgz.web_springboot.mapper.ImgMapper;
 import cn.sdadgz.web_springboot.utils.IdUtil;
 import cn.sdadgz.web_springboot.utils.JwtUtil;
 import cn.sdadgz.web_springboot.utils.SameCode.User.UserUtil;
@@ -30,10 +32,13 @@ import java.util.Map;
 public class UserController {
 
     @Resource
-    UserMapper userMapper;
+    private UserMapper userMapper;
 
     @Resource
-    IUserService userService;
+    private IUserService userService;
+
+    @Resource
+    private ImgMapper imgMapper;
 
     @Resource
     private IIpBanService ipBanService;
@@ -42,12 +47,21 @@ public class UserController {
     private static final String OLD_PASSWORD = "oldPassword";
     private static final String NEW_PASSWORD = "newPassword";
 
-    // 测试获取ip
-    @GetMapping("/ip")
-    public Result getIp(HttpServletRequest request) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("ip", IdUtil.getIp(request));
-        return Result.success(map);
+    // 上传头像
+    @PutMapping("/avatar")
+    public Result uploadAvatar(@RequestParam("imgId") int imgId, HttpServletRequest request) {
+
+        // 初始化
+        int userId = IdUtil.getUserId(request);
+        Img img = imgMapper.selectById(imgId);
+
+        // 修改user
+        User user = new User();
+        user.setId(userId);
+        user.setAvatar(img.getUrl() != null ? img.getUrl() : img.getReduceUrl());
+        userMapper.updateById(user);
+
+        return Result.success();
     }
 
     // 修改密码

@@ -38,7 +38,7 @@ public class IpBanServiceImpl extends ServiceImpl<IpBanMapper, IpBan> implements
         Long aLong = ipBanMapper.selectCount(wrapper);
 
         if (aLong > StrUtil.BLACKLIST_BAN) {
-            throw new BusinessException(Constants.CODE_498, "用户已被拉入黑名单");
+            throw new BusinessException(Constants.CODE_498, "加载失败，联系站长。");
         }
 
         return true;
