@@ -48,3 +48,12 @@ my:
     uploadPath: '${my.server.uploadPath}'
     staticPath: '/static/' # 访问前缀，不是物理地址
     downloadPath: '${my.server.name}:${server.port}${my.file-config.staticPath}' # 存url到数据库时用的他
+
+# 日志
+logging:
+  level:
+    root: info
+  file:
+    name: test.log
+    max-size: 10MB
+    clean-history-on-start: true

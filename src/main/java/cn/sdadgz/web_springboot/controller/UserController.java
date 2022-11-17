@@ -58,10 +58,10 @@ public class UserController {
         // 修改user
         User user = new User();
         user.setId(userId);
-        user.setAvatar(img.getUrl() != null ? img.getUrl() : img.getReduceUrl());
+        user.setAvatar(img.getReduceUrl() != null ? img.getReduceUrl() : img.getUrl());
         userMapper.updateById(user);
 
-        return Result.success();
+        return Result.success(user);
     }
 
     // 修改密码

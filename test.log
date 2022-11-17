@@ -1,0 +1,20 @@
+2022-11-17 18:59:31.181  INFO 15480 --- [main] c.s.w.WebSpringbootApplicationTests      : Starting WebSpringbootApplicationTests on DESKTOP-2AV1H2V with PID 15480 (started by 02 in D:\工具\编程\idea\java工作区\web_springboot)
+2022-11-17 18:59:31.183  INFO 15480 --- [main] c.s.w.WebSpringbootApplicationTests      : No active profile set, falling back to default profiles: default
+2022-11-17 18:59:31.314  WARN 15480 --- [background-preinit] o.s.h.c.j.Jackson2ObjectMapperBuilder    : For Jackson Kotlin classes support please add "com.fasterxml.jackson.module:jackson-module-kotlin" to the classpath
+2022-11-17 18:59:32.647  INFO 15480 --- [main] c.a.d.s.b.a.DruidDataSourceAutoConfigure : Init DruidDataSource
+2022-11-17 18:59:32.857  INFO 15480 --- [main] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} inited
+2022-11-17 18:59:34.243  INFO 15480 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2022-11-17 18:59:34.858  INFO 15480 --- [main] c.s.w.WebSpringbootApplicationTests      : Started WebSpringbootApplicationTests in 3.963 seconds (JVM running for 4.889)
+2022-11-17 18:59:36.403  INFO 15480 --- [SpringContextShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2022-11-17 18:59:36.404  INFO 15480 --- [SpringContextShutdownHook] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} closing ...
+2022-11-17 18:59:36.412  INFO 15480 --- [SpringContextShutdownHook] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} closed
+2022-11-17 19:04:10.368  INFO 4152 --- [main] c.s.w.WebSpringbootApplicationTests      : Starting WebSpringbootApplicationTests on DESKTOP-2AV1H2V with PID 4152 (started by 02 in D:\工具\编程\idea\java工作区\web_springboot)
+2022-11-17 19:04:10.370  INFO 4152 --- [main] c.s.w.WebSpringbootApplicationTests      : No active profile set, falling back to default profiles: default
+2022-11-17 19:04:10.541  WARN 4152 --- [background-preinit] o.s.h.c.j.Jackson2ObjectMapperBuilder    : For Jackson Kotlin classes support please add "com.fasterxml.jackson.module:jackson-module-kotlin" to the classpath
+2022-11-17 19:04:11.776  INFO 4152 --- [main] c.a.d.s.b.a.DruidDataSourceAutoConfigure : Init DruidDataSource
+2022-11-17 19:04:11.968  INFO 4152 --- [main] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} inited
+2022-11-17 19:04:13.319  INFO 4152 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2022-11-17 19:04:13.863  INFO 4152 --- [main] c.s.w.WebSpringbootApplicationTests      : Started WebSpringbootApplicationTests in 3.81 seconds (JVM running for 4.726)
+2022-11-17 19:04:15.250  INFO 4152 --- [SpringContextShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2022-11-17 19:04:15.252  INFO 4152 --- [SpringContextShutdownHook] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} closing ...
+2022-11-17 19:04:15.258  INFO 4152 --- [SpringContextShutdownHook] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} closed
