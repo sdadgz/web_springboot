@@ -35,3 +35,7 @@ build/
 ### 证书 ###
 src/main/resources/sdadgz.cn.jks
 src/main/resources/application.properties
+
+### log ###
+*.log
+*.gz
