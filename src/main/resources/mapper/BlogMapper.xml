@@ -50,6 +50,14 @@
         limit #{startPage},#{pageSize}
     </select>
 
+    <!--  垃圾回收  -->
+    <select id="getGC" resultMap="BlogMap">
+        select *
+        from blog b
+        where b.img_id not in (select i.id from img i)
+           or b.user_id not in (select u.id from user u)
+    </select>
+
     <!--  返回map  -->
     <resultMap id="BlogMap" type="Blog">
         <association property="img" javaType="Img"/>

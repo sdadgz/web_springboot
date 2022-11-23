@@ -29,4 +29,7 @@ public interface BlogMapper extends BaseMapper<Blog>, cn.sdadgz.web_springboot.u
 
     // 正常用户分页
     List<Blog> getPage(@Param("userId") Integer userId, @Param("startPage") Integer startPage, @Param("pageSize") Integer pageSize);
+
+    // 垃圾回收
+    List<Blog> getGC();
 }
