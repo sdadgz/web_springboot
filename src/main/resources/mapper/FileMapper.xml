@@ -16,6 +16,12 @@
         limit #{startPage}, #{pageSize}
     </select>
 
+    <select id="getGC" resultMap="FileMap">
+        select *
+        from file f
+        where f.user_id not in (select u.id from user u)
+    </select>
+
     <!--  返回map  -->
     <resultMap id="FileMap" type="File">
         <association property="user" javaType="User"/>
