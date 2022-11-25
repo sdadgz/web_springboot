@@ -19,4 +19,7 @@ public interface IBlogService extends IService<Blog> {
 
     // 获取用户blog分页
     Map<String, Object> getPage(int userId, int currentPage, int pageSize);
+
+    // 获取需要删除的blog
+    List<Blog> getGC();
 }
