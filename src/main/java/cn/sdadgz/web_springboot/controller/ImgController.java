@@ -1,5 +1,6 @@
 package cn.sdadgz.web_springboot.controller;
 
+import cn.sdadgz.web_springboot.dao.ImgUpdateDao;
 import cn.sdadgz.web_springboot.utils.FileUtil;
 import cn.sdadgz.web_springboot.utils.IdUtil;
 import cn.sdadgz.web_springboot.utils.SameCode.Page.Page;
@@ -55,7 +56,7 @@ public class ImgController {
 
     // 获取首页横幅
     @GetMapping("/{username}/banner")
-    public Result banner(HttpServletRequest request, @PathVariable String username) {
+    public Result banner(@PathVariable String username) {
 
         List<Img> imgs = imgService.getImgs(banner, username);
 
@@ -64,7 +65,7 @@ public class ImgController {
 
     // 获取背景图片
     @GetMapping("/{username}/background")
-    public Result background(HttpServletRequest request, @PathVariable String username) {
+    public Result background(@PathVariable String username) {
 
         List<Img> imgs = imgService.getImgs(background, username);
 
@@ -73,39 +74,19 @@ public class ImgController {
 
     // 修改博客
     @PutMapping("/update")
-    public Result update(@RequestBody Map<String, Object> paramMap,
+    public Result update(@RequestBody ImgUpdateDao paramMap,
                          HttpServletRequest request) {
 
         // 返回集
         Map<String, Object> map = new HashMap<>();
 
-        int id = 0;
-        ArrayList<Integer> idList = null;
-
         // 获取需要修改的数据
-        String field = String.valueOf(paramMap.get("field"));
+        String field = paramMap.getField();
+        List<Integer> idList = paramMap.getIdList();
 
-        // 参数是单
-        Object param = paramMap.get("id");
-        if (param != null) {
-            id = (int) param;
-        }
-        // 参数是多
-        param = paramMap.get("idList");
-        if (param != null) {
-            idList = (ArrayList<Integer>) param;
-            System.out.println(param.getClass());
-        }
-
-        // 使用参数
-        if (id != 0) {
-            map.put("single", updateF(id, field, request));
-        }
         // 使用多个参数
-        if (idList != null) {
-            for (int i : idList) {
-                map.put("multiple:" + i, updateF(i, field, request));
-            }
+        for (Integer i : idList) {
+            map.put("multiple:" + i, updateF(i, field, request));
         }
 
         return Result.success(map);
