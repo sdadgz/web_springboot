@@ -45,4 +45,21 @@ public class ImgServiceImpl extends ServiceImpl<ImgMapper, Img> implements IImgS
     public List<Img> getNeverUseImg(String field, Integer userId) {
         return imgMapper.getNeverUseImgs(field, userId);
     }
+
+    @Override
+    public List<Img> getGC() {
+        return imgMapper.getGC();
+    }
+
+    @Override
+    public Long virtualDeleteBatch(List<Img> imgs) {
+        return imgMapper.virtualDeleteBatch(imgs);
+    }
+
+    @Override
+    public Long realDeleteBatch() {
+        // TODO 获取需要被删除的md5值及url
+        List<Img> deleteImgs = imgMapper.getDeleteImgs();
+        return null;
+    }
 }

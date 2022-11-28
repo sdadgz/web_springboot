@@ -1,5 +1,6 @@
 package cn.sdadgz.web_springboot;
 
+import cn.sdadgz.web_springboot.entity.Img;
 import cn.sdadgz.web_springboot.entity.User;
 import cn.sdadgz.web_springboot.mapper.BlogMapper;
 import cn.sdadgz.web_springboot.mapper.ImgMapper;
@@ -12,7 +13,9 @@ import javax.annotation.Resource;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 @SpringBootTest
@@ -27,20 +30,6 @@ class WebSpringbootApplicationTests {
 
     @Resource
     UserMapper userMapper;
-
-    @Test
-    void getImgs(){
-        long l = System.currentTimeMillis();
-        imgMapper.getNeverUseImgs("首页",1);
-        long l1 = System.currentTimeMillis() - l;
-        imgMapper.getNeverUseImgs("首页",1);
-        long l2 = System.currentTimeMillis() - l;
-        imgMapper.getNeverUseImgs("首页",1);
-        long l3 = System.currentTimeMillis() - l;
-        imgMapper.getNeverUseImgs("首页",1);
-        long l4 = System.currentTimeMillis() - l;
-        System.out.println(l);
-    }
 
     @Test
     void random(){

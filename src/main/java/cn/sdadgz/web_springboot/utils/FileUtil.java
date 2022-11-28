@@ -37,7 +37,6 @@ import java.util.*;
 @Slf4j
 @Component
 public class FileUtil {
-
     private static FileUtil fileUtil;
 
     @Value("${my.file-config.uploadPath}")
@@ -129,13 +128,6 @@ public class FileUtil {
         map.put("id", uploadFile.getId());
 
         return map;
-    }
-
-    // 文件名已经存在
-    private boolean filenameExists(String filename) {
-        LambdaQueryWrapper<cn.sdadgz.web_springboot.entity.File> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(cn.sdadgz.web_springboot.entity.File::getOriginalFilename, filename);
-        return fileUtil.fileMapper.exists(wrapper);
     }
 
     // 笔记上传
@@ -232,22 +224,6 @@ public class FileUtil {
         return sb.toString();
     }
 
-    // 获取文件创建时间
-    private Date getCreateTime(String fullFileName) {
-        Path path = Paths.get(fullFileName);
-        BasicFileAttributeView basicview = Files.getFileAttributeView(path, BasicFileAttributeView.class, LinkOption.NOFOLLOW_LINKS);
-        BasicFileAttributes attr;
-        try {
-            attr = basicview.readAttributes();
-            return new Date(attr.creationTime().toMillis());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        Calendar cal = Calendar.getInstance();
-        cal.set(1970, Calendar.JANUARY, 1, 0, 0, 0);
-        return cal.getTime();
-    }
-
     // 上传到服务器
     public Map<String, Object> uploadImg(MultipartFile file, int userid, String field) throws NoSuchAlgorithmException, IOException {
         Map<String, Object> map = new HashMap<>();
@@ -290,6 +266,7 @@ public class FileUtil {
             if (jFile.delete()) {
                 map.put("fileInfo", "重复文件，删除了，用旧的");
             } else {
+                log.error("文件{}删除失败", path);
                 throw new BusinessException("557", "上传文件异常");
             }
         } else {
@@ -334,6 +311,44 @@ public class FileUtil {
         return null;
     }
 
+    // 上传到服务器
+    public void uploadToServer(MultipartFile file, String path) {
+        if (!file.isEmpty()) {
+            try {
+                file.transferTo(new File(path));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    // 根据url删除本地文件
+    public void deleteByUrl(String url) {
+        String path = urlToPath(url);
+        File file = new File(path);
+        boolean delete = file.delete();
+        if (delete) {
+            log.info("删除文件：{}成功", path);
+        } else {
+            log.error("删除文件：{}失败", path);
+        }
+    }
+
+    // url转path
+    private String urlToPath(String url) {
+        if (url.startsWith(fileUtil.downloadPath)) {
+            url = fileUtil.uploadPath + url.substring(fileUtil.downloadPath.length());
+        }
+        return url;
+    }
+
+    // 文件名已经存在
+    private boolean filenameExists(String filename) {
+        LambdaQueryWrapper<cn.sdadgz.web_springboot.entity.File> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(cn.sdadgz.web_springboot.entity.File::getOriginalFilename, filename);
+        return fileUtil.fileMapper.exists(wrapper);
+    }
+
     // 包含可处理图片
     private boolean containsType(String type) {
         for (String s : SUPPORT_TYPE) {
@@ -366,17 +381,6 @@ public class FileUtil {
         return null;
     }
 
-    // 上传到服务器
-    public void uploadToServer(MultipartFile file, String path) {
-        if (!file.isEmpty()) {
-            try {
-                file.transferTo(new File(path));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
     // 根据文件名获取文件类型
     private String getType(String fileName) {
         if (!fileName.contains(".")) {
@@ -385,11 +389,11 @@ public class FileUtil {
         return fileName.substring(fileName.lastIndexOf('.'));
     }
 
+    // 获取文件名
     private String getOriginalFilename(String fileName) {
         if (!fileName.contains(".")) {
             return fileName;
         }
         return fileName.substring(0, fileName.lastIndexOf('.'));
     }
-
 }

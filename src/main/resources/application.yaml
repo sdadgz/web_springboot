@@ -8,6 +8,9 @@ server:
     encoding:
       force: true # 静态资源乱码
       charset: utf-8
+      # 不要手欠格式化，不知道在哪个环节起作用的timeout
+#  tomcat:
+#    connection-timeout: 500
 
 spring:
   datasource:

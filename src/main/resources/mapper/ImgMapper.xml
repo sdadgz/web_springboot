@@ -2,6 +2,17 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.sdadgz.web_springboot.mapper.ImgMapper">
 
+    <!--    虚拟批量删除    -->
+    <update id="virtualDeleteBatch" parameterType="list">
+        update img i
+        set i.is_delete = true
+        where i.id in (
+        <foreach collection="imgs" item="item" index="index" separator=",">
+            #{item.id}
+        </foreach>
+        )
+    </update>
+
     <!--  正常用户分页  -->
     <select id="getPage" resultMap="ImgMap">
         select *
@@ -23,6 +34,19 @@
         where i.field like CONCAT('%', #{field}, '%')
           and i.id not in (select b.img_id from blog b where b.user_id = #{userId})
           and !i.is_delete
+    </select>
+
+    <select id="getGC" resultMap="ImgMap">
+        select *
+        from img i
+        where i.user_id not in (select u.id from user u)
+    </select>
+
+    <select id="getDeleteImgs" resultType="cn.sdadgz.web_springboot.entity.Img">
+        select i.md5, min(i.is_delete) iis_delete, max(i.url) as url, max(i.reduce_url) as reduce_url
+        from img i
+        group by i.md5
+        having iis_delete = 1
     </select>
 
     <!--  结果集  -->

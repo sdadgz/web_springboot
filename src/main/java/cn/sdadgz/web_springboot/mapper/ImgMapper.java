@@ -26,4 +26,13 @@ public interface ImgMapper extends BaseMapper<Img>, cn.sdadgz.web_springboot.uti
     // 获取未使用的图片
     List<Img> getNeverUseImgs(@Param("field") String field,
                               @Param("userId") Integer userId);
+
+    // 获取失效图片
+    List<Img> getGC();
+
+    // 批量虚拟删除
+    Long virtualDeleteBatch(@Param("imgs") List<Img> imgs);
+
+    // 获取需要删除的图片
+    List<Img> getDeleteImgs();
 }
