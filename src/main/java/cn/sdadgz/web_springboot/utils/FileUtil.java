@@ -323,14 +323,16 @@ public class FileUtil {
     }
 
     // 根据url删除本地文件
-    public void deleteByUrl(String url) {
-        String path = urlToPath(url);
-        File file = new File(path);
-        boolean delete = file.delete();
-        if (delete) {
-            log.info("删除文件：{}成功", path);
-        } else {
-            log.error("删除文件：{}失败", path);
+    public void deleteByUrl(String... url) {
+        for (String s : url) {
+            String path = urlToPath(s);
+            File file = new File(path);
+            boolean delete = file.delete();
+            if (delete) {
+                log.info("删除文件：{}成功", path);
+            } else {
+                log.error("删除文件：{}失败", path);
+            }
         }
     }
 

@@ -4,8 +4,10 @@ import cn.sdadgz.web_springboot.entity.Img;
 import cn.sdadgz.web_springboot.mapper.ImgMapper;
 import cn.sdadgz.web_springboot.service.IImgService;
 import cn.sdadgz.web_springboot.service.IUserService;
+import cn.sdadgz.web_springboot.utils.FileUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -20,6 +22,7 @@ import java.util.List;
  * @since 2022-08-27
  */
 @Service
+@Slf4j
 public class ImgServiceImpl extends ServiceImpl<ImgMapper, Img> implements IImgService {
 
     @Resource
@@ -58,8 +61,22 @@ public class ImgServiceImpl extends ServiceImpl<ImgMapper, Img> implements IImgS
 
     @Override
     public Long realDeleteBatch() {
-        // TODO 获取需要被删除的md5值及url
+        // 获取需要被删除的md5值及url
+        FileUtil fileUtil = new FileUtil();
         List<Img> deleteImgs = imgMapper.getDeleteImgs();
-        return null;
+        LambdaQueryWrapper<Img> wrapper = new LambdaQueryWrapper<>();
+        long res = 0;
+
+        for (Img deleteImg : deleteImgs) {
+            // 物理删除
+            fileUtil.deleteByUrl(deleteImg.getUrl(), deleteImg.getReduceUrl());
+            // 数据库删除
+            wrapper.eq(Img::getMd5, deleteImg.getMd5());
+            res += imgMapper.delete(wrapper);
+        }
+
+        log.info("从img数据库删除了{}条信息", res);
+        return res;
     }
+
 }

@@ -21,12 +21,13 @@ public interface IImgService extends IService<Img> {
     // 获取没有被使用过的图片
     List<Img> getNeverUseImg(String field, Integer userId);
 
-    // 失效图片
+    // 空引用图片
     List<Img> getGC();
 
     // 批量虚拟删除图片
     Long virtualDeleteBatch(List<Img> imgs);
 
-    // 物理删除图片
+    // 物理删除冗余图片
     Long realDeleteBatch();
+
 }
