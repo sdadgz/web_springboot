@@ -31,7 +31,6 @@ public class JwtUtil {
         JWTVerifier verifier = JWT.require(Algorithm.HMAC256(Md5Util.md5(userid) + Md5Util.md5(password))).build();
         try {
             jwt = verifier.verify(token);
-            System.out.println(jwt);
             return true;
         } catch (JWTVerificationException e) {
             return false;

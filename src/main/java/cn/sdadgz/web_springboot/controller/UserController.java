@@ -66,8 +66,7 @@ public class UserController {
 
     // 修改密码
     @PutMapping("/password")
-    public Result update(HttpServletRequest request,
-                         @RequestBody Map<String, String> map) throws NoSuchAlgorithmException {
+    public Result update(@RequestBody Map<String, String> map, HttpServletRequest request) throws NoSuchAlgorithmException {
 
         // 初始化
         String username = map.get(USERNAME);

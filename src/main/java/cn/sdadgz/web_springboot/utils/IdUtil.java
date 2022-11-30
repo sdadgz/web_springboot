@@ -41,7 +41,6 @@ public class IdUtil {
             }
         }
 
-//        log.info("访问者ip：{}", ip);
         return ip;
     }
 }

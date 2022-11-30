@@ -113,7 +113,6 @@ public class FileController {
     @GetMapping("/{username}/page")
     public Result page(@RequestParam("currentPage") int currentPage,
                        @RequestParam("pageSize") int pageSize,
-                       HttpServletRequest request,
                        @PathVariable("username") String username) {
 
         Page<FileMapper, File> page = new Page<>();

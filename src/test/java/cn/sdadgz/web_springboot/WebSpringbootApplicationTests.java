@@ -9,6 +9,7 @@ import cn.sdadgz.web_springboot.mapper.ImgMapper;
 import cn.sdadgz.web_springboot.mapper.UserMapper;
 import cn.sdadgz.web_springboot.scheduled.ImgScheduled;
 import cn.sdadgz.web_springboot.service.IImgService;
+import cn.sdadgz.web_springboot.utils.RandomUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,13 +43,15 @@ class WebSpringbootApplicationTests {
     private FileMapper fileMapper;
 
     @Test
-    void test() {
-        String[] arr = {"1", "2"};
-        add(arr);
-    }
-
-    void add(String... strings) {
-        System.out.println(Arrays.toString(strings));
+    void random() {
+        int anInt = RandomUtil.getInt(60);
+        System.out.println(anInt);
+        anInt = RandomUtil.getInt(60);
+        System.out.println(anInt);
+        anInt = RandomUtil.getInt(24);
+        System.out.println(anInt);
+        anInt = RandomUtil.getInt(7);
+        System.out.println(anInt);
     }
 
 }

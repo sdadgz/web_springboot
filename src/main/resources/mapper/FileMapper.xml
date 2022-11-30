@@ -33,16 +33,15 @@
     </select>
 
     <select id="getDeleteFiles" resultType="cn.sdadgz.web_springboot.entity.File">
-        select f.md5, min(f.is_delete) as f.is_delete, max(f.url) as f.url
+        select f.md5, min(f.is_delete) as is_delete, max(f.url) as url
         from file f
         group by f.md5
-        having f.is_delete = 1
+        having is_delete = 1
     </select>
 
     <!--  返回map  -->
     <resultMap id="FileMap" type="File">
         <association property="user" javaType="User"/>
     </resultMap>
-
 </mapper>
 

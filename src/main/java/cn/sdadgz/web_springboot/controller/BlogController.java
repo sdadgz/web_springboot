@@ -58,12 +58,6 @@ public class BlogController {
     @Resource
     private IImgService imgService;
 
-    @Value("${my.file-config.uploadPath}")
-    private String uploadPath;
-
-    @Value("${my.file-config.downloadPath}")
-    private String downloadPath;
-
     private static final int DEFAULT_IMG_ID = 0; // 默认图片id
     private static final String BLOG_IMG = "博客首页";
 

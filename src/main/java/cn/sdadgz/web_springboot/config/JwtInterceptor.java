@@ -24,6 +24,9 @@ public class JwtInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        // ip
+        String ip = IdUtil.getIp(request);
+
         //放行OPTIONS请求
         String method = request.getMethod();
         if ("OPTIONS".equals(method)) {
@@ -31,9 +34,9 @@ public class JwtInterceptor implements HandlerInterceptor {
         }
         //获取token
         String token = request.getHeader("token");
-        System.out.println("Token已拦截请求");
         //token不存在直接报错
         if (token == null) {
+            log.error("访问者ip：{}，token不存在", ip);
             throw new BusinessException("499", "Token不存在");
         }
         //获取签发对象id，不存在直接报错
@@ -41,23 +44,26 @@ public class JwtInterceptor implements HandlerInterceptor {
         try {
             userid = JwtUtil.getAudience(token);//获取token中的签发对象
         } catch (Exception e) {
-            throw new DangerousException("499", "数据校验失败", IdUtil.getIp(request), StrUtil.NO_USER);
+            log.error("访问者ip：{}，token校验失败", ip);
+            throw new DangerousException("499", "数据校验失败", ip, StrUtil.NO_USER);
         }
         //带着token验证载荷username是否正确
         User realUser = null;
         realUser = userMapper.selectById(userid);
         if (realUser == null) { // 用户不存在
+            log.error("访问者ip：{}，token认证错误", ip);
             throw new DangerousException("499", "认证错误", request, Integer.parseInt(userid));
         }
         //姓名不匹配返回
         if (!Objects.equals(realUser.getName(), JwtUtil.getClaimByName(token, "username").asString())) {
+            log.error("访问者ip：{}，token认证错误", ip);
             throw new DangerousException("499", "认证错误", request, Integer.parseInt(userid));
         }
         //检查是否过期
         if (JwtUtil.checkDate(token)) {
+            log.error("访问者ip：{}，token过期", ip);
             throw new BusinessException("499", "token过期");
         }
-        log.info("tocken验证成功");
         //布尔值验证
         return JwtUtil.vertifyToken(token, userid, realUser.getPassword());
     }

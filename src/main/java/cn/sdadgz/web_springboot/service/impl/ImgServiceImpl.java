@@ -57,7 +57,6 @@ public class ImgServiceImpl extends ServiceImpl<ImgMapper, Img> implements IImgS
     @Override
     public Long virtualDeleteBatch(List<Img> imgs) {
         if (imgs.size() < 1) {
-            log.info("imgService虚拟删除为空");
             return 0L;
         }
         return imgMapper.virtualDeleteBatch(imgs);
