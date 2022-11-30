@@ -92,33 +92,6 @@ public class ImgController {
         return Result.success(map);
     }
 
-    // 带验证的修改
-    private Map<String, Object> updateF(int id, String field, HttpServletRequest request) {
-
-        Map<String, Object> map = new HashMap<>();
-
-        // 获取用户id
-        int userId = IdUtil.getUserId(request);
-
-        // 获取图片信息并验证
-        Img img = imgMapper.selectById(id);
-        if (userId > 0) { // 正常用户
-            if (img.getUserId() != userId) { // 尝试跨权限
-                // 拒绝他
-                throw new BusinessException("498", "权限不足");
-            }
-        }
-
-        if (img == null) {
-            throw new BusinessException("433", "图片id不存在");
-        }
-        img.setField(field);
-        int i = imgMapper.updateById(img);
-        map.put("id:" + id, i);
-
-        return map;
-    }
-
     // 分页
     @GetMapping("/{username}/page")
     public Result page(@RequestParam("currentPage") int currentPage,
@@ -137,14 +110,14 @@ public class ImgController {
 
     // 删除
     @DeleteMapping
-    public Result delete(@RequestBody Map<String, Object> map,
+    public Result delete(@RequestBody Map<String, Integer> map,
                          HttpServletRequest request) {
 
         // 返回集
         Map<String, Object> resultMap = new HashMap<>();
 
         // 获取图片id
-        int id = (int) map.get("id");
+        int id = map.get("id");
 
         // 获取用户id
         int userId = IdUtil.getUserId(request);
@@ -165,44 +138,6 @@ public class ImgController {
 
         resultMap.put("mapperDelete", i);
 
-        // 真实删除
-        String md5 = img.getMd5();
-        wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Img::getMd5, md5);
-        List<Img> imgs = imgMapper.selectList(wrapper);
-        boolean readDelete = true;
-        for (Img img1 : imgs) {
-            if (!img1.getIsDelete()) {
-                readDelete = false;
-                break;
-            }
-        }
-        // 确实需要删除了
-        if (readDelete) {
-            // 原图片删除
-            String path = img.getUrl();
-            if (path.contains(downloadPath)) { // 是上传的图片，不是网图
-                path = path.substring(downloadPath.length());
-                File file = new File(uploadPath + path);
-                boolean delete = file.delete();
-                resultMap.put("realDelete", delete);
-            }
-
-            // 浓缩图删除
-            String reducePath = img.getReduceUrl();
-            if (reducePath != null && reducePath.contains(downloadPath)) { // 是上传的图片，不是网图
-                reducePath = reducePath.substring(downloadPath.length());
-                File reduceFile = new File(uploadPath + reducePath);
-                boolean reduceDelete = reduceFile.delete();
-                resultMap.put("reduceRealDelete", reduceDelete);
-            }
-
-            // 数据库删除
-            for (Img img1 : imgs) {
-                int deleteById = imgMapper.deleteById(img1.getId());
-                resultMap.put("deleteSqlItem" + img1.getId(), deleteById);
-            }
-        }
         return Result.success(resultMap);
     }
 
@@ -240,4 +175,32 @@ public class ImgController {
 
         return Result.success(map);
     }
+
+    // 带验证的修改
+    private Map<String, Object> updateF(int id, String field, HttpServletRequest request) {
+
+        Map<String, Object> map = new HashMap<>();
+
+        // 获取用户id
+        int userId = IdUtil.getUserId(request);
+
+        // 获取图片信息并验证
+        Img img = imgMapper.selectById(id);
+        if (userId > 0) { // 正常用户
+            if (img.getUserId() != userId) { // 尝试跨权限
+                // 拒绝他
+                throw new BusinessException("498", "权限不足");
+            }
+        }
+
+        if (img == null) {
+            throw new BusinessException("433", "图片id不存在");
+        }
+        img.setField(field);
+        int i = imgMapper.updateById(img);
+        map.put("id:" + id, i);
+
+        return map;
+    }
+
 }
