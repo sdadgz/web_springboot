@@ -56,11 +56,15 @@ public class ImgServiceImpl extends ServiceImpl<ImgMapper, Img> implements IImgS
 
     @Override
     public Long virtualDeleteBatch(List<Img> imgs) {
+        if (imgs.size() < 1) {
+            log.info("imgService虚拟删除为空");
+            return 0L;
+        }
         return imgMapper.virtualDeleteBatch(imgs);
     }
 
     @Override
-    public Long realDeleteBatch() {
+    public void realDeleteBatch() {
         // 获取需要被删除的md5值及url
         FileUtil fileUtil = new FileUtil();
         List<Img> deleteImgs = imgMapper.getDeleteImgs();
@@ -76,7 +80,6 @@ public class ImgServiceImpl extends ServiceImpl<ImgMapper, Img> implements IImgS
         }
 
         log.info("从img数据库删除了{}条信息", res);
-        return res;
     }
 
 }

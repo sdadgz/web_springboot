@@ -1,17 +1,17 @@
 package cn.sdadgz.web_springboot.service.impl;
 
-import cn.sdadgz.web_springboot.config.BusinessException;
 import cn.sdadgz.web_springboot.config.FileConfig;
 import cn.sdadgz.web_springboot.entity.File;
 import cn.sdadgz.web_springboot.mapper.FileMapper;
 import cn.sdadgz.web_springboot.service.IFileService;
-import cn.sdadgz.web_springboot.utils.GeneralUtil;
+import cn.sdadgz.web_springboot.utils.FileUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -46,37 +46,37 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
     }
 
     @Override
-    public File deleteFile(Integer fileId, Integer userId) {
-        File file = fileMapper.selectById(fileId);
-
-        // 遣返跨权
-        if (userId > 0 && !userId.equals(file.getUserId())) {
-            throw new BusinessException("498", "权限不足");
+    public Long virtualDelete(List<File> files) {
+        // 去掉空
+        if (files.size() < 1) {
+            log.info("file虚拟删除传参为空");
+            return 0L;
         }
 
-        file.setIsDelete(true);
-        fileMapper.updateById(file);
-        return file;
+        // 虚拟删除
+        return fileMapper.virtualDeleteBatch(files);
     }
 
     @Override
-    public File realDelete(File file) {
+    public void realDelete() {
+        // 真实删除图片
+        FileUtil fileUtil = new FileUtil();
+        List<File> deleteFiles = fileMapper.getDeleteFiles();
 
-        // 确实需要删除了
-        String path = file.getUrl();
-        // 是上传的图片，不是网图
-        if (path.contains(fileConfig.getDownloadPath())) {
-            path = path.substring(fileConfig.getDownloadPath().length());
-            java.io.File jFile = new java.io.File(fileConfig.getUploadPath() + path);
-            boolean delete = jFile.delete();
-            log.info("删除文件{}，{}", jFile.getName(), GeneralUtil.tf(delete));
+        for (File deleteFile : deleteFiles) {
+            // 文件删除
+            fileUtil.deleteByUrl(deleteFile.getUrl());
+
+            // 数据库删除
+            deleteByMD5Batch(deleteFile.getMd5());
         }
+    }
 
-        // 数据库删除
+    @Override
+    public void deleteByMD5Batch(String... md5) {
         LambdaQueryWrapper<File> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(File::getMd5, file.getMd5());
-        fileMapper.delete(wrapper);
-
-        return file;
+        wrapper.in(File::getMd5, Arrays.asList(md5));
+        int delete = fileMapper.delete(wrapper);
+        log.info("file数据库根据md5s删除了{}条数据", delete);
     }
 }

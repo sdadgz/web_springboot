@@ -2,6 +2,16 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.sdadgz.web_springboot.mapper.FileMapper">
 
+    <update id="virtualDeleteBatch" parameterType="list">
+        update file i
+        set i.is_delete = true
+        where i.id in (
+        <foreach collection="files" item="item" index="index" separator=",">
+            #{item.id}
+        </foreach>
+        )
+    </update>
+
     <!--  正常用户分页  -->
     <select id="getPage" resultMap="FileMap">
         select *
@@ -22,9 +32,17 @@
         where f.user_id not in (select u.id from user u)
     </select>
 
+    <select id="getDeleteFiles" resultType="cn.sdadgz.web_springboot.entity.File">
+        select f.md5, min(f.is_delete) as f.is_delete, max(f.url) as f.url
+        from file f
+        group by f.md5
+        having f.is_delete = 1
+    </select>
+
     <!--  返回map  -->
     <resultMap id="FileMap" type="File">
         <association property="user" javaType="User"/>
     </resultMap>
 
 </mapper>
+

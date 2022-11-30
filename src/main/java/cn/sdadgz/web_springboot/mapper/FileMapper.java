@@ -23,4 +23,10 @@ public interface FileMapper extends BaseMapper<File>, cn.sdadgz.web_springboot.u
 
     // 垃圾回收
     List<File> getGC();
+
+    // 虚拟删除，需要判断非空
+    Long virtualDeleteBatch(@Param("files") List<File> files);
+
+    // 获取需要删除的文件
+    List<File> getDeleteFiles();
 }

@@ -3,7 +3,6 @@ package cn.sdadgz.web_springboot.service;
 import cn.sdadgz.web_springboot.entity.File;
 import com.baomidou.mybatisplus.extension.service.IService;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -23,8 +22,11 @@ public interface IFileService extends IService<File> {
     List<File> getGC();
 
     // 删除文件
-    File deleteFile(Integer fileId, Integer userId);
+    Long virtualDelete(List<File> files);
 
     // 物理删除
-    File realDelete(File file);
+    void realDelete();
+
+    // 根据md5删除数据库
+    void deleteByMD5Batch(String... md5);
 }

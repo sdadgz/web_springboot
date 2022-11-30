@@ -329,9 +329,9 @@ public class FileUtil {
             File file = new File(path);
             boolean delete = file.delete();
             if (delete) {
-                log.info("删除文件：{}成功", path);
+                log.info("删除文件：\"{}\"成功", path);
             } else {
-                log.error("删除文件：{}失败", path);
+                log.error("删除文件：\"{}\"失败", path);
             }
         }
     }

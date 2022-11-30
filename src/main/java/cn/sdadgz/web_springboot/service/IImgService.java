@@ -28,6 +28,6 @@ public interface IImgService extends IService<Img> {
     Long virtualDeleteBatch(List<Img> imgs);
 
     // 物理删除冗余图片
-    Long realDeleteBatch();
+    void realDeleteBatch();
 
 }

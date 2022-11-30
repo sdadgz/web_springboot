@@ -30,7 +30,7 @@ public interface ImgMapper extends BaseMapper<Img>, cn.sdadgz.web_springboot.uti
     // 获取失效图片
     List<Img> getGC();
 
-    // 批量虚拟删除
+    // 批量虚拟删除，需要判定是否非空
     Long virtualDeleteBatch(@Param("imgs") List<Img> imgs);
 
     // 获取需要删除的图片

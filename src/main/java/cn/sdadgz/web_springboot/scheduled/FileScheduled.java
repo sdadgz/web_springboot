@@ -19,10 +19,17 @@ public class FileScheduled {
     private IFileService fileService;
 
     @Scheduled(cron = "9 9 6 ? * 2")
-    public void deleteFile() {
+    private void deleteFile() {
         List<File> gc = fileService.getGC();
         log.info("file垃圾回收获取到了{}条垃圾", gc.size());
-        fileService.removeBatchByIds(gc);
+
+        Long aLong = fileService.virtualDelete(gc);
+        log.info("file垃圾回收修改数据库{}条数据", aLong);
+    }
+
+    @Scheduled(cron = "7 1 22 ? * 6")
+    private void realDelete(){
+        fileService.realDelete();
     }
 
 }
