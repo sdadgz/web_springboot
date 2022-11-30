@@ -2,4 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.sdadgz.web_springboot.mapper.IpBanMapper">
 
+    <select id="getGC" resultType="cn.sdadgz.web_springboot.entity.IpBan">
+        select *
+        from ip_ban ib
+        where ib.user_id not in (select u.id from user u)
+    </select>
+
 </mapper>

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * <p>
@@ -53,5 +54,10 @@ public class IpBanServiceImpl extends ServiceImpl<IpBanMapper, IpBan> implements
         if (aLong > StrUtil.BLACKLIST_BAN) {
             throw new BusinessException(Constants.CODE_499, "用户名或密码错误");
         }
+    }
+
+    @Override
+    public List<IpBan> getGC() {
+        return ipBanMapper.getGC();
     }
 }

@@ -1,0 +1,28 @@
+package cn.sdadgz.web_springboot.scheduled;
+
+import cn.sdadgz.web_springboot.entity.IpBan;
+import cn.sdadgz.web_springboot.service.IIpBanService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+
+import javax.annotation.Resource;
+import java.util.List;
+
+@EnableScheduling
+@Configuration
+@Slf4j
+public class IpBanScheduled {
+
+    @Resource
+    private IIpBanService ipBanService;
+
+    @Scheduled(cron = "12 23 3 ? * 2")
+    void delete() {
+        List<IpBan> gc = ipBanService.getGC();
+        log.info("ipBan获取到{}条垃圾", gc.size());
+        ipBanService.removeBatchByIds(gc);
+    }
+
+}

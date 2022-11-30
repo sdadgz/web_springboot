@@ -5,6 +5,7 @@ import cn.sdadgz.web_springboot.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * <p>
@@ -21,5 +22,8 @@ public interface IIpBanService extends IService<IpBan> {
 
     // 防止用户密码被暴力破解
     void protect(User user);
+
+    // 垃圾回收
+    List<IpBan> getGC();
 
 }

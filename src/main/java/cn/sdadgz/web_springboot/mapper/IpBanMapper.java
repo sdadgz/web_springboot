@@ -4,6 +4,8 @@ import cn.sdadgz.web_springboot.entity.IpBan;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * <p>
  *  Mapper 接口
@@ -14,5 +16,8 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface IpBanMapper extends BaseMapper<IpBan> {
+
+    // 获取GC
+    List<IpBan> getGC();
 
 }
