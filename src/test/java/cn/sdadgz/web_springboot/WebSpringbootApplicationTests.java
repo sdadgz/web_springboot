@@ -26,7 +26,7 @@ class WebSpringbootApplicationTests {
     private IImgService imgService;
 
     @Resource
-    UserMapper userMapper;
+    private UserMapper userMapper;
 
     @Resource
     private FileMapper fileMapper;
