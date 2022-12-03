@@ -8,9 +8,6 @@ server:
     encoding:
       force: true # 静态资源乱码
       charset: utf-8
-      # 不要手欠格式化，不知道在哪个环节起作用的timeout
-#  tomcat:
-#    connection-timeout: 500
 
 spring:
   datasource:
@@ -18,6 +15,9 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      max-active: 200
+      min-idle: 6
   servlet:
     multipart:
       max-request-size: 10GB
@@ -26,7 +26,6 @@ spring:
     static-path-pattern: ${my.file-config.staticPath}** # 静态资源访问
   resources:
     static-locations: file:${my.file-config.uploadPath}
-
 # mybatis原生，删了试试会不会报错
 #mybatis:
 #  mapper-locations: mapper/*.xml
@@ -41,7 +40,8 @@ mybatis-plus:
     map-underscore-to-camel-case: true
     auto-mapping-behavior: full
   type-aliases-package: cn.sdadgz.web_springboot.entity
-
+  global-config:
+    mapper-registry-cache: true
 my:
   server: # 上传到服务器需要改这个
     name: https://sdadgz.cn
