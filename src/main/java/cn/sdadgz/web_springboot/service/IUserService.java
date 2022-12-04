@@ -13,12 +13,22 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IUserService extends IService<User> {
 
-    // 根据用户名获取用户id
+    // 新增用户
+    void addUser(User user);
+
+    // 根据id修改
+    void updateUserById(User user);
+
+    // username -> userId
     int getUserIdByName(String username);
 
-    // 根据用户名获取用户
+    // username -> user
     User getUserByName(String username);
 
-    // 用户名已被占用
+    // userId -> user
+    User getUserById(Integer userId);
+
+    // username -> 被占用
     boolean nameExists(String username);
+
 }

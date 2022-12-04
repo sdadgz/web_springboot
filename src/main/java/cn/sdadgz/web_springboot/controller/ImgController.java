@@ -1,6 +1,7 @@
 package cn.sdadgz.web_springboot.controller;
 
 import cn.sdadgz.web_springboot.dao.ImgUpdateDao;
+import cn.sdadgz.web_springboot.service.IUserService;
 import cn.sdadgz.web_springboot.utils.FileUtil;
 import cn.sdadgz.web_springboot.utils.IdUtil;
 import cn.sdadgz.web_springboot.utils.SameCode.Page.Page;
@@ -18,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -44,21 +44,23 @@ public class ImgController {
     @Resource
     private IImgService imgService;
 
+    @Resource
+    private IUserService userService;
+
     @Value("${my.file-config.uploadPath}")
     private String uploadPath;
 
     @Value("${my.file-config.downloadPath}")
     private String downloadPath;
 
-    private final String banner = "首页横幅";
-
-    private final String background = "全局背景图片";
+    private static final String BANNER = "首页横幅";
+    private static final String BACKGROUND = "全局背景图片";
 
     // 获取首页横幅
     @GetMapping("/{username}/banner")
     public Result banner(@PathVariable String username) {
 
-        List<Img> imgs = imgService.getImgs(banner, username);
+        List<Img> imgs = imgService.getImgs(BANNER, username);
 
         return Result.success(imgs);
     }
@@ -67,7 +69,7 @@ public class ImgController {
     @GetMapping("/{username}/background")
     public Result background(@PathVariable String username) {
 
-        List<Img> imgs = imgService.getImgs(background, username);
+        List<Img> imgs = imgService.getImgs(BACKGROUND, username);
 
         return Result.success(imgs);
     }
@@ -102,10 +104,9 @@ public class ImgController {
         // 遣返
         UserBan.getTheFuckOut(username, request);
 
-        Page<ImgMapper, Img> page = new Page<>();
-        Map<String, Object> map = page.getPage(currentPage, pageSize, request, imgMapper);
+        Map<String, Object> page = imgService.getPage(userService.getUserIdByName(username), currentPage, pageSize);
 
-        return Result.success(map);
+        return Result.success(page);
     }
 
     // 删除
@@ -123,9 +124,7 @@ public class ImgController {
         int userId = IdUtil.getUserId(request);
 
         // 获取图片
-        LambdaQueryWrapper<Img> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Img::getId, id);
-        Img img = imgMapper.selectById(id);
+        Img img = imgService.getImgById(id);
 
         // 不是海克斯科技用户还想删别人东西
         if (img.getUserId() != userId && userId > 0) {
@@ -133,10 +132,9 @@ public class ImgController {
         }
 
         // 虚拟删除
-        img.setIsDelete(true);
-        int i = imgMapper.updateById(img);
+        Long aLong = imgService.virtualDeleteBatch(Collections.singletonList(img));
 
-        resultMap.put("mapperDelete", i);
+        resultMap.put("updateCount", aLong);
 
         return Result.success(resultMap);
     }
@@ -177,7 +175,7 @@ public class ImgController {
     }
 
     // 带验证的修改
-    private Map<String, Object> updateF(int id, String field, HttpServletRequest request) {
+    private Map<String, Object> updateF(int imgId, String field, HttpServletRequest request) {
 
         Map<String, Object> map = new HashMap<>();
 
@@ -185,7 +183,7 @@ public class ImgController {
         int userId = IdUtil.getUserId(request);
 
         // 获取图片信息并验证
-        Img img = imgMapper.selectById(id);
+        Img img = imgService.getImgById(imgId);
         if (userId > 0) { // 正常用户
             if (img.getUserId() != userId) { // 尝试跨权限
                 // 拒绝他
@@ -197,8 +195,8 @@ public class ImgController {
             throw new BusinessException("433", "图片id不存在");
         }
         img.setField(field);
-        int i = imgMapper.updateById(img);
-        map.put("id:" + id, i);
+        int i = imgService.updateImgById(img);
+        map.put("imgId:" + imgId, i);
 
         return map;
     }

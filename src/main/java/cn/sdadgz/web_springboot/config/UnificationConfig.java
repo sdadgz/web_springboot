@@ -6,15 +6,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "my.file-config")
+@ConfigurationProperties(prefix = "my.unification-config")
 @Getter
 @Setter
-public class FileConfig {
+public class UnificationConfig {
 
-    private String uploadPath;
+    private String responseLists;
 
-    private String staticPath;
-
-    private String downloadPath;
+    private String responseTotal;
 
 }

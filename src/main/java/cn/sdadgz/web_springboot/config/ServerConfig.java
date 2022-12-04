@@ -6,15 +6,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "my.file-config")
+@ConfigurationProperties(prefix = "my.server")
 @Getter
 @Setter
-public class FileConfig {
+public class ServerConfig {
+
+    private String name;
 
     private String uploadPath;
-
-    private String staticPath;
-
-    private String downloadPath;
 
 }

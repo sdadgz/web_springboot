@@ -10,6 +10,9 @@ import cn.sdadgz.web_springboot.mapper.IpBanMapper;
 import cn.sdadgz.web_springboot.service.IIpBanService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -25,12 +28,14 @@ import java.util.List;
  * @since 2022-11-09
  */
 @Service
+@CacheConfig(cacheNames = "ipBanCache")
 public class IpBanServiceImpl extends ServiceImpl<IpBanMapper, IpBan> implements IIpBanService {
 
     @Resource
     private IpBanMapper ipBanMapper;
 
     @Override
+    @Cacheable(key = "#request.getHeader(\"X-FORWARDED-FOR\") == null ? #request.remoteAddr : #request.getHeader(\"X-FORWARDED-FOR\")")
     public boolean blacklist(HttpServletRequest request) {
         String ip = IdUtil.getIp(request);
 

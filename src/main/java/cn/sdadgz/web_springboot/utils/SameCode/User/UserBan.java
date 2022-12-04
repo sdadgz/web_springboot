@@ -17,9 +17,6 @@ public class UserBan {
     public static UserBan userBan;
 
     @Resource
-    private UserMapper userMapper;
-
-    @Resource
     private IUserService userService;
 
     @PostConstruct //通过@PostConstruct实现初始化bean之前进行的操作

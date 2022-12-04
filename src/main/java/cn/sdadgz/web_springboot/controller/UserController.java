@@ -2,6 +2,7 @@ package cn.sdadgz.web_springboot.controller;
 
 import cn.sdadgz.web_springboot.entity.Img;
 import cn.sdadgz.web_springboot.mapper.ImgMapper;
+import cn.sdadgz.web_springboot.service.IImgService;
 import cn.sdadgz.web_springboot.utils.IdUtil;
 import cn.sdadgz.web_springboot.utils.JwtUtil;
 import cn.sdadgz.web_springboot.utils.SameCode.User.UserUtil;
@@ -32,13 +33,10 @@ import java.util.Map;
 public class UserController {
 
     @Resource
-    private UserMapper userMapper;
-
-    @Resource
     private IUserService userService;
 
     @Resource
-    private ImgMapper imgMapper;
+    private IImgService imgService;
 
     @Resource
     private IIpBanService ipBanService;
@@ -51,15 +49,16 @@ public class UserController {
     @PutMapping("/avatar")
     public Result uploadAvatar(@RequestParam("imgId") int imgId, HttpServletRequest request) {
 
-        // 初始化
+        // 获取userId
         int userId = IdUtil.getUserId(request);
-        Img img = imgMapper.selectById(imgId);
+        // 选择图片
+        Img img = imgService.getImgById(imgId);
 
         // 修改user
         User user = new User();
         user.setId(userId);
         user.setAvatar(img.getReduceUrl() != null ? img.getReduceUrl() : img.getUrl());
-        userMapper.updateById(user);
+        userService.updateUserById(user);
 
         return Result.success(user);
     }
@@ -68,7 +67,7 @@ public class UserController {
     @PutMapping("/password")
     public Result update(@RequestBody Map<String, String> map, HttpServletRequest request) throws NoSuchAlgorithmException {
 
-        // 初始化
+        // 加密密码
         String username = map.get(USERNAME);
         String oldPassword = map.get(OLD_PASSWORD);
         String newPassword = map.get(NEW_PASSWORD);
@@ -78,7 +77,7 @@ public class UserController {
         UserUtil.verify(new User().setPassword(oldPassword), userByName, request);
 
         userByName.setPassword(UserUtil.encryptPassword(newPassword));
-        userMapper.updateById(userByName);
+        userService.updateUserById(userByName);
 
         return Result.success();
     }
@@ -89,7 +88,7 @@ public class UserController {
         user.setCreateTime(TimeUtil.now());
         String password = user.getPassword();
         user.setPassword(UserUtil.encryptPassword(password));
-        userMapper.insert(user);
+        userService.addUser(user);
         user.setPassword(password);
         return Result.success(loginF(user, request));
     }

@@ -51,9 +51,9 @@ public class FileController {
                          HttpServletRequest request) {
 
         // 遣返
-        UserBan.getTheFuckOut(fileMapper.selectById(file.getId()).getUserId(), request);
+        UserBan.getTheFuckOut(fileService.getFileById(file.getId()).getUserId(), request);
 
-        int i = fileMapper.updateById(file);
+        int i = fileService.updateFileById(file);
 
         return Result.success(i);
     }
@@ -67,7 +67,7 @@ public class FileController {
 
         // 获取请求中的用户id
         int userId = IdUtil.getUserId(request);
-        File file = fileMapper.selectById(id);
+        File file = fileService.getFileById(id);
 
         // 阻止跨权限
         if (userId > 0 && userId != file.getUserId()) {
@@ -75,36 +75,36 @@ public class FileController {
         }
 
         // 删除
-        file.setIsDelete(true);
-        int i = fileMapper.updateById(file);
-        map.put("id", i);
+        Long aLong = fileService.virtualDelete(Collections.singletonList(file));
+        map.put("id", aLong);
 
-        // 获取同md5文件
-        List<File> files = fileService.getFilesByMd5(file.getMd5());
-        boolean realDelete = true;
-        for (File dFile : files) {
-            if (!dFile.getIsDelete()) {
-                realDelete = false;
-                break;
-            }
-        }
-
-        // 确实需要删除了
-        if (realDelete) {
-            String path = file.getUrl();
-            if (path.contains(downloadPath)) { // 是上传的图片，不是网图
-                path = path.substring(downloadPath.length());
-                java.io.File jFile = new java.io.File(uploadPath + path);
-                boolean delete = jFile.delete();
-                map.put("realDelete", delete);
-            }
-
-            // 数据库删除
-            for (File deleteFile : files) {
-                int deleteById = fileMapper.deleteById(deleteFile.getId());
-                map.put("deleteFile" + deleteFile.getId(), deleteById);
-            }
-        }
+        // 哪个傻逼写的api，这么占用资源不怕宕机
+//        // 获取同md5文件
+//        List<File> files = fileService.getFilesByMd5(file.getMd5());
+//        boolean realDelete = true;
+//        for (File dFile : files) {
+//            if (!dFile.getIsDelete()) {
+//                realDelete = false;
+//                break;
+//            }
+//        }
+//
+//        // 确实需要删除了
+//        if (realDelete) {
+//            String path = file.getUrl();
+//            if (path.contains(downloadPath)) { // 是上传的图片，不是网图
+//                path = path.substring(downloadPath.length());
+//                java.io.File jFile = new java.io.File(uploadPath + path);
+//                boolean delete = jFile.delete();
+//                map.put("realDelete", delete);
+//            }
+//
+//            // 数据库删除
+//            for (File deleteFile : files) {
+//                int deleteById = fileMapper.deleteById(deleteFile.getId());
+//                map.put("deleteFile" + deleteFile.getId(), deleteById);
+//            }
+//        }
 
         return Result.success(map);
     }
@@ -115,10 +115,13 @@ public class FileController {
                        @RequestParam("pageSize") int pageSize,
                        @PathVariable("username") String username) {
 
-        Page<FileMapper, File> page = new Page<>();
-        Map<String, Object> map = page.getPage(currentPage, pageSize, userService.getUserIdByName(username), fileMapper);
+        // 以前的屎山，他妈的哪个傻逼写的
+//        Page<FileMapper, File> page = new Page<>();
+//        Map<String, Object> map = page.getPage(currentPage, pageSize, userService.getUserIdByName(username), fileMapper);
 
-        return Result.success(map);
+        Map<String, Object> page = fileService.getPage(userService.getUserIdByName(username), currentPage, pageSize);
+
+        return Result.success(page);
     }
 
     // 上传文件

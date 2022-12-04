@@ -20,7 +20,7 @@ public class ImgScheduled {
     private IImgService imgService;
 
     // 垃圾回收
-    @Scheduled(cron = "0 */13 * ? * *")
+    @Scheduled(cron = "16 56 20 ? * 2")
     void delete() {
         List<Img> gc = imgService.getGC();
         Long aLong = imgService.virtualDeleteBatch(gc);

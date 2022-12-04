@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.format.annotation.DateTimeFormat;
 
 /**
@@ -23,6 +24,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Getter
 @Setter
 @ApiModel(value = "Img对象", description = "")
+@Accessors(chain = true)
 public class Img implements Serializable {
 
     private static final long serialVersionUID = 1L;

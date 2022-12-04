@@ -3,7 +3,6 @@ server:
   ssl:
     key-store: classpath:sdadgz.cn.jks
     key-store-type: JKS
-
   servlet:
     encoding:
       force: true # 静态资源乱码
@@ -18,6 +17,8 @@ spring:
     druid:
       max-active: 200
       min-idle: 6
+    tomcat:
+      max-active: 200
   servlet:
     multipart:
       max-request-size: 10GB
@@ -40,8 +41,7 @@ mybatis-plus:
     map-underscore-to-camel-case: true
     auto-mapping-behavior: full
   type-aliases-package: cn.sdadgz.web_springboot.entity
-  global-config:
-    mapper-registry-cache: true
+
 my:
   server: # 上传到服务器需要改这个
     name: https://sdadgz.cn
@@ -51,6 +51,10 @@ my:
     uploadPath: '${my.server.uploadPath}'
     staticPath: '/static/' # 访问前缀，不是物理地址
     downloadPath: '${my.server.name}:${server.port}${my.file-config.staticPath}' # 存url到数据库时用的他
+
+  unification-config:
+    response-lists: 'lists'
+    response-total: 'total'
 
 # 日志
 logging:

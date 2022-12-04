@@ -3,6 +3,7 @@ package cn.sdadgz.web_springboot.utils;
 import java.util.Random;
 
 public class RandomUtil {
+
     // 获取随机数
     public static int getInt(int max) {
         return getInt(max, System.currentTimeMillis());

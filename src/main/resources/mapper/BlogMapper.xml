@@ -47,7 +47,7 @@
             </if>
         </where>
         order by b.create_time desc, b.id desc
-        limit #{startPage},#{pageSize}
+        limit #{startPage}, #{pageSize}
     </select>
 
     <!--  垃圾回收  -->

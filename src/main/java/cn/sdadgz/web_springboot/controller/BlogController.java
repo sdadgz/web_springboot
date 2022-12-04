@@ -41,19 +41,10 @@ import java.util.*;
 public class BlogController {
 
     @Resource
-    private BlogMapper blogMapper;
-
-    @Resource
     private IBlogService blogService;
 
     @Resource
-    private UserMapper userMapper;
-
-    @Resource
     private IUserService userService;
-
-    @Resource
-    private ImgMapper imgMapper;
 
     @Resource
     private IImgService imgService;
@@ -75,8 +66,8 @@ public class BlogController {
         Blog blog = fileUtil.mdUpload(file, title, request, imgId, detail, createTime);
 
         // 使用前端传来的时间作为创建时间
-        blog.setCreateTime(createTime);
-        blogMapper.updateById(blog);
+//        blog.setCreateTime(createTime);
+//        blogService.updateBlogById(blog);
 
         return Result.success(blog);
     }
@@ -122,7 +113,7 @@ public class BlogController {
     public Result getBlog(@PathVariable("username") String username,
                           @PathVariable("title") String title) {
 
-        Blog blog = blogMapper.getBlog(username, title);
+        Blog blog = blogService.getBlogByUsernameAndTitle(username, title);
         return Result.success(blog);
     }
 
@@ -149,36 +140,43 @@ public class BlogController {
         int userId = IdUtil.getUserId(request);
         int id = blog.getId();
         if (userId > 0) {
-            Blog dbBlog = blogMapper.selectById(id);
+            Blog dbBlog = blogService.getBlogById(id);
             if (dbBlog.getUserId() != userId) {
                 throw new BusinessException("498", "权限不足");
             }
         }
-        int i = blogMapper.updateById(blog);
+        int i = blogService.updateBlogById(blog);
 
         return Result.success(i);
     }
 
     // 删除博客
     @DeleteMapping
-    public Result deleteBlog(@RequestBody Map<String, Integer[]> objectMap,
+    public Result deleteBlog(@RequestBody Map<String, List<Integer>> objectMap,
                              HttpServletRequest request) {
+
+        // 返回集
+        Map<String, Object> map = new HashMap<>();
+        int count = 0;
 
         int userId = IdUtil.getUserId(request);
 
-        Integer[] idList = objectMap.get("idList");
+        List<Integer> idList = objectMap.get("idList");
 
         for (Integer integer : idList) {
-            Blog blog = blogMapper.selectById(integer);
+            Blog blog = blogService.getBlogById(integer);
             // 阻止用户跨权限
             if (userId > 0 && blog.getUserId() != userId) {
                 throw new BusinessException("498", "权限不足");
             }
 
-            blogMapper.deleteById(integer);
+            count += blogService.deleteById(integer);
         }
 
-        return Result.success();
+        // 返回数据
+        map.put("delete", count);
+
+        return Result.success(map);
     }
 
     // 分页
@@ -191,8 +189,11 @@ public class BlogController {
         // 遣返
         UserBan.getTheFuckOut(username, request);
 
-        Page<BlogMapper, Blog> page = new Page<>();
-        Map<String, Object> map = page.getPage(currentPage, pageSize, request, blogMapper);
+        Map<String, Object> map = blogService.getPage(userService.getUserIdByName(username), currentPage, pageSize);
+
+        // 真是个废物码农，完全不会解耦
+//        Page<BlogMapper, Blog> page = new Page<>();
+//        Map<String, Object> map = page.getPage(currentPage, pageSize, request, blogMapper);
 
         return Result.success(map);
     }

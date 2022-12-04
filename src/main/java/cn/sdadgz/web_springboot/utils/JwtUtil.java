@@ -13,6 +13,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class JwtUtil {
+
     //创建token
     public static String CreateToken(String userid, String username, String password) throws NoSuchAlgorithmException {
         Calendar now = Calendar.getInstance();
