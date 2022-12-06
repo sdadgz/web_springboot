@@ -1,15 +1,14 @@
 package cn.sdadgz.web_springboot.controller;
 
 import cn.sdadgz.web_springboot.entity.Img;
-import cn.sdadgz.web_springboot.mapper.ImgMapper;
 import cn.sdadgz.web_springboot.service.IImgService;
 import cn.sdadgz.web_springboot.utils.IdUtil;
 import cn.sdadgz.web_springboot.utils.JwtUtil;
 import cn.sdadgz.web_springboot.utils.SameCode.User.UserUtil;
+import cn.sdadgz.web_springboot.utils.StrUtil;
 import cn.sdadgz.web_springboot.utils.TimeUtil;
 import cn.sdadgz.web_springboot.common.Result;
 import cn.sdadgz.web_springboot.entity.User;
-import cn.sdadgz.web_springboot.mapper.UserMapper;
 import cn.sdadgz.web_springboot.service.IIpBanService;
 import cn.sdadgz.web_springboot.service.IUserService;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +44,26 @@ public class UserController {
     private static final String OLD_PASSWORD = "oldPassword";
     private static final String NEW_PASSWORD = "newPassword";
 
-    // 上传头像
+    /**
+     * 重置token时间
+     *
+     * @param token 旧token
+     * @return token
+     */
+    @GetMapping("/token")
+    public Result refreshToken(@RequestHeader(StrUtil.TOKEN) String token) throws NoSuchAlgorithmException {
+
+        String s = JwtUtil.reFlushToken(token);
+
+        return Result.success(s);
+    }
+
+    /**
+     * 上传头像
+     *
+     * @param imgId 头像的图片id
+     * @return null
+     */
     @PutMapping("/avatar")
     public Result uploadAvatar(@RequestParam("imgId") int imgId, HttpServletRequest request) {
 
@@ -60,7 +78,18 @@ public class UserController {
         user.setAvatar(img.getReduceUrl() != null ? img.getReduceUrl() : img.getUrl());
         userService.updateUserById(user);
 
-        return Result.success(user);
+        return Result.success();
+    }
+
+    // 新建用户
+    @PostMapping
+    public Result setUser(@RequestBody User user, HttpServletRequest request) throws NoSuchAlgorithmException {
+        user.setCreateTime(TimeUtil.now());
+        String password = user.getPassword();
+        user.setPassword(UserUtil.encryptPassword(password));
+        userService.addUser(user);
+        user.setPassword(password);
+        return Result.success(loginF(user, request));
     }
 
     // 修改密码
@@ -82,42 +111,11 @@ public class UserController {
         return Result.success();
     }
 
-    // 新建用户
-    @PostMapping
-    public Result setUser(@RequestBody User user, HttpServletRequest request) throws NoSuchAlgorithmException {
-        user.setCreateTime(TimeUtil.now());
-        String password = user.getPassword();
-        user.setPassword(UserUtil.encryptPassword(password));
-        userService.addUser(user);
-        user.setPassword(password);
-        return Result.success(loginF(user, request));
-    }
-
     // 登录 放行
     @PostMapping("/login")
     public Result login(@RequestBody User user, HttpServletRequest request) throws NoSuchAlgorithmException {
         Map<String, Object> map = loginF(user, request);
         return Result.success(map);
-    }
-
-    // 登录并返回token及基本信息
-    private Map<String, Object> loginF(User user, HttpServletRequest request) throws NoSuchAlgorithmException {
-        Map<String, Object> map = new HashMap<>();
-        String username = user.getName();
-
-        // 获取用户
-        User userByName = userService.getUserByName(username);
-
-        // 冻结用户，保护用户密码不被暴力破解
-        ipBanService.protect(userByName);
-
-        // 验证密码
-        UserUtil.verify(user, userByName, request);
-
-        String token = JwtUtil.CreateToken(userByName.getId().toString(), userByName.getName(), userByName.getPassword());
-        map.put("user", userByName);
-        map.put("token", token);
-        return map;
     }
 
     // 用户名已被占用
@@ -127,6 +125,26 @@ public class UserController {
         boolean exists = userService.nameExists(username);
 
         return Result.success(exists);
+    }
+
+    // 登录并返回token及基本信息
+    private Map<String, Object> loginF(User user, HttpServletRequest request) throws NoSuchAlgorithmException {
+        Map<String, Object> map = new HashMap<>();
+        String username = user.getName();
+
+        // 获取用户
+        User dbUser = userService.getUserByName(username);
+
+        // 冻结用户，保护用户密码不被暴力破解
+        ipBanService.protect(dbUser);
+
+        // 验证密码
+        UserUtil.verify(user, dbUser, request);
+
+        String token = JwtUtil.createToken(dbUser);
+        map.put("user", dbUser);
+        map.put("token", token);
+        return map;
     }
 
 }

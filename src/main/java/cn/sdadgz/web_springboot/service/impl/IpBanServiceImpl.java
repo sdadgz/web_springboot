@@ -50,6 +50,7 @@ public class IpBanServiceImpl extends ServiceImpl<IpBanMapper, IpBan> implements
         return true;
     }
 
+    // 他人尝试次数超过指定次数恒返回假信息
     @Override
     public void protect(User user) {
         LambdaQueryWrapper<IpBan> wrapper = new LambdaQueryWrapper<>();

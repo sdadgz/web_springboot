@@ -65,7 +65,7 @@ public class JwtInterceptor implements HandlerInterceptor {
             throw new BusinessException("499", "token过期");
         }
         //布尔值验证
-        return JwtUtil.vertifyToken(token, userid, realUser.getPassword());
+        return JwtUtil.verifyToken(token, userid, realUser.getPassword());
     }
 
     @Override

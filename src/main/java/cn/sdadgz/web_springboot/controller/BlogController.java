@@ -65,10 +65,6 @@ public class BlogController {
         FileUtil fileUtil = new FileUtil();
         Blog blog = fileUtil.mdUpload(file, title, request, imgId, detail, createTime);
 
-        // 使用前端传来的时间作为创建时间
-//        blog.setCreateTime(createTime);
-//        blogService.updateBlogById(blog);
-
         return Result.success(blog);
     }
 
@@ -190,10 +186,6 @@ public class BlogController {
         UserBan.getTheFuckOut(username, request);
 
         Map<String, Object> map = blogService.getPage(userService.getUserIdByName(username), currentPage, pageSize);
-
-        // 真是个废物码农，完全不会解耦
-//        Page<BlogMapper, Blog> page = new Page<>();
-//        Map<String, Object> map = page.getPage(currentPage, pageSize, request, blogMapper);
 
         return Result.success(map);
     }
