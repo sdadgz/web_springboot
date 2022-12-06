@@ -39,3 +39,4 @@ src/main/resources/application.properties
 ### log ###
 *.log
 *.gz
+*.tmp
