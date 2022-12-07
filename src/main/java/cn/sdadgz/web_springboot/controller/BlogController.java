@@ -3,20 +3,14 @@ package cn.sdadgz.web_springboot.controller;
 import cn.sdadgz.web_springboot.service.IBlogService;
 import cn.sdadgz.web_springboot.service.IUserService;
 import cn.sdadgz.web_springboot.utils.*;
-import cn.sdadgz.web_springboot.utils.SameCode.Page.Page;
 import cn.sdadgz.web_springboot.utils.SameCode.User.UserBan;
 import cn.sdadgz.web_springboot.common.Result;
 import cn.sdadgz.web_springboot.config.BusinessException;
 import cn.sdadgz.web_springboot.entity.Blog;
 import cn.sdadgz.web_springboot.entity.Img;
-import cn.sdadgz.web_springboot.mapper.BlogMapper;
-import cn.sdadgz.web_springboot.mapper.ImgMapper;
-import cn.sdadgz.web_springboot.mapper.UserMapper;
 import cn.sdadgz.web_springboot.service.IImgService;
-import cn.sdadgz.web_springboot.utils.SameCode.User.UserUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -81,7 +75,7 @@ public class BlogController {
         int userId = IdUtil.getUserId(request);
 
         // 时间不存在使用当前时间
-        if (GeneralUtil.notNull(createTime)) {
+        if (GeneralUtil.isNull(createTime)) {
             createTime = TimeUtil.now();
         }
 

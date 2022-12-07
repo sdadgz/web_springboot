@@ -19,6 +19,9 @@ spring:
       min-idle: 6
     tomcat:
       max-active: 200
+  redis:
+    port: 6379
+    host: sdadgz.cn
   servlet:
     multipart:
       max-request-size: 10GB

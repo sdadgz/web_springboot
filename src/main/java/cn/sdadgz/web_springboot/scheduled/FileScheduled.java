@@ -21,7 +21,6 @@ public class FileScheduled {
     @Scheduled(cron = "14 14 2 ? * 1")
     private void deleteFile() {
         List<File> gc = fileService.getGC();
-
         Long aLong = fileService.virtualDelete(gc);
         log.info("file垃圾回收获取到了{}条垃圾，虚拟删除了{}条数据", gc.size(), aLong);
     }
