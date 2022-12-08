@@ -35,4 +35,9 @@ public interface ImgMapper extends BaseMapper<Img>, cn.sdadgz.web_springboot.uti
 
     // 获取需要删除的图片
     List<Img> getDeleteImgs();
+
+    // field, userId --随机-> imgs
+    List<Img> getImgsRandByFieldAndUserId(@Param("field") String field,
+                                          @Param("userId") Integer userId,
+                                          @Param("count") Integer count);
 }

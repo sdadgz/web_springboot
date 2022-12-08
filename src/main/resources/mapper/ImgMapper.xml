@@ -49,6 +49,15 @@
         having iis_delete = 1
     </select>
 
+    <select id="getImgsRandByFieldAndUserId" resultType="cn.sdadgz.web_springboot.entity.Img">
+        select *
+        from img i
+        where i.field like concat('%', #{field}, '%')
+          and i.user_id = #{userId}
+          and i.id >= (RAND() * (select MAX(s.id) from img s))
+        limit #{count}
+    </select>
+
     <!--  结果集  -->
     <resultMap id="ImgMap" type="Img">
         <association property="user" javaType="User"/>

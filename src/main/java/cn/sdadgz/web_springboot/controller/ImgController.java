@@ -1,10 +1,11 @@
 package cn.sdadgz.web_springboot.controller;
 
+import cn.sdadgz.web_springboot.dao.ImgOnlyUrlDao;
 import cn.sdadgz.web_springboot.dao.ImgUpdateDao;
 import cn.sdadgz.web_springboot.service.IUserService;
 import cn.sdadgz.web_springboot.utils.FileUtil;
+import cn.sdadgz.web_springboot.utils.GeneralUtil;
 import cn.sdadgz.web_springboot.utils.IdUtil;
-import cn.sdadgz.web_springboot.utils.SameCode.Page.Page;
 import cn.sdadgz.web_springboot.utils.SameCode.User.UserBan;
 import cn.sdadgz.web_springboot.common.Result;
 import cn.sdadgz.web_springboot.config.BusinessException;
@@ -12,7 +13,6 @@ import cn.sdadgz.web_springboot.entity.Img;
 import cn.sdadgz.web_springboot.mapper.ImgMapper;
 import cn.sdadgz.web_springboot.mapper.UserMapper;
 import cn.sdadgz.web_springboot.service.IImgService;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -56,22 +56,47 @@ public class ImgController {
     private static final String BANNER = "首页横幅";
     private static final String BACKGROUND = "全局背景图片";
 
-    // 获取首页横幅
+    // 默认banner数量
+    public static final int DEFAULT_BANNER_COUNT = 6;
+    // 默认background数量
+    public static final int DEFAULT_BACKGROUND_COUNT = 6;
+
+    /**
+     * 获取首页横幅，随机
+     *
+     * @param username 用户名
+     * @param count    获取几张图片，可选
+     * @return 图片数组 ImgOnlyUrlDao
+     */
     @GetMapping("/{username}/banner")
-    public Result banner(@PathVariable String username) {
+    public Result banner(@PathVariable String username,
+                         @RequestParam(value = "count", required = false) Integer count) {
 
-        List<Img> imgs = imgService.getImgs(BANNER, username);
+        List<Img> imgs = imgService.getImgsRandByFieldAndUsername(BANNER, username, GeneralUtil.thisOrDefault(count, DEFAULT_BANNER_COUNT));
 
-        return Result.success(imgs);
+        // 转传输格式
+        List<ImgOnlyUrlDao> res = ImgOnlyUrlDao.toThis(imgs);
+
+        return Result.success(res);
     }
 
-    // 获取背景图片
+    /**
+     * 获取背景图片，随机
+     *
+     * @param username 用户名
+     * @param count    获取几张图片，可选
+     * @return 图片数组 ImgOnlyUrlDao
+     */
     @GetMapping("/{username}/background")
-    public Result background(@PathVariable String username) {
+    public Result background(@PathVariable String username,
+                             @RequestParam(value = "count", required = false) Integer count) {
 
-        List<Img> imgs = imgService.getImgs(BACKGROUND, username);
+        List<Img> imgs = imgService.getImgsRandByFieldAndUsername(BACKGROUND, username, GeneralUtil.thisOrDefault(count, DEFAULT_BACKGROUND_COUNT));
 
-        return Result.success(imgs);
+        // 转传输格式
+        List<ImgOnlyUrlDao> res = ImgOnlyUrlDao.toThis(imgs);
+
+        return Result.success(res);
     }
 
     // 修改博客

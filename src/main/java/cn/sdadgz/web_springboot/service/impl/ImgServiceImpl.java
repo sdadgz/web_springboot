@@ -44,6 +44,7 @@ public class ImgServiceImpl extends ServiceImpl<ImgMapper, Img> implements IImgS
     @Resource
     public UnificationConfig unificationConfig;
 
+    // 新增图片
     @Override
     @CacheEvict(allEntries = true)
     public void addImg(Img img) {
@@ -51,6 +52,7 @@ public class ImgServiceImpl extends ServiceImpl<ImgMapper, Img> implements IImgS
         log.info("img新增：{} 条数据", insert);
     }
 
+    // 分页
     @Override
     @Cacheable(unless = "#result.get(#root.target.unificationConfig.getResponseLists()).size() == 0")
     public Map<String, Object> getPage(Integer userId, Integer currentPage, Integer pageSize) {
@@ -67,6 +69,7 @@ public class ImgServiceImpl extends ServiceImpl<ImgMapper, Img> implements IImgS
         return map;
     }
 
+    // 用户总图片数
     @Override
     @Cacheable(unless = "#result == 0L")
     public Long getTotalByUserId(Integer userId) {
@@ -75,10 +78,11 @@ public class ImgServiceImpl extends ServiceImpl<ImgMapper, Img> implements IImgS
         return imgMapper.selectCount(wrapper);
     }
 
+    // username, field -> imgs
     @Override
     @Cacheable(unless = "#result.size() == 0")
-    public List<Img> getImgs(String field, String username) {
-        // 根据username获取userId
+    public List<Img> getImgsByFieldAndUsername(String field, String username) {
+        // username -> userId
         int userId = userService.getUserIdByName(username);
 
         // 不拦截，共享单车
@@ -87,6 +91,15 @@ public class ImgServiceImpl extends ServiceImpl<ImgMapper, Img> implements IImgS
         wrapper.eq(Img::getUserId, userId);
 
         return imgMapper.selectList(wrapper);
+    }
+
+    // 随机 field 图片
+    @Override
+    @Cacheable(unless = "#result.size() == 0")
+    public List<Img> getImgsRandByFieldAndUsername(String field, String username, Integer count) {
+        // username -> userId
+        int userId = userService.getUserIdByName(username);
+        return imgMapper.getImgsRandByFieldAndUserId(field, userId, count);
     }
 
     @Override

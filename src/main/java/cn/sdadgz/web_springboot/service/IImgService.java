@@ -35,18 +35,21 @@ public interface IImgService extends IService<Img> {
     Long getTotalByUserId(Integer userId);
 
     // field, username -> imgs
-    List<Img> getImgs(String field, String username);
+    List<Img> getImgsByFieldAndUsername(String field, String username);
 
-    // 获取未使用图片
-    List<Img> getNeverUseImg(String field, Integer userId);
-
-    // 获取空引用图片
-    List<Img> getGC();
+    // field, username --随机-> imgs
+    List<Img> getImgsRandByFieldAndUsername(String field, String username, Integer count);
 
     // id -> img
     Img getImgById(Integer imgId);
 
     // md5 -> imgs
     List<Img> getImgsByMD5(String md5);
+
+    // 获取未使用图片
+    List<Img> getNeverUseImg(String field, Integer userId);
+
+    // 获取空引用图片
+    List<Img> getGC();
 
 }
