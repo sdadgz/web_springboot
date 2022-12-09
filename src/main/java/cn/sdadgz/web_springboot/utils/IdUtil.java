@@ -1,8 +1,11 @@
 package cn.sdadgz.web_springboot.utils;
 
+import cn.sdadgz.web_springboot.config.BusinessException;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
@@ -31,16 +34,29 @@ public class IdUtil {
     }
 
     // 获取ip
-    public static String getIp(HttpServletRequest request) {
-        //目前则是网关ip
-        String ip = "";
-        if (request != null) {
-            ip = request.getHeader("X-FORWARDED-FOR");
-            if (ip == null || "".equals(ip)) {
-                ip = request.getRemoteAddr();
-            }
+    public static String getIp(@NonNull HttpServletRequest request) {
+        // nginx
+        String ip = request.getHeader("x-real-ip");
+        if (ip != null && !"".equals(ip) && !"unknown".equalsIgnoreCase(ip)) {
+            return ip;
         }
-
-        return ip;
+        // 代理
+        ip = request.getHeader("x-forwarded-for");
+        if (ip != null && !"".equals(ip) && !"unknown".equalsIgnoreCase(ip)) {
+            int index = ip.indexOf(',');
+            if (index != -1) {
+                //只获取第一个值
+                return ip.substring(0, index);
+            } else {
+                return ip;
+            }
+        } else {
+            // 连接的ip
+            ip = request.getRemoteAddr();
+            if (GeneralUtil.isNull(ip)) {
+                throw new BusinessException("457", "你的ip怎么不存在？？？");
+            }
+            return ip;
+        }
     }
 }
