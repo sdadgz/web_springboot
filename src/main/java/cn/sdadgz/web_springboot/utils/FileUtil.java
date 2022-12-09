@@ -92,7 +92,7 @@ public class FileUtil {
         uploadFile.setUserId(userId);
 
         // 去重复文件名
-        String originalFilename = user.getName() + StrUtil.UNDERSCORE + file.getOriginalFilename();
+        String originalFilename = user.getName() + StrUtil.UNDERLINE + file.getOriginalFilename();
         while (filenameExists(originalFilename)) {
             // 获取类型
             String type = getType(originalFilename);
