@@ -1,5 +1,6 @@
 package cn.sdadgz.web_springboot.service.impl;
 
+import cn.sdadgz.web_springboot.config.DangerousException;
 import cn.sdadgz.web_springboot.utils.IdUtil;
 import cn.sdadgz.web_springboot.utils.StrUtil;
 import cn.sdadgz.web_springboot.common.Constants;
@@ -8,9 +9,11 @@ import cn.sdadgz.web_springboot.entity.IpBan;
 import cn.sdadgz.web_springboot.entity.User;
 import cn.sdadgz.web_springboot.mapper.IpBanMapper;
 import cn.sdadgz.web_springboot.service.IIpBanService;
+import cn.sdadgz.web_springboot.utils.TimeUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
@@ -35,10 +38,14 @@ public class IpBanServiceImpl extends ServiceImpl<IpBanMapper, IpBan> implements
     private IpBanMapper ipBanMapper;
 
     @Override
-    @Cacheable(key = "#request.getHeader(\"X-FORWARDED-FOR\") == null ? #request.remoteAddr : #request.getHeader(\"X-FORWARDED-FOR\")")
     public boolean blacklist(HttpServletRequest request) {
         String ip = IdUtil.getIp(request);
+        return blacklist(ip);
+    }
 
+    // 黑名单，没有什么是加一层解决不了的问题，如果有，那就再加一层
+    @Cacheable
+    public boolean blacklist(String ip){
         LambdaQueryWrapper<IpBan> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(IpBan::getIp, ip);
         Long aLong = ipBanMapper.selectCount(wrapper);
@@ -65,5 +72,17 @@ public class IpBanServiceImpl extends ServiceImpl<IpBanMapper, IpBan> implements
     @Override
     public List<IpBan> getGC() {
         return ipBanMapper.getGC();
+    }
+
+    @Override
+    @CacheEvict(allEntries = true)
+    public void addExcept(DangerousException e) {
+        IpBan ipBan = new IpBan();
+        ipBan.setCreateTime(TimeUtil.now());
+        ipBan.setMsg(e.getMessage());
+        ipBan.setUserId(e.getUserId());
+        ipBan.setIp(e.getIp());
+
+        ipBanMapper.insert(ipBan);
     }
 }

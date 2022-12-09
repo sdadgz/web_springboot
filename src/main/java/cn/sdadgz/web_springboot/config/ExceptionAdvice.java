@@ -1,5 +1,6 @@
 package cn.sdadgz.web_springboot.config;
 
+import cn.sdadgz.web_springboot.service.IIpBanService;
 import cn.sdadgz.web_springboot.utils.TimeUtil;
 import cn.sdadgz.web_springboot.common.Result;
 import cn.sdadgz.web_springboot.entity.IpBan;
@@ -16,7 +17,7 @@ import javax.annotation.Resource;
 public class ExceptionAdvice {
 
     @Resource
-    private IpBanMapper ipBanMapper;
+    private IIpBanService ipBanService;
 
     // 常规异常
     @ResponseBody
@@ -31,13 +32,7 @@ public class ExceptionAdvice {
     public Result dangerousException(DangerousException e) {
         log.error("出现异常ip：{}，异常行为：{}", e.getIp(), e.getMessage());
 
-        IpBan ipBan = new IpBan();
-        ipBan.setCreateTime(TimeUtil.now());
-        ipBan.setMsg(e.getMessage());
-        ipBan.setUserId(e.getUserId());
-        ipBan.setIp(e.getIp());
-
-        ipBanMapper.insert(ipBan);
+        ipBanService.addExcept(e);
 
         return Result.error(e.getCode(), e.getMessage());
     }

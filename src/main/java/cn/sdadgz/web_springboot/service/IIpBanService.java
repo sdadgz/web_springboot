@@ -1,5 +1,6 @@
 package cn.sdadgz.web_springboot.service;
 
+import cn.sdadgz.web_springboot.config.DangerousException;
 import cn.sdadgz.web_springboot.entity.IpBan;
 import cn.sdadgz.web_springboot.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -25,5 +26,8 @@ public interface IIpBanService extends IService<IpBan> {
 
     // 垃圾回收
     List<IpBan> getGC();
+
+    // 异常记录
+    void addExcept(DangerousException e);
 
 }
