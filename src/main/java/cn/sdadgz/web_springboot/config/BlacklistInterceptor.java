@@ -1,6 +1,7 @@
 package cn.sdadgz.web_springboot.config;
 
 import cn.sdadgz.web_springboot.service.IIpBanService;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -15,7 +16,7 @@ public class BlacklistInterceptor implements HandlerInterceptor {
     private IIpBanService ipBanService;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) {
         return ipBanService.blacklist(request);
     }
 }

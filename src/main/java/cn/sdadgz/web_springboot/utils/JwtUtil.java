@@ -91,7 +91,6 @@ public class JwtUtil {
     public static Boolean checkDate(String token) {
         Claim claim = JWT.decode(token).getClaim("exp");
         Date date = claim.asDate();
-        System.out.println("token日期" + date);
         return date.before(new Date());
     }
 }

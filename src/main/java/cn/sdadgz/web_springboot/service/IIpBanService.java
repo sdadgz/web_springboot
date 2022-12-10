@@ -21,6 +21,8 @@ public interface IIpBanService extends IService<IpBan> {
     // 是否是黑名单ip
     boolean blacklist(HttpServletRequest request);
 
+    boolean blacklist(String ip);
+
     // 防止用户密码被暴力破解
     void protect(User user);
 

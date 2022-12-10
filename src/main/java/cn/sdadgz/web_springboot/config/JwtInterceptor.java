@@ -1,5 +1,6 @@
 package cn.sdadgz.web_springboot.config;
 
+import cn.sdadgz.web_springboot.service.IUserService;
 import cn.sdadgz.web_springboot.utils.IdUtil;
 import cn.sdadgz.web_springboot.utils.JwtUtil;
 import cn.sdadgz.web_springboot.utils.StrUtil;
@@ -21,6 +22,9 @@ public class JwtInterceptor implements HandlerInterceptor {
 
     @Resource
     private UserMapper userMapper;
+
+    @Resource
+    private IUserService userService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -49,7 +53,7 @@ public class JwtInterceptor implements HandlerInterceptor {
         }
         //带着token验证载荷username是否正确
         User realUser = null;
-        realUser = userMapper.selectById(userid);
+        realUser = userService.getUserById(Integer.parseInt(userid));
         if (realUser == null) { // 用户不存在
             log.error("访问者ip：{}，token认证错误", ip);
             throw new DangerousException("499", "认证错误", request, Integer.parseInt(userid));

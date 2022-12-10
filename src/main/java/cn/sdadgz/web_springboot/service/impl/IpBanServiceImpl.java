@@ -37,14 +37,18 @@ public class IpBanServiceImpl extends ServiceImpl<IpBanMapper, IpBan> implements
     @Resource
     private IpBanMapper ipBanMapper;
 
+    @Resource
+    private IIpBanService ipBanService;
+
     @Override
     public boolean blacklist(HttpServletRequest request) {
         String ip = IdUtil.getIp(request);
-        return blacklist(ip);
+        return ipBanService.blacklist(ip);
     }
 
     // 黑名单，没有什么是加一层解决不了的问题，如果有，那就再加一层
     @Cacheable
+    @Override
     public boolean blacklist(String ip){
         LambdaQueryWrapper<IpBan> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(IpBan::getIp, ip);
