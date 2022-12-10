@@ -41,22 +41,10 @@ public class FileUtil {
     private String downloadPath;
 
     @Resource
-    private ImgMapper imgMapper;
-
-    @Resource
-    private BlogMapper blogMapper;
-
-    @Resource
     private IBlogService blogService;
 
     @Resource
-    private UserMapper userMapper;
-
-    @Resource
     private IUserService userService;
-
-    @Resource
-    private FileMapper fileMapper;
 
     @Resource
     private IFileService fileService;
@@ -185,6 +173,7 @@ public class FileUtil {
             fileUtil.blogService.addBlog(blog);
         } else {
             blog.setId(blogs.getId());
+            blog.setImgId(imgId);
             fileUtil.blogService.updateBlogById(blog);
         }
 

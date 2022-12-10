@@ -47,7 +47,7 @@ public interface IImgService extends IService<Img> {
     List<Img> getImgsByMD5(String md5);
 
     // 获取未使用图片
-    List<Img> getNeverUseImg(String field, Integer userId);
+    List<Img> getNeverUseImgs(String field, Integer userId);
 
     // 获取空引用图片
     List<Img> getGC();

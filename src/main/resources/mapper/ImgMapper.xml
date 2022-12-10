@@ -33,6 +33,7 @@
         from img i
         where i.field like CONCAT('%', #{field}, '%')
           and i.id not in (select b.img_id from blog b where b.user_id = #{userId})
+          and i.user_id = #{userId}
           and !i.is_delete
     </select>
 
@@ -54,7 +55,7 @@
         from img i
         where i.field like concat('%', #{field}, '%')
           and i.user_id = #{userId}
-          and i.id >= (RAND() * (select MAX(s.id) from img s))
+          and i.id >= (RAND() * (select MAX(ii.id) from img ii))
         limit #{count}
     </select>
 

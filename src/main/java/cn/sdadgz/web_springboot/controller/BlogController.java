@@ -9,7 +9,6 @@ import cn.sdadgz.web_springboot.config.BusinessException;
 import cn.sdadgz.web_springboot.entity.Blog;
 import cn.sdadgz.web_springboot.entity.Img;
 import cn.sdadgz.web_springboot.service.IImgService;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
@@ -80,16 +79,15 @@ public class BlogController {
         }
 
         // 获取本人博客首页图片
-        LambdaQueryWrapper<Img> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Img::getUserId, userId); // 用户id
-        wrapper.like(Img::getField, BLOG_IMG);
+        List<Img> neverUseImg = imgService.getNeverUseImgs(BLOG_IMG, userId);
 
-        List<Img> neverUseImg = imgService.getNeverUseImg(BLOG_IMG, userId);
         if (neverUseImg.size() < 1) {
+            // 他没存图片
             fileUtil.mdUpload(files, "", request, DEFAULT_IMG_ID, "", createTime);
         } else {
-            int seed = files.hashCode() + request.hashCode() + map.hashCode() + fileUtil.hashCode() + userId
-                    + wrapper.hashCode() + neverUseImg.hashCode();
+            // 他存了图片
+            int seed = files.hashCode() + createTime.hashCode() + request.hashCode() + map.hashCode() +
+                    fileUtil.hashCode() + userId + neverUseImg.hashCode();
             int rand = RandomUtil.getInt(neverUseImg.size(), seed);
             Integer imgId = neverUseImg.get(rand).getId();
             fileUtil.mdUpload(files, StrUtil.EMPTY_STRING, request, imgId, StrUtil.EMPTY_STRING, createTime);

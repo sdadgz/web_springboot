@@ -36,22 +36,10 @@ import java.util.*;
 public class ImgController {
 
     @Resource
-    private ImgMapper imgMapper;
-
-    @Resource
-    private UserMapper userMapper;
-
-    @Resource
     private IImgService imgService;
 
     @Resource
     private IUserService userService;
-
-    @Value("${my.file-config.uploadPath}")
-    private String uploadPath;
-
-    @Value("${my.file-config.downloadPath}")
-    private String downloadPath;
 
     private static final String BANNER = "首页横幅";
     private static final String BACKGROUND = "全局背景图片";

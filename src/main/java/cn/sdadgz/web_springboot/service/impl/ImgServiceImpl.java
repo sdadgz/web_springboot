@@ -102,9 +102,10 @@ public class ImgServiceImpl extends ServiceImpl<ImgMapper, Img> implements IImgS
         return imgMapper.getImgsRandByFieldAndUserId(field, userId, count);
     }
 
+    // 获取未使用的图片
     @Override
-    @Cacheable(unless = "#result.size() == 0")
-    public List<Img> getNeverUseImg(String field, Integer userId) {
+    public List<Img> getNeverUseImgs(String field, Integer userId) {
+        // 缓存清理问题，解决了，不缓存就行了
         return imgMapper.getNeverUseImgs(field, userId);
     }
 
