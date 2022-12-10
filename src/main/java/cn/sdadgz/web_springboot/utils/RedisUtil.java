@@ -1,5 +1,6 @@
 package cn.sdadgz.web_springboot.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -8,8 +9,10 @@ import javax.annotation.Resource;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 @Component
+@Slf4j
 public class RedisUtil {
 
     // 自增带过期的默认值
@@ -41,9 +44,16 @@ public class RedisUtil {
 
     // 自增定时数据，首次创建定时
     public void setIncrExp(String key, long timeout) {
+        // TODO 这样写太不讲究了，回头改了
+        setIncrExp(key, timeout, (k) -> log.info("创建自增定期键：{}，过期时间{}秒", k, timeout));
+    }
+
+    // 同上，创建时带一个回调函数，不清楚是不是叫回调，回头从新看一遍java吧
+    public void setIncrExp(String key, long timeout, Consumer<String> consumer) {
         if (GeneralUtil.isNull(get(key))) {
             // 不存在创建
             set(key, DEFAULT_INCR_INT_VALUE, timeout);
+            consumer.accept(key);
             return;
         }
 

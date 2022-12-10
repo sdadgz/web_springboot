@@ -35,15 +35,26 @@ public class IdUtil {
 
     // 获取ip
     public static String getIp(@NonNull HttpServletRequest request) {
+        try {
+            return getIpThrows(request);
+        } catch (BusinessException e) {
+            log.warn("没得到你的ip");
+            return null;
+        }
+    }
+
+    public static String getIpThrows(@NonNull HttpServletRequest request) throws BusinessException {
         // nginx
         String ip = request.getHeader("x-real-ip");
         if (ip != null && !"".equals(ip) && !"unknown".equalsIgnoreCase(ip)) {
+            log.info("x-real-ip 获取到了ip：{}，tcp连接ip：{}", ip, request.getRemoteAddr());
             return ip;
         }
         // 代理
         ip = request.getHeader("x-forwarded-for");
         if (ip != null && !"".equals(ip) && !"unknown".equalsIgnoreCase(ip)) {
             int index = ip.indexOf(',');
+            log.info("x-forwarded-ip 获取到了ip：{}，tcp连接ip：{}", ip, request.getRemoteAddr());
             if (index != -1) {
                 //只获取第一个值
                 return ip.substring(0, index);
@@ -54,7 +65,7 @@ public class IdUtil {
             // 连接的ip
             ip = request.getRemoteAddr();
             if (GeneralUtil.isNull(ip)) {
-                throw new BusinessException("457", "你的ip怎么不存在？？？");
+                throw new BusinessException("466", "没得到ip");
             }
             return ip;
         }
