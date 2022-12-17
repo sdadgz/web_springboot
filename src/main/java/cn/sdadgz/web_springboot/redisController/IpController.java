@@ -1,6 +1,7 @@
 package cn.sdadgz.web_springboot.redisController;
 
 import cn.sdadgz.web_springboot.common.Result;
+import cn.sdadgz.web_springboot.utils.IdUtil;
 import cn.sdadgz.web_springboot.utils.RedisUtil;
 import cn.sdadgz.web_springboot.utils.SameCode.User.UserBan;
 import cn.sdadgz.web_springboot.utils.StrUtil;
@@ -24,6 +25,12 @@ public class IpController {
 
     @Resource
     private RedisUtil redisUtil;
+
+    @GetMapping
+    public Result getIp(HttpServletRequest request) {
+        String ip = IdUtil.getIp(request);
+        return Result.success(ip);
+    }
 
     @GetMapping("/today")
     public Result getTodayIpList(HttpServletRequest request) {
