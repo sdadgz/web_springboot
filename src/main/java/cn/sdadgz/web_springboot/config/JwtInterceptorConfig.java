@@ -23,6 +23,7 @@ public class JwtInterceptorConfig implements WebMvcConfigurer {
                         "/img/*/banner", // 主页banner
                         "/img/*/background", // 背景图片
                         "/file/sdadgz/page", // 我的仓库
+                        "/ip", // 获取ip
                         "/static/**");
     }
 }
