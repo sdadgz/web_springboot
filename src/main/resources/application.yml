@@ -49,6 +49,7 @@ my:
   server: # 上传到服务器需要改这个
     name: https://sdadgz.cn
     uploadPath: '/usr/local/springboot/static/' # 文件下载到哪里，记得屁股加个杠
+    localhostIp: '85.230.0.1'
 
   file-config:
     uploadPath: '${my.server.uploadPath}'

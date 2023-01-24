@@ -67,6 +67,9 @@ public class IdUtil {
             if (GeneralUtil.isNull(ip)) {
                 throw new BusinessException("466", "没得到ip");
             }
+            // 直连得到的ip
+//            throw new BusinessException("471", "拒绝");
+
             return ip;
         }
     }

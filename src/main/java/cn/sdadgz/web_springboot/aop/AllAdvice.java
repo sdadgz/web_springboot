@@ -1,5 +1,7 @@
 package cn.sdadgz.web_springboot.aop;
 
+import cn.sdadgz.web_springboot.config.BusinessException;
+import cn.sdadgz.web_springboot.config.ServerConfig;
 import cn.sdadgz.web_springboot.utils.*;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,10 @@ public class AllAdvice {
     // 默认过期时间
     public static final int TIMEOUT = TimeUtil.SECOND_PER_DAY * 7;
 
+    // server配置
+    @Resource
+    private ServerConfig serverConfig;
+
     // 总ip存放地
     public static final String IP_LIST = "ip_list";
 
@@ -35,6 +41,20 @@ public class AllAdvice {
         if (!GeneralUtil.isNull(ip)) {
             // ip访问信息储存到redis里
             addIp(ip);
+        }
+    }
+
+    @Before(value = "execution(boolean cn..config.BlacklistInterceptor.*(javax.servlet.http.HttpServletRequest,..)) && args(request,..)")
+    public void localhostOnly(JoinPoint joinPoint, HttpServletRequest request) {
+//        // 放行options
+//        if (WebUtil.passOptions(request)) {
+//            return;
+//        }
+
+        // 仅允许localhost访问
+        String ip = request.getRemoteAddr();
+        if (!serverConfig.getLocalhostIp().equals(ip)) {
+            throw new BusinessException("471", "ip:" + ip + "被拒绝访问");
         }
     }
 

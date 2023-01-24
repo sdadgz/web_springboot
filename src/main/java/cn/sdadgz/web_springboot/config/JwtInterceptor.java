@@ -32,10 +32,12 @@ public class JwtInterceptor implements HandlerInterceptor {
         String ip = IdUtil.getIp(request);
 
         //放行OPTIONS请求
-        String method = request.getMethod();
-        if ("OPTIONS".equals(method)) {
-            return true;
-        }
+        // nginx拦过了，自信去掉
+//        String method = request.getMethod().toUpperCase();
+//        if ("OPTIONS".equals(method)) {
+//            return true;
+//        }
+
         //获取token
         String token = request.getHeader("token");
         //token不存在直接报错

@@ -14,6 +14,6 @@ public class BlacklistInterceptorConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(blacklistInterceptor).addPathPatterns("/**");
+        registry.addInterceptor(blacklistInterceptor).addPathPatterns("/**").excludePathPatterns("/static/**");
     }
 }

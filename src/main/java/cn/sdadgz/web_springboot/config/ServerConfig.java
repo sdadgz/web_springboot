@@ -15,4 +15,6 @@ public class ServerConfig {
 
     private String uploadPath;
 
+    private String localhostIp;
+
 }
