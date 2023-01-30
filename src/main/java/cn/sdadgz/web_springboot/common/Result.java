@@ -29,6 +29,11 @@ public class Result {
         return new Result(code, msg, null);
     }
 
+    // 需要返回状态
+    public static Result error(String code, String msg, Object data) {
+        return new Result(code, msg, data);
+    }
+
     // 不需要返回状态
     public static Result error() {
         return new Result(Constants.CODE_500, "系统错误", null);

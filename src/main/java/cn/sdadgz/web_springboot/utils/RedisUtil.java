@@ -1,7 +1,6 @@
 package cn.sdadgz.web_springboot.utils;
 
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -18,8 +17,16 @@ public class RedisUtil {
     // 自增带过期的默认值
     public static final int DEFAULT_INCR_INT_VALUE = 1;
 
+    // 默认锁失效时间
+    public static final int DEFAULT_LOCK_TIMEOUT = 233;
+
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
+
+    // 获取键
+    public Set<String> getKeys(String prefix) {
+        return redisTemplate.keys(prefix + "*");
+    }
 
     // 取值
     public Object get(String key) {
@@ -28,7 +35,11 @@ public class RedisUtil {
 
     // 类型转换取值
     public <T> T get(String key, Class<T> t) {
-        return t.cast(get(key));
+        Object o = get(key);
+        if (t.isInstance(o)) {
+            return t.cast(o);
+        }
+        return null;
     }
 
     // 设置值
@@ -37,9 +48,9 @@ public class RedisUtil {
     }
 
     // 定时缓存
-    public void set(String key, Object value, long timeout) {
+    public void set(String key, Object value, long second) {
 //        redisTemplate.opsForValue().set(key, value, timeout);
-        redisTemplate.opsForValue().set(key, value, Duration.ofSeconds(timeout));
+        redisTemplate.opsForValue().set(key, value, Duration.ofSeconds(second));
     }
 
     // 自增定时数据，首次创建定时
@@ -62,8 +73,8 @@ public class RedisUtil {
     }
 
     // 设置过期时间
-    public Boolean expire(String key, long timeout) {
-        return redisTemplate.expire(key, Duration.ofSeconds(timeout));
+    public Boolean expire(String key, long second) {
+        return redisTemplate.expire(key, Duration.ofSeconds(second));
     }
 
     // 获取hash
@@ -103,6 +114,26 @@ public class RedisUtil {
 
     public void setSet(String key, Object... value) {
         redisTemplate.opsForSet().add(key, value);
+    }
+
+    // 删除key
+    public Boolean delKey(String key){
+        return redisTemplate.delete(key);
+    }
+
+    // 加锁
+    public Boolean lock(String key) {
+        return lock(key, DEFAULT_LOCK_TIMEOUT);
+    }
+
+    // 带过期的加锁
+    public Boolean lock(String key, long ms) {
+        return redisTemplate.opsForValue().setIfAbsent(key, System.currentTimeMillis(), Duration.ofMillis(ms));
+    }
+
+    // 释放锁
+    public Boolean unlock(String key){
+        return delKey(key);
     }
 
 }

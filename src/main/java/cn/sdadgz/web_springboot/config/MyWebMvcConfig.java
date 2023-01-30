@@ -20,14 +20,14 @@ import java.util.List;
 public class MyWebMvcConfig implements WebMvcConfigurer {
 
     // 跨域
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("*")
-                .allowedMethods("POST", "GET", "PUT", "OPTIONS", "DELETE")
-                .allowedHeaders("*")
-                .exposedHeaders("*")
-                .allowCredentials(true);
-    }
+//    @Override
+//    public void addCorsMappings(CorsRegistry registry) {
+//        registry.addMapping("/**")
+//                .allowedOrigins("*")
+//                .allowedMethods("POST", "GET", "PUT", "OPTIONS", "DELETE")
+//                .allowedHeaders("*")
+//                .exposedHeaders("*")
+//                .allowCredentials(true);
+//    }
 
 }
