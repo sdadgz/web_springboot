@@ -49,7 +49,7 @@ public class IpBanServiceImpl extends ServiceImpl<IpBanMapper, IpBan> implements
     // 黑名单，没有什么是加一层解决不了的问题，如果有，那就再加一层
     @Cacheable
     @Override
-    public boolean blacklist(String ip){
+    public boolean blacklist(String ip) {
         LambdaQueryWrapper<IpBan> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(IpBan::getIp, ip);
         Long aLong = ipBanMapper.selectCount(wrapper);
@@ -88,5 +88,14 @@ public class IpBanServiceImpl extends ServiceImpl<IpBanMapper, IpBan> implements
         ipBan.setIp(e.getIp());
 
         ipBanMapper.insert(ipBan);
+    }
+
+    @Override
+    @Cacheable(unless = "#result.size() == 0")
+    public List<IpBan> getIpBanPage(int currentPage, int pageSize) {
+        int startPage = (currentPage - 1) * pageSize;
+        LambdaQueryWrapper<IpBan> wrapper = new LambdaQueryWrapper<>();
+        wrapper.last("limit " + startPage + "," + pageSize);
+        return ipBanMapper.selectList(wrapper);
     }
 }

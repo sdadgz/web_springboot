@@ -32,4 +32,6 @@ public interface IIpBanService extends IService<IpBan> {
     // 异常记录
     void addExcept(DangerousException e);
 
+    // 查询最早的几条
+    List<IpBan> getIpBanPage(int currentPage,int pageSize);
 }
