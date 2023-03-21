@@ -95,7 +95,7 @@ public class ImgServiceImpl extends ServiceImpl<ImgMapper, Img> implements IImgS
 
     // 随机 field 图片
     @Override
-    @Cacheable(unless = "#result.size() == 0")
+//    @Cacheable(unless = "#result.size() == 0")
     public List<Img> getImgsRandByFieldAndUsername(String field, String username, Integer count) {
         // username -> userId
         int userId = userService.getUserIdByName(username);
