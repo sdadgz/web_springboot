@@ -14,11 +14,11 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     type: com.alibaba.druid.pool.DruidDataSource
-    druid:
-      max-active: 200
-      min-idle: 6
-    tomcat:
-      max-active: 200
+#    druid:
+#      max-active: 200
+#      min-idle: 6
+#    tomcat:
+#      max-active: 200
   redis:
     port: 6379
     host: sdadgz.cn
