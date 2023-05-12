@@ -31,7 +31,7 @@ public class JwtInterceptor implements HandlerInterceptor {
         // ip
         String ip = IdUtil.getIp(request);
 
-        //放行OPTIONS请求
+        // 放行OPTIONS请求
         // nginx拦过了，自信去掉
 //        String method = request.getMethod().toUpperCase();
 //        if ("OPTIONS".equals(method)) {

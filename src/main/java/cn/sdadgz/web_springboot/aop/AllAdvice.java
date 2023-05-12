@@ -52,10 +52,10 @@ public class AllAdvice {
 //        }
 
         // 仅允许localhost访问
-        String ip = request.getRemoteAddr();
-        if (!serverConfig.getLocalhostIp().equals(ip)) {
-            throw new BusinessException("471", "ip:" + ip + "被拒绝访问");
-        }
+//        String ip = request.getRemoteAddr();
+//        if (!serverConfig.getLocalhostIp().equals(ip)) {
+//            throw new BusinessException("471", "ip:" + ip + "被拒绝访问");
+//        }
     }
 
     // 将ip添加到redis里

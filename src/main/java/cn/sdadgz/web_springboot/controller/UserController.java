@@ -2,15 +2,13 @@ package cn.sdadgz.web_springboot.controller;
 
 import cn.sdadgz.web_springboot.entity.Img;
 import cn.sdadgz.web_springboot.service.IImgService;
-import cn.sdadgz.web_springboot.utils.IdUtil;
-import cn.sdadgz.web_springboot.utils.JwtUtil;
+import cn.sdadgz.web_springboot.utils.*;
 import cn.sdadgz.web_springboot.utils.SameCode.User.UserUtil;
-import cn.sdadgz.web_springboot.utils.StrUtil;
-import cn.sdadgz.web_springboot.utils.TimeUtil;
 import cn.sdadgz.web_springboot.common.Result;
 import cn.sdadgz.web_springboot.entity.User;
 import cn.sdadgz.web_springboot.service.IIpBanService;
 import cn.sdadgz.web_springboot.service.IUserService;
+import org.springframework.boot.SpringApplication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -43,6 +41,26 @@ public class UserController {
     private static final String USERNAME = "username";
     private static final String OLD_PASSWORD = "oldPassword";
     private static final String NEW_PASSWORD = "newPassword";
+
+
+    /**
+     * 测试接口，放行的
+     *
+     * @return 成功
+     */
+    @GetMapping("/test")
+    public Result test() {
+        return Result.success();
+    }
+
+
+    /**
+     * 关机接口
+     */
+    @GetMapping("/shutdown")
+    public void shutdown() {
+        SpringApplication.exit(SpringUtil.getApplicationContext(), () -> 0);
+    }
 
     /**
      * 重置token时间

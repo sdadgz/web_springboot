@@ -19,8 +19,8 @@ public class IpBanScheduled {
     @Resource
     private IIpBanService ipBanService;
 
-    // 每周原谅多少人
-    public static final int FORGIVE_PER_WEEK = 10;
+    // 每分钟原谅多少人
+    public static final int FORGIVE_PER_WEEK = 1;
 
     @Scheduled(cron = "30 30 6 ? * 5")
     void delete() {
@@ -29,10 +29,13 @@ public class IpBanScheduled {
         log.info("ipBan获取到{}条垃圾，删除{}", gc.size(), GeneralUtil.tf(b));
     }
 
-    @Scheduled(cron = "22 14 2 ? * 2")
+    @Scheduled(cron = "22 * * * * ?")
     void forgive() {
         List<IpBan> ipBanPage = ipBanService.getIpBanPage(0, FORGIVE_PER_WEEK);
-        boolean b = ipBanService.removeBatchByIds(ipBanPage);
+        boolean b = false;
+        if (ipBanPage.size() > 0) {
+            b = ipBanService.removeBatchByIds(ipBanPage);
+        }
         log.info("原谅了{}人次搞破坏的，删除{}", ipBanPage.size(), GeneralUtil.tf(b));
     }
 
