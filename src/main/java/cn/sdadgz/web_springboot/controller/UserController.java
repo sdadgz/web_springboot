@@ -58,9 +58,8 @@ public class UserController {
      * 关机接口
      */
     @GetMapping("/shutdown")
-    public Result shutdown() {
+    public void shutdown() {
         SpringApplication.exit(SpringUtil.getApplicationContext(), () -> 0);
-        return Result.error();
     }
 
     /**
