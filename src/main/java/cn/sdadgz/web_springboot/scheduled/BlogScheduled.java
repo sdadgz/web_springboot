@@ -20,7 +20,7 @@ public class BlogScheduled {
     @Resource
     private IBlogService blogService;
 
-    @Scheduled(cron = "41 41 5 ? * 4")
+    @Scheduled(cron = "41 41 5 ? * 1")
     public void deleteBlog() {
         List<Blog> gc = blogService.getGC();
         boolean b = blogService.removeBatchByIds(gc);

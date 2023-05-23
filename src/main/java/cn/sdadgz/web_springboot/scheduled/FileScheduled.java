@@ -18,14 +18,14 @@ public class FileScheduled {
     @Resource
     private IFileService fileService;
 
-    @Scheduled(cron = "14 14 2 ? * 1")
+    @Scheduled(cron = "14 21 8 ? * 1")
     private void deleteFile() {
         List<File> gc = fileService.getGC();
         Long aLong = fileService.virtualDelete(gc);
         log.info("file垃圾回收获取到了{}条垃圾，虚拟删除了{}条数据", gc.size(), aLong);
     }
 
-    @Scheduled(cron = "55 39 3 ? * 1")
+    @Scheduled(cron = "55 0 23 ? * 1")
     private void realDelete() {
         log.info("清理file回收站");
         fileService.realDelete();
