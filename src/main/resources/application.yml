@@ -54,7 +54,7 @@ my:
   file-config:
     uploadPath: '${my.server.uploadPath}'
     staticPath: '/static/' # 访问前缀，不是物理地址
-    downloadPath: '${my.server.name}:${server.port}${my.file-config.staticPath}' # 存url到数据库时用的他
+    downloadPath: '${my.server.name}/springboot/8000${my.file-config.staticPath}' # 存url到数据库时用的他
 
   unification-config:
     response-lists: 'lists'
