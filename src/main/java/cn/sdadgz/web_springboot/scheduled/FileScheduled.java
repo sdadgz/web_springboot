@@ -18,7 +18,7 @@ public class FileScheduled {
     @Resource
     private IFileService fileService;
 
-    @Scheduled(cron = "14 21 8 ? * 1")
+    @Scheduled(cron = "14 9 20 ? * 1")
     private void deleteFile() {
         List<File> gc = fileService.getGC();
         Long aLong = fileService.virtualDelete(gc);

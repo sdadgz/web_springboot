@@ -18,7 +18,8 @@ public class UserUtil {
 
     // 原密码 -> 加密密码
     public static String encryptPassword(String password) throws NoSuchAlgorithmException {
-        return Md5Util.md5(password + SALT);
+//        return Md5Util.md5(password + SALT);
+        return password;
     }
 
     // 原user, 加密user -> 不对就throw
