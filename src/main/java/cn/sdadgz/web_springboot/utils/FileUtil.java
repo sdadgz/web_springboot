@@ -120,6 +120,7 @@ public class FileUtil {
         // 返回id
         map.put("id", uploadFile.getId());
         map.put("add", i);
+        map.put("url", uploadFile.getUrl());
 
         return map;
     }
