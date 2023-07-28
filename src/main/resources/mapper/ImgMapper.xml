@@ -55,9 +55,19 @@
         from img i
         where i.field like concat('%', #{field}, '%')
           and i.user_id = #{userId}
-          and i.id >= (RAND() * (select MAX(ii.id) from img ii))
+        order by RAND()
         limit #{count}
     </select>
+
+    <!--
+        之前的随机，要求数据量大
+        select *
+        from img i
+        where i.field like concat('%', #{field}, '%')
+          and i.user_id = #{userId}
+          and i.id >= (RAND() * (select MAX(ii.id) from img ii))
+        limit #{count}
+    -->
 
     <!--  结果集  -->
     <resultMap id="ImgMap" type="Img">
