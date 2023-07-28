@@ -42,8 +42,13 @@ public class BlogController {
     @Resource
     private IImgService imgService;
 
+    @Resource
+    private RedisUtil redisUtil;
+
     private static final int DEFAULT_IMG_ID = 0; // 默认图片id
     private static final String BLOG_IMG = "博客首页";
+    public static final String UPLOAD_LOCK = "lock:upload";
+    public static final int UPLOAD_LOCK_MS = 1000;
 
     // 上传并新建一个博客
     @PostMapping("/upload")
@@ -67,6 +72,9 @@ public class BlogController {
                          @RequestParam(value = "createTime", required = false)
                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime createTime,
                          HttpServletRequest request) throws IOException {
+
+        // 加锁
+        redisUtil.waitLock(UPLOAD_LOCK, UPLOAD_LOCK_MS);
 
         // 初始化
         Map<String, Object> map = new HashMap<>();
@@ -92,6 +100,8 @@ public class BlogController {
             Integer imgId = neverUseImg.get(rand).getId();
             fileUtil.mdUpload(files, StrUtil.EMPTY_STRING, request, imgId, StrUtil.EMPTY_STRING, createTime);
         }
+
+        redisUtil.unlock(UPLOAD_LOCK);
 
         return Result.success(map);
     }
