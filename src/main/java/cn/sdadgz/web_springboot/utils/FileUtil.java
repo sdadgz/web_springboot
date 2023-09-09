@@ -204,7 +204,8 @@ public class FileUtil {
                 if (isImg) { // 是图片
                     if (!(line.contains("(http://") || line.contains("(https://"))) { // 都不包括链接
                         String start = line.substring(0, line.indexOf('(')); // 去掉右边括号
-                        String originName = line.substring(line.lastIndexOf('\\') + 1, line.length() - 1);
+                        // 反斜杠或斜杠，只获取文件名
+                        String originName = line.substring(Math.max(line.lastIndexOf('\\') + 1, line.lastIndexOf('/') + 1), line.length() - 1);
                         line = start + '(' + fileUtil.downloadPath + "blog/" + originName + ')';
                     }
                 }
