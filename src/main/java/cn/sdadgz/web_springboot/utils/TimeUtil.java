@@ -17,4 +17,13 @@ public class TimeUtil {
     public static LocalDate nowDay() {
         return LocalDate.now();
     }
+
+    // 睡一觉
+    public static void sleep(long ms){
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }

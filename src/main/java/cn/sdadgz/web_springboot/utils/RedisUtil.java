@@ -5,6 +5,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.sql.Time;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Set;
@@ -117,7 +118,7 @@ public class RedisUtil {
     }
 
     // 删除key
-    public Boolean delKey(String key){
+    public Boolean delKey(String key) {
         return redisTemplate.delete(key);
     }
 
@@ -132,25 +133,21 @@ public class RedisUtil {
     }
 
     // 释放锁
-    public Boolean unlock(String key){
+    public Boolean unlock(String key) {
         return delKey(key);
     }
 
     // 阻塞获取锁
-    public void waitLock(String key){
+    public void waitLock(String key) {
         waitLock(key, DEFAULT_LOCK_TIMEOUT);
     }
 
     // 带过期的拥塞获取锁
-    public void waitLock(String key, long ms){
-        while (!lock(key, ms)){
-            // 没拿到锁
-            try {
-                // 没办法只能等待，我是想不出来什么好方法了
-                Thread.sleep(ms);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+    public void waitLock(String key, long ms) {
+        int sleepTime = 1;
+        while (!lock(key, ms)) {
+            // 没拿到锁，睡会
+            TimeUtil.sleep(Math.min(ms / 2, sleepTime *= 2));
         }
     }
 

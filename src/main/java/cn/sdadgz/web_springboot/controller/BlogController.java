@@ -101,6 +101,7 @@ public class BlogController {
             fileUtil.mdUpload(files, StrUtil.EMPTY_STRING, request, imgId, StrUtil.EMPTY_STRING, createTime);
         }
 
+        // 释放锁
         redisUtil.unlock(UPLOAD_LOCK);
 
         return Result.success(map);
