@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.List;
 
@@ -20,7 +21,8 @@ public class ImgScheduled {
     private IImgService imgService;
 
     // 垃圾回收
-    @Scheduled(cron = "16 56 20 ? * 1")
+    @Scheduled(cron = "23 9 9 ? * 1")
+    @PostConstruct
     void delete() {
         List<Img> gc = imgService.getGC();
         Long aLong = imgService.virtualDeleteBatch(gc);
@@ -28,7 +30,7 @@ public class ImgScheduled {
     }
 
     // 定期物理删除
-    @Scheduled(cron = "45 45 9 ? * 1")
+    @Scheduled(cron = "23 9 9 ? * 7")
     void realDelete() {
         log.info("清理img回收站");
         imgService.realDeleteBatch();

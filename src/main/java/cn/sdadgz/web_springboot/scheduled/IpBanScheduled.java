@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.List;
 
@@ -22,14 +23,16 @@ public class IpBanScheduled {
     // 每分钟原谅多少人
     public static final int FORGIVE_PER_WEEK = 1;
 
-    @Scheduled(cron = "30 30 6 ? * 1")
+    @Scheduled(cron = "23 9 9 ? * 5")
+    @PostConstruct
     void delete() {
         List<IpBan> gc = ipBanService.getGC();
         boolean b = ipBanService.removeBatchByIds(gc);
         log.info("ipBan获取到{}条垃圾，删除{}", gc.size(), GeneralUtil.tf(b));
     }
 
-    @Scheduled(cron = "20 53 20 ? * 1")
+    @Scheduled(cron = "23 9 9 ? * 1")
+    @PostConstruct
     void forgive() {
         List<IpBan> ipBanPage = ipBanService.getIpBanPage(1, FORGIVE_PER_WEEK);
         boolean b = false;

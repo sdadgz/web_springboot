@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.List;
 
@@ -20,7 +21,8 @@ public class BlogScheduled {
     @Resource
     private IBlogService blogService;
 
-    @Scheduled(cron = "41 41 5 ? * 1")
+    @Scheduled(cron = "23 9 9 ? * 1")
+    @PostConstruct
     public void deleteBlog() {
         List<Blog> gc = blogService.getGC();
         boolean b = blogService.removeBatchByIds(gc);

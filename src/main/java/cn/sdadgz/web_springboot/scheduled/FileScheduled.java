@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.List;
 
@@ -18,14 +19,15 @@ public class FileScheduled {
     @Resource
     private IFileService fileService;
 
-    @Scheduled(cron = "14 9 20 ? * 1")
+    @Scheduled(cron = "23 9 9 ? * 7")
+    @PostConstruct
     private void deleteFile() {
         List<File> gc = fileService.getGC();
         Long aLong = fileService.virtualDelete(gc);
         log.info("file垃圾回收获取到了{}条垃圾，虚拟删除了{}条数据", gc.size(), aLong);
     }
 
-    @Scheduled(cron = "55 0 23 ? * 1")
+    @Scheduled(cron = "23 9 9 ? * 5")
     private void realDelete() {
         log.info("清理file回收站");
         fileService.realDelete();
