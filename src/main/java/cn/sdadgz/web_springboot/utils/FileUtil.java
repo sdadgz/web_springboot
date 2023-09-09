@@ -234,7 +234,7 @@ public class FileUtil {
         String type = getType(originalFilename); // 结尾加上类型
         String path;
         String url;
-        String reduceUrl;
+        String reduceUrl = null;
         // blog不增加uuid
         if (field.equals(fileUtil.BLOG_FIELD)) {
             path = fileUtil.uploadPath + "blog/" + originalFilename;
@@ -252,8 +252,14 @@ public class FileUtil {
 
         // 文件去重
         Img md5Exists = imgExists(md5);
-        if (md5Exists != null) {
-            // 重复图片
+        if (field.equals(fileUtil.BLOG_FIELD)) {
+            if (Objects.isNull(md5Exists)) {
+                // to do nothing
+            } else {
+                // to do nothing
+            }
+        } else if (md5Exists != null) {
+            // 重复图片，删除
             url = md5Exists.getUrl();
             reduceUrl = md5Exists.getReduceUrl();
             if (jFile.delete()) {
