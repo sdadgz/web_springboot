@@ -67,7 +67,7 @@ public class FileUtil {
         fileUtil = this;
     }
 
-    // 文件上传
+    // 仓库文件上传
     public Map<String, Object> fileUpload(MultipartFile file, HttpServletRequest request) {
         // 初始化
         HashMap<String, Object> map = new HashMap<>();
@@ -89,9 +89,13 @@ public class FileUtil {
         }
         uploadFile.setOriginalFilename(originalFilename);
 
+        // 修改存储的文件名
+        String uuid = cn.hutool.core.util.IdUtil.randomUUID();
+        String type = getType(originalFilename); // 结尾加上类型
+
         // 上传
-        String url = fileUtil.downloadPath + StrUtil.REPOSITORY + StrUtil.LEVER + originalFilename;
-        String path = fileUtil.uploadPath + StrUtil.REPOSITORY + StrUtil.LEVER + originalFilename;
+        String url = fileUtil.downloadPath + StrUtil.REPOSITORY + StrUtil.LEVER + uuid + type;
+        String path = fileUtil.uploadPath + StrUtil.REPOSITORY + StrUtil.LEVER + uuid + type;
         uploadToServer(file, path);
         uploadFile.setUrl(WebUtil.encodeURL(url));
 
