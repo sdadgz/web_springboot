@@ -9,10 +9,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.annotation.Resource;
 
-@ControllerAdvice
+@RestControllerAdvice
 @Slf4j
 public class ExceptionAdvice {
 
@@ -20,14 +21,12 @@ public class ExceptionAdvice {
     private IIpBanService ipBanService;
 
     // 常规异常
-    @ResponseBody
     @ExceptionHandler(BusinessException.class)
     public Result handleBussinessException(BusinessException e) {
         return Result.error(e.getCode(), "异常：" + e.getMessage());
     }
 
     // 危险异常
-    @ResponseBody
     @ExceptionHandler(DangerousException.class)
     public Result dangerousException(DangerousException e) {
         log.error("出现异常ip：{}，异常行为：{}", e.getIp(), e.getMessage());
