@@ -23,7 +23,7 @@ public class ImgScheduled {
     // 垃圾回收
     @Scheduled(cron = "23 9 9 ? * 1")
     @PostConstruct
-    void delete() {
+    public void delete() {
         List<Img> gc = imgService.getGC();
         Long aLong = imgService.virtualDeleteBatch(gc);
         log.info("img垃圾回收获取到{}条垃圾，成功删除{}条垃圾", gc.size(), aLong);
@@ -31,7 +31,7 @@ public class ImgScheduled {
 
     // 定期物理删除
     @Scheduled(cron = "23 9 9 ? * 7")
-    void realDelete() {
+    public void realDelete() {
         log.info("清理img回收站");
         imgService.realDeleteBatch();
     }

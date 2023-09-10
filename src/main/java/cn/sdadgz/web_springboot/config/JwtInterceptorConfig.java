@@ -28,6 +28,7 @@ public class JwtInterceptorConfig implements WebMvcConfigurer {
                         "/ip", // 获取ip
                         "/toy/**", // 小玩具
                         "/ipBan/**", // 这个就当是压测nginx接口了
+                        "/develop/*", // 开发者
                         "/static/**");
     }
 }

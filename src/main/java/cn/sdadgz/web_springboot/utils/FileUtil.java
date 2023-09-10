@@ -93,7 +93,7 @@ public class FileUtil {
         String url = fileUtil.downloadPath + StrUtil.REPOSITORY + StrUtil.LEVER + originalFilename;
         String path = fileUtil.uploadPath + StrUtil.REPOSITORY + StrUtil.LEVER + originalFilename;
         uploadToServer(file, path);
-        uploadFile.setUrl(url);
+        uploadFile.setUrl(WebUtil.encodeURL(url));
 
         // md5
         File jFile = new File(path);

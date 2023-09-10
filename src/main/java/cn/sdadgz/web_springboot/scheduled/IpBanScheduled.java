@@ -25,7 +25,7 @@ public class IpBanScheduled {
 
     @Scheduled(cron = "23 9 9 ? * 5")
     @PostConstruct
-    void delete() {
+    public void delete() {
         List<IpBan> gc = ipBanService.getGC();
         boolean b = ipBanService.removeBatchByIds(gc);
         log.info("ipBan获取到{}条垃圾，删除{}", gc.size(), GeneralUtil.tf(b));
@@ -33,7 +33,7 @@ public class IpBanScheduled {
 
     @Scheduled(cron = "23 9 9 ? * 1")
     @PostConstruct
-    void forgive() {
+    public void forgive() {
         List<IpBan> ipBanPage = ipBanService.getIpBanPage(1, FORGIVE_PER_WEEK);
         boolean b = false;
         if (ipBanPage.size() > 0) {

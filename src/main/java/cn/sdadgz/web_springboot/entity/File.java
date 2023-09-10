@@ -1,5 +1,6 @@
 package cn.sdadgz.web_springboot.entity;
 
+import cn.sdadgz.web_springboot.utils.WebUtil;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -46,4 +47,14 @@ public class File implements Serializable {
     // 用户
     @TableField(exist = false)
     private User user;
+
+//    /**
+//     * 设置url时转义百分号
+//     *
+//     * @param url 转移后的
+//     */
+//    public void setUrl(String url) {
+//        // url需要转义
+//        this.url = WebUtil.encodeURL(url);
+//    }
 }

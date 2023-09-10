@@ -19,16 +19,17 @@ public class FileScheduled {
     @Resource
     private IFileService fileService;
 
-    @Scheduled(cron = "23 9 9 ? * 7")
+    @Scheduled(cron = "23 9 9 17 2 ?")
     @PostConstruct
-    private void deleteFile() {
+    public void deleteFile() {
+        // 删除注销账号的文件
         List<File> gc = fileService.getGC();
         Long aLong = fileService.virtualDelete(gc);
         log.info("file垃圾回收获取到了{}条垃圾，虚拟删除了{}条数据", gc.size(), aLong);
     }
 
     @Scheduled(cron = "23 9 9 ? * 5")
-    private void realDelete() {
+    public void realDelete() {
         log.info("清理file回收站");
         fileService.realDelete();
     }
