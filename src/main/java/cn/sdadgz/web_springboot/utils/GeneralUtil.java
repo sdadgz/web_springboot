@@ -22,7 +22,7 @@ public class GeneralUtil {
         // 空字符串否
         if (obj instanceof String) {
             String str = (String) obj;
-            return str.equals(StrUtil.EMPTY_STRING);
+            return str.equals(StringUtil.EMPTY_STRING);
         }
         // 为0的数字
         if (obj instanceof Integer) {

@@ -4,7 +4,7 @@ import cn.sdadgz.web_springboot.common.Result;
 import cn.sdadgz.web_springboot.utils.IdUtil;
 import cn.sdadgz.web_springboot.utils.RedisUtil;
 import cn.sdadgz.web_springboot.utils.SameCode.User.UserBan;
-import cn.sdadgz.web_springboot.utils.StrUtil;
+import cn.sdadgz.web_springboot.utils.StringUtil;
 import cn.sdadgz.web_springboot.utils.TimeUtil;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,7 +40,7 @@ public class IpController {
 
         // todo 要不试试上redis事务？
         // 根据前缀获取今日来访者
-        Set<String> keys = redisUtil.getKeys(TimeUtil.nowDay() + StrUtil.COLON);
+        Set<String> keys = redisUtil.getKeys(TimeUtil.nowDay() + StringUtil.COLON);
 
         keys.forEach(key -> map.put(key, redisUtil.get(key)));
 

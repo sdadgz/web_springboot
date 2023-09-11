@@ -69,7 +69,7 @@ public class UserController {
      * @return token
      */
     @GetMapping("/token")
-    public Result refreshToken(@RequestHeader(StrUtil.TOKEN) String token) throws NoSuchAlgorithmException {
+    public Result refreshToken(@RequestHeader(StringUtil.TOKEN) String token) throws NoSuchAlgorithmException {
 
         String s = JwtUtil.reFlushToken(token);
 

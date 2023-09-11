@@ -2,7 +2,6 @@ package cn.sdadgz.web_springboot;
 
 import cn.sdadgz.web_springboot.entity.Blog;
 import cn.sdadgz.web_springboot.entity.Img;
-import cn.sdadgz.web_springboot.entity.User;
 import cn.sdadgz.web_springboot.mapper.BlogMapper;
 import cn.sdadgz.web_springboot.mapper.FileMapper;
 import cn.sdadgz.web_springboot.mapper.ImgMapper;
@@ -11,7 +10,7 @@ import cn.sdadgz.web_springboot.service.*;
 import cn.sdadgz.web_springboot.toy.Toy;
 import cn.sdadgz.web_springboot.utils.RandomUtil;
 import cn.sdadgz.web_springboot.utils.RedisUtil;
-import cn.sdadgz.web_springboot.utils.StrUtil;
+import cn.sdadgz.web_springboot.utils.StringUtil;
 import cn.sdadgz.web_springboot.utils.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -20,8 +19,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.annotation.Resource;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @SpringBootTest
@@ -85,9 +82,9 @@ class WebSpringbootApplicationTests {
         String ip2 = "0.0.0.1";
         String ip3 = "0.0.0.2";
         redisUtil.setSet("ip_list", ip1, ip2, ip3);
-        redisUtil.setIncrExp(localDate + StrUtil.COLON + ip1, TimeUtil.SECOND_PER_DAY * 7);
-        redisUtil.setIncrExp(localDate + StrUtil.COLON + ip2, TimeUtil.SECOND_PER_DAY * 7);
-        redisUtil.setIncrExp(localDate + StrUtil.COLON + ip3, TimeUtil.SECOND_PER_DAY * 7);
+        redisUtil.setIncrExp(localDate + StringUtil.COLON + ip1, TimeUtil.SECOND_PER_DAY * 7);
+        redisUtil.setIncrExp(localDate + StringUtil.COLON + ip2, TimeUtil.SECOND_PER_DAY * 7);
+        redisUtil.setIncrExp(localDate + StringUtil.COLON + ip3, TimeUtil.SECOND_PER_DAY * 7);
     }
 
     //    @Test

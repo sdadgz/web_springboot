@@ -1,17 +1,13 @@
 package cn.sdadgz.web_springboot.aop;
 
-import cn.sdadgz.web_springboot.config.BusinessException;
 import cn.sdadgz.web_springboot.config.ServerConfig;
 import cn.sdadgz.web_springboot.utils.*;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -61,7 +57,7 @@ public class AllAdvice {
     // 将ip添加到redis里
     public void addIp(String ip) {
         // 年-月-日:ip 作为key
-        String key = TimeUtil.nowDay() + StrUtil.COLON + ip;
+        String key = TimeUtil.nowDay() + StringUtil.COLON + ip;
 
         // 计数
         redisUtil.setIncrExp(key, TIMEOUT, k -> log.info("ip：{}今日首次访问，统计过期时间{}s", k, TIMEOUT));

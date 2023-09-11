@@ -2,7 +2,7 @@ package cn.sdadgz.web_springboot.service.impl;
 
 import cn.sdadgz.web_springboot.config.DangerousException;
 import cn.sdadgz.web_springboot.utils.IdUtil;
-import cn.sdadgz.web_springboot.utils.StrUtil;
+import cn.sdadgz.web_springboot.utils.StringUtil;
 import cn.sdadgz.web_springboot.common.Constants;
 import cn.sdadgz.web_springboot.config.BusinessException;
 import cn.sdadgz.web_springboot.entity.IpBan;
@@ -15,7 +15,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -54,7 +53,7 @@ public class IpBanServiceImpl extends ServiceImpl<IpBanMapper, IpBan> implements
         wrapper.eq(IpBan::getIp, ip);
         Long aLong = ipBanMapper.selectCount(wrapper);
 
-        if (aLong > StrUtil.BLACKLIST_BAN) {
+        if (aLong > StringUtil.BLACKLIST_BAN) {
             throw new BusinessException(Constants.CODE_498, "加载失败，联系站长。");
         }
 
@@ -68,7 +67,7 @@ public class IpBanServiceImpl extends ServiceImpl<IpBanMapper, IpBan> implements
         wrapper.eq(IpBan::getUserId, user.getId());
         Long aLong = ipBanMapper.selectCount(wrapper);
 
-        if (aLong > StrUtil.BLACKLIST_BAN) {
+        if (aLong > StringUtil.BLACKLIST_BAN) {
             throw new BusinessException(Constants.CODE_499, "用户名或密码错误");
         }
     }

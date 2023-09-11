@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.concurrent.CompletableFuture;
+
 /**
  * 开发者模式
  *
@@ -26,7 +28,13 @@ public class DevelopController {
 
     @DeleteMapping("/cleanFile")
     public Result cleanFile() {
-        fileScheduled.realDelete();
+        CompletableFuture.runAsync(fileScheduled::realDelete);
+        return Result.success();
+    }
+
+    @DeleteMapping("/deleteFile")
+    public Result deleteFile() {
+        CompletableFuture.runAsync(fileScheduled::cleanFileNotInDatabase);
         return Result.success();
     }
 

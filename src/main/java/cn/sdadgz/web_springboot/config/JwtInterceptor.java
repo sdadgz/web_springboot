@@ -3,7 +3,7 @@ package cn.sdadgz.web_springboot.config;
 import cn.sdadgz.web_springboot.service.IUserService;
 import cn.sdadgz.web_springboot.utils.IdUtil;
 import cn.sdadgz.web_springboot.utils.JwtUtil;
-import cn.sdadgz.web_springboot.utils.StrUtil;
+import cn.sdadgz.web_springboot.utils.StringUtil;
 import cn.sdadgz.web_springboot.entity.User;
 import cn.sdadgz.web_springboot.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -51,7 +51,7 @@ public class JwtInterceptor implements HandlerInterceptor {
             userid = JwtUtil.getAudience(token);//获取token中的签发对象
         } catch (Exception e) {
             log.error("访问者ip：{}，token校验失败", ip);
-            throw new DangerousException("499", "数据校验失败", ip, StrUtil.NO_USER);
+            throw new DangerousException("499", "数据校验失败", ip, StringUtil.NO_USER);
         }
         //带着token验证载荷username是否正确
         User realUser = null;

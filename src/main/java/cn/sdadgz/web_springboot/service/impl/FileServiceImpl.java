@@ -6,8 +6,6 @@ import cn.sdadgz.web_springboot.entity.File;
 import cn.sdadgz.web_springboot.mapper.FileMapper;
 import cn.sdadgz.web_springboot.service.IFileService;
 import cn.sdadgz.web_springboot.utils.FileUtil;
-import cn.sdadgz.web_springboot.utils.GeneralUtil;
-import cn.sdadgz.web_springboot.utils.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;

@@ -5,10 +5,6 @@ import cn.sdadgz.web_springboot.config.DangerousException;
 import cn.sdadgz.web_springboot.entity.Blog;
 import cn.sdadgz.web_springboot.entity.Img;
 import cn.sdadgz.web_springboot.entity.User;
-import cn.sdadgz.web_springboot.mapper.BlogMapper;
-import cn.sdadgz.web_springboot.mapper.FileMapper;
-import cn.sdadgz.web_springboot.mapper.ImgMapper;
-import cn.sdadgz.web_springboot.mapper.UserMapper;
 import cn.sdadgz.web_springboot.service.IBlogService;
 import cn.sdadgz.web_springboot.service.IFileService;
 import cn.sdadgz.web_springboot.service.IImgService;
@@ -80,12 +76,12 @@ public class FileUtil {
         uploadFile.setUserId(userId);
 
         // 去重复文件名
-        String originalFilename = user.getName() + StrUtil.UNDERLINE + file.getOriginalFilename();
+        String originalFilename = user.getName() + StringUtil.UNDERLINE + file.getOriginalFilename();
         while (filenameExists(originalFilename)) {
             // 获取类型
             String type = getType(originalFilename);
             // 除类型以外的
-            originalFilename = getOriginalFilename(originalFilename) + StrUtil.COPY + type;
+            originalFilename = getOriginalFilename(originalFilename) + StringUtil.COPY + type;
         }
         uploadFile.setOriginalFilename(originalFilename);
 
@@ -94,8 +90,8 @@ public class FileUtil {
         String type = getType(originalFilename); // 结尾加上类型
 
         // 上传
-        String url = fileUtil.downloadPath + StrUtil.REPOSITORY + StrUtil.LEVER + uuid + type;
-        String path = fileUtil.uploadPath + StrUtil.REPOSITORY + StrUtil.LEVER + uuid + type;
+        String url = fileUtil.downloadPath + StringUtil.REPOSITORY + uuid + type;
+        String path = fileUtil.uploadPath + StringUtil.REPOSITORY + uuid + type;
         uploadToServer(file, path);
         uploadFile.setUrl(WebUtil.encodeURL(url));
 
@@ -210,7 +206,7 @@ public class FileUtil {
                         String start = line.substring(0, line.indexOf('(')); // 去掉右边括号
                         // 反斜杠或斜杠，只获取文件名
                         String originName = line.substring(Math.max(line.lastIndexOf('\\') + 1, line.lastIndexOf('/') + 1), line.length() - 1);
-                        line = start + '(' + fileUtil.downloadPath + "blog/" + originName + ')';
+                        line = start + '(' + fileUtil.downloadPath + StringUtil.BLOG + originName + ')';
                     }
                 }
             }
@@ -241,8 +237,8 @@ public class FileUtil {
         String reduceUrl = null;
         // blog不增加uuid
         if (field.equals(fileUtil.BLOG_FIELD)) {
-            path = fileUtil.uploadPath + "blog/" + originalFilename;
-            url = fileUtil.downloadPath + "blog/" + originalFilename;
+            path = fileUtil.uploadPath + StringUtil.BLOG + originalFilename;
+            url = fileUtil.downloadPath + StringUtil.BLOG + originalFilename;
         } else {
             path = fileUtil.uploadPath + uuid + type;
             url = fileUtil.downloadPath + uuid + type;
@@ -350,7 +346,7 @@ public class FileUtil {
     // multipartFile -> 数据库blog中text字段
     private String fileToString(MultipartFile file) throws IOException {
         String originalFilename = file.getOriginalFilename();
-        String path = fileUtil.uploadPath + BLOG_DIR + StrUtil.LEVER + originalFilename;
+        String path = fileUtil.uploadPath + StringUtil.BLOG + originalFilename;
         uploadToServer(file, path);
         File jFile = new File(path);
         String text = md(jFile);
@@ -408,4 +404,33 @@ public class FileUtil {
         }
         return fileName.substring(0, fileName.lastIndexOf('.'));
     }
+
+    // 删除文件夹
+    public static boolean deleteDir(File file) {
+        if (!file.exists()) {
+            return false;
+        }
+        if (file.isFile()) {
+            return file.delete();
+        } else {
+            File[] files = file.listFiles();
+            if (files == null) {
+                return false;
+            }
+            for (File f : files) {
+                if (f.isFile()) {
+                    if (!f.delete()) {
+                        System.out.println("FileUtil::deleteDir " + f.getAbsolutePath() + " delete error");
+                        return false;
+                    }
+                } else {
+                    if (!deleteDir(f)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return file.delete();
+    }
+
 }

@@ -98,7 +98,7 @@ public class BlogController {
                     fileUtil.hashCode() + userId + neverUseImg.hashCode();
             int rand = RandomUtil.getInt(neverUseImg.size(), seed);
             Integer imgId = neverUseImg.get(rand).getId();
-            fileUtil.mdUpload(files, StrUtil.EMPTY_STRING, request, imgId, StrUtil.EMPTY_STRING, createTime);
+            fileUtil.mdUpload(files, StringUtil.EMPTY_STRING, request, imgId, StringUtil.EMPTY_STRING, createTime);
         }
 
         // 释放锁
