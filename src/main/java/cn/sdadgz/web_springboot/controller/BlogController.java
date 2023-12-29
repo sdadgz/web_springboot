@@ -1,6 +1,7 @@
 package cn.sdadgz.web_springboot.controller;
 
 import cn.sdadgz.web_springboot.dto.BlogDetailDTO;
+import cn.sdadgz.web_springboot.dto.BlogsDTO;
 import cn.sdadgz.web_springboot.service.IBlogService;
 import cn.sdadgz.web_springboot.service.IUserService;
 import cn.sdadgz.web_springboot.utils.*;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -134,6 +136,12 @@ public class BlogController {
         // 分页数据
         Map<String, Object> map = blogService.getPage(userId, currentPage, pageSize);
 
+        // 去掉冗余字段
+        Object lists = map.get("lists");
+        List<Blog> blogs = (List<Blog>) lists;
+        List<BlogsDTO> blogsDTOS = blogs.stream().map(BlogsDTO::of).collect(Collectors.toList());
+        map.put("lists", blogsDTOS);
+
         return Result.success(map);
     }
 
@@ -185,7 +193,9 @@ public class BlogController {
     }
 
     // 分页
+    /** Deprecated **/
     @GetMapping("/{username}/page")
+    @Deprecated
     public Result page(@RequestParam("currentPage") int currentPage,
                        @RequestParam("pageSize") int pageSize,
                        @PathVariable("username") String username,
