@@ -147,7 +147,7 @@ public class RedisUtil {
         int sleepTime = 1;
         while (!lock(key, ms)) {
             // 没拿到锁，睡会
-            TimeUtil.sleep(Math.min(ms / 2, sleepTime *= 2));
+            TimeUtil.sleep(Math.min(ms / 2, Math.abs(sleepTime *= 2)));
         }
     }
 

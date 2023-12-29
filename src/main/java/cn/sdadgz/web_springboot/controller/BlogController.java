@@ -1,5 +1,6 @@
 package cn.sdadgz.web_springboot.controller;
 
+import cn.sdadgz.web_springboot.dto.BlogDetailDTO;
 import cn.sdadgz.web_springboot.service.IBlogService;
 import cn.sdadgz.web_springboot.service.IUserService;
 import cn.sdadgz.web_springboot.utils.*;
@@ -113,7 +114,12 @@ public class BlogController {
                           @PathVariable("title") String title) {
 
         Blog blog = blogService.getBlogByUsernameAndTitle(username, title);
-        return Result.success(blog);
+        BlogDetailDTO dto = BlogDetailDTO.builder()
+                .text(blog.getText())
+                .imgUrl(blog.getImg().getUrl())
+                .title(blog.getTitle())
+                .build();
+        return Result.success(dto);
     }
 
     // 提供用户名获取blogs

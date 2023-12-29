@@ -22,6 +22,7 @@ spring:
   redis:
     port: 6379
     host: sdadgz.cn
+    database: 0
   servlet:
     multipart:
       max-request-size: 10GB
