@@ -11,6 +11,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
+/**
+ * redis工具类
+ *
+ * <p>
+ * 废物本物
+ * </p>
+ *
+ * @author sdadgz
+ * @since 2024/3/21 16:59:11
+ */
+
 @Component
 @Slf4j
 public class RedisUtil {

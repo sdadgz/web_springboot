@@ -34,6 +34,8 @@ public class Generator {
                 })
                 .packageConfig(builder -> {
                     builder.parent(packagePath) // 设置父包名
+                            // 设置实体类层名字
+                            .entity("entity")
                             // 设置mapperXml生成路径
                             //直接右键复制项目mapper文件夹的绝对路径
                             .pathInfo(Collections.singletonMap(OutputFile.xml, localPath + projectName + "/src/main/resources/mapper"));

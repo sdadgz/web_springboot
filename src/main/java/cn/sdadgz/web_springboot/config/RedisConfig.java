@@ -6,6 +6,17 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
 
+/**
+ * redis配置
+ *
+ * <p>
+ * 废物本物
+ * </p>
+ *
+ * @author sdadgz
+ * @since 2024/3/21 17:01:40
+ */
+
 @Configuration
 public class RedisConfig {
 
